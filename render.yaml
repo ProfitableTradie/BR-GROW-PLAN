@@ -1,0 +1,50 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# The Boardroom Growth Plan is one self-contained HTML file, so the natural
+# fit is a Render STATIC SITE: no server, no cold starts, free tier.
+#
+# public/index.html is COMMITTED, so the build command is optional. If you
+# uploaded these files through the GitHub website (which drops the execute
+# bit on shell scripts), you can leave the build command empty entirely and
+# just publish ./public. `sh ./build.sh` is used here rather than
+# `./build.sh` so it works either way.
+#
+# If the service you already have on Render is a WEB SERVICE rather than a
+# static site, comment out the block below and uncomment the second one —
+# server.js and package.json in this repo make that work with no extra
+# dependencies. See RENDER.md.
+
+services:
+  - type: web
+    name: br-grow-plan
+    runtime: static
+    buildCommand: sh ./build.sh
+    staticPublishPath: ./public
+    pullRequestPreviewsEnabled: true
+    headers:
+      # The app is a single HTML file, so never let a browser serve a stale
+      # copy after a deploy.
+      - path: /*
+        name: Cache-Control
+        value: no-cache, must-revalidate
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    routes:
+      # Any path serves the app.
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+# ── Web Service alternative ─────────────────────────────────────────────
+# services:
+#   - type: web
+#     name: br-grow-plan
+#     runtime: node
+#     plan: free
+#     buildCommand: sh ./build.sh
+#     startCommand: node server.js
+#     healthCheckPath: /healthz

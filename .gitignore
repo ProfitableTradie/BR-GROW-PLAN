@@ -1,0 +1,7 @@
+# public/index.html and boardroom-growth-plan.html are BUILD OUTPUTS, but they
+# are committed on purpose: Render's static-site build runs ./build.sh, and
+# committing them means the app also works from a plain `git clone` with no
+# build step at all.
+.DS_Store
+node_modules/
+*.log

@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boardroom Growth Plan — Profitable Tradie</title>
+<style>
+:root{
+  --ink:#0E1A22; --ink-2:#1C2C38; --paper:#F7F5F1; --paper-2:#FFFFFF;
+  --rule:#DCD6CC; --muted:#5E6B74; --accent:#C2703A; --accent-soft:#F0E2D6;
+  --steel:#3D5A6C; --good:#2E7D5B; --warn:#B8862F; --bad:#A4433B;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --ease:cubic-bezier(.32,.72,0,1);
+  --rail:248px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ============ TOP BAR ============ */
+.bar{
+  position:sticky; top:0; z-index:80; display:flex; align-items:center; gap:14px;
+  padding:0 20px; min-height:52px; background:var(--ink); color:#EDE8E1;
+  border-bottom:1px solid #000; flex-wrap:wrap; row-gap:7px;
+}
+.bar .brand{font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:#9FB0BB; white-space:nowrap}
+.bar .brand b{color:#fff}
+.bar .brand .ver{color:var(--accent); letter-spacing:.08em; margin-left:4px}
+.bar .spacer{margin-left:auto}
+.seg{display:flex; background:rgba(255,255,255,.07); border-radius:7px; padding:2px; gap:2px}
+.seg button{
+  border:0; background:transparent; color:#9FB0BB; font-size:12px; font-weight:600;
+  padding:5px 13px; border-radius:5px; cursor:pointer; transition:all .18s var(--ease); white-space:nowrap;
+}
+.seg button:hover{color:#EDE8E1}
+.seg button.on{background:var(--accent); color:#fff}
+.tbtn{
+  border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); color:#EDE8E1;
+  font-size:12.5px; font-weight:600; padding:6px 13px; border-radius:6px; cursor:pointer;
+  transition:background .18s var(--ease); white-space:nowrap;
+}
+.tbtn:hover{background:rgba(255,255,255,.15)}
+.tbtn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+.tbtn.primary:hover{background:#D07C41}
+.savestat{font-size:11px; font-weight:600; color:#8FA3AF; min-width:104px; text-align:right}
+.savestat.dirty{color:#F0B87A}
+.savestat.ok{color:#7FD6A5}
+
+/* ============ SHELL ============ */
+.shell{display:flex; min-height:calc(100vh - 52px)}
+nav.rail{
+  width:var(--rail); flex:none; border-right:1px solid var(--rule); padding:26px 0 60px;
+  position:sticky; top:52px; height:calc(100vh - 52px); overflow-y:auto; background:var(--paper);
+}
+.rail .rlabel{font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#9AA5AC; font-weight:700; padding:0 24px 10px}
+.rail a{
+  display:flex; gap:12px; align-items:baseline; padding:10px 24px; text-decoration:none;
+  color:var(--ink); border-left:2px solid transparent; cursor:pointer; transition:background .16s var(--ease);
+}
+.rail a:hover{background:rgba(194,112,58,.06)}
+.rail a.on{border-left-color:var(--accent); background:rgba(194,112,58,.09)}
+.rail a .n{font-family:var(--serif); font-size:15px; color:var(--accent); flex:none; width:22px}
+.rail a .t{font-size:13.5px; font-weight:600; letter-spacing:.01em}
+.rail a .d{display:block; font-size:11.5px; color:var(--muted); font-weight:400; margin-top:1px; line-height:1.35}
+.rail .div{height:1px; background:var(--rule); margin:16px 24px}
+
+main{flex:1; min-width:0; padding:0 0 140px}
+.wrap{max-width:1240px; margin:0 auto; padding:0 40px}
+.tab{display:none}
+.tab.on{display:block}
+
+/* ============ TYPE ============ */
+.eyebrow{font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; font-weight:700; color:var(--accent)}
+h1.big{font-family:var(--serif); font-size:clamp(34px,4.4vw,50px); line-height:1.04; letter-spacing:-.02em; font-weight:600; margin:10px 0 0}
+.lead{font-size:17px; line-height:1.55; color:var(--ink-2); max-width:64ch; margin:14px 0 0}
+h2.sec{font-family:var(--serif); font-size:25px; font-weight:600; letter-spacing:-.01em; margin:0}
+.sechead{display:flex; align-items:baseline; gap:14px; padding-bottom:12px; border-bottom:1px solid var(--rule); margin:52px 0 22px}
+.sechead .hint{font-size:12.5px; color:var(--muted); margin-left:auto; text-align:right}
+.pagehead{padding:44px 0 0}
+.pagehead + .sechead{margin-top:40px}
+.muted{color:var(--muted)}
+.tiny{font-size:12px; color:var(--muted); line-height:1.45}
+.cap{font-size:12.5px; color:var(--muted); margin-top:10px; max-width:70ch}
+
+/* ============ METRICS ============ */
+.mgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px; background:transparent}
+.m{background:var(--paper-2); padding:20px 20px 22px; outline:1px solid var(--rule)}
+.m .ml{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:8px; line-height:1.3}
+.m .mv{font-family:var(--serif); font-size:34px; line-height:1; letter-spacing:-.02em}
+.m .ms{font-size:12.5px; color:var(--muted); margin-top:7px}
+.m.hero{background:var(--ink); color:#fff}
+.m.hero .ml{color:#8FA3AF}
+.m.hero .mv{color:#fff; font-size:42px}
+.m.hero .ms{color:#9FB0BB}
+.m.accent .mv{color:var(--accent)}
+.up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
+
+/* ============ TABLES ============ */
+table.t{width:100%; border-collapse:collapse; font-size:13.5px}
+table.t th{
+  text-align:right; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
+  font-weight:700; padding:0 12px 9px; border-bottom:1px solid var(--rule); white-space:nowrap;
+}
+table.t th:first-child, table.t td:first-child{text-align:left; padding-left:0}
+table.t th:last-child, table.t td:last-child{padding-right:0}
+table.t td{padding:9px 12px; border-bottom:1px solid var(--rule); text-align:right; white-space:nowrap}
+table.t td:first-child{white-space:normal; color:var(--ink-2)}
+table.t tr.grp td{
+  background:transparent; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; color:var(--accent); padding-top:22px; border-bottom:1px solid var(--ink);
+}
+table.t tr.tot td{font-weight:700; border-bottom:2px solid var(--ink); color:var(--ink)}
+table.t tr.sub td:first-child{padding-left:16px; color:var(--muted)}
+table.t tbody tr:hover td{background:rgba(194,112,58,.045)}
+table.t tr.grp:hover td, table.t tr.spacer:hover td{background:transparent}
+.scrollx{overflow-x:auto; margin:0 -40px; padding:0 40px}
+
+/* ============ FIELDS ============ */
+.fgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:0 40px}
+.f{padding:13px 0; border-bottom:1px solid var(--rule); display:flex; align-items:center; gap:16px}
+.f .flab{flex:1; min-width:0}
+.f .fl{font-size:13.5px; font-weight:600; line-height:1.35}
+.f .fh{font-size:11.5px; color:var(--muted); line-height:1.4; margin-top:2px}
+.f input, .f select{
+  width:132px; flex:none; text-align:right; padding:7px 10px; border:1px solid var(--rule);
+  border-radius:6px; background:var(--paper-2); font-size:14px; font-variant-numeric:tabular-nums;
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.f select{text-align:left; width:150px}
+.f input:focus, .f select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.f input:hover, .f select:hover{border-color:#C3BBAE}
+.f input.wide{width:100%}
+.f .out{width:132px; flex:none; text-align:right; font-weight:700; font-size:14.5px; padding:7px 0}
+.f.derived{background:linear-gradient(90deg,transparent,rgba(14,26,34,.028))}
+input[type=text].full, textarea.full{
+  width:100%; padding:11px 13px; border:1px solid var(--rule); border-radius:8px;
+  background:var(--paper-2); font-size:15px; text-align:left;
+}
+textarea.full{min-height:82px; resize:vertical; line-height:1.55; font-family:var(--serif); font-size:17px}
+input[type=text].full:focus, textarea.full:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); margin:18px 0 7px}
+
+/* ============ PILLS / NOTES ============ */
+.pill{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; padding:3px 9px; border-radius:999px; white-space:nowrap}
+.pill.good{background:rgba(46,125,91,.13); color:var(--good)}
+.pill.warn{background:rgba(184,134,47,.15); color:#8A6318}
+.pill.bad{background:rgba(164,67,59,.13); color:var(--bad)}
+.pill.neutral{background:rgba(94,107,116,.12); color:var(--muted)}
+.pill.accent{background:var(--accent-soft); color:#8A4A1E}
+.note{margin:22px 0 0; padding:17px 21px; border-left:3px solid var(--accent); background:var(--accent-soft); font-family:var(--serif); font-size:17px; line-height:1.5; color:#4A3527}
+.alert{display:flex; gap:12px; align-items:flex-start; padding:13px 17px; border:1px solid var(--rule); border-left:3px solid var(--warn); background:var(--paper-2); font-size:13.5px; margin-bottom:8px; line-height:1.45}
+.alert.bad{border-left-color:var(--bad)}
+.alert.good{border-left-color:var(--good)}
+.alert b{display:block; font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--warn); margin-bottom:3px}
+.alert.bad b{color:var(--bad)} .alert.good b{color:var(--good)}
+.empty{padding:44px 0; text-align:center; color:var(--muted); font-size:14px; border:1px dashed var(--rule); border-radius:10px}
+
+/* ============ BUTTONS ============ */
+.btn{border:1px solid var(--rule); background:var(--paper-2); font-size:13px; font-weight:600; padding:8px 15px; border-radius:7px; cursor:pointer; transition:all .16s var(--ease)}
+.btn:hover{border-color:var(--ink); background:#fff}
+.btn.accent{background:var(--accent); border-color:var(--accent); color:#fff}
+.btn.accent:hover{background:#D07C41; border-color:#D07C41}
+.btn.ghost{background:transparent; border-style:dashed; color:var(--steel)}
+.btn.sm{font-size:11.5px; padding:5px 11px}
+.btn.danger:hover{border-color:var(--bad); color:var(--bad)}
+.btnrow{display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-top:18px}
+
+/* ============ CARDS ============ */
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:16px}
+.card{background:var(--paper-2); border:1px solid var(--rule); border-radius:11px; padding:19px 20px 20px; position:relative; transition:border-color .16s var(--ease)}
+.card:hover{border-color:#C3BBAE}
+.card .ch{font-family:var(--serif); font-size:20px; line-height:1.2; margin:0 0 4px; padding-right:30px}
+.card .cmeta{display:flex; gap:6px; flex-wrap:wrap; margin:9px 0 12px}
+.card .x{position:absolute; top:11px; right:11px; width:24px; height:24px; border:1px solid var(--rule); background:var(--paper-2); border-radius:6px; color:var(--muted); cursor:pointer; line-height:1; font-size:15px; padding:0}
+.card .x:hover{border-color:var(--bad); color:var(--bad)}
+.lever{display:flex; align-items:center; gap:8px; padding:7px 0; border-top:1px solid var(--rule); font-size:12.5px; flex-wrap:wrap}
+.lever > *{min-width:0}
+.lever select{flex:1 1 100%; min-width:0; border:1px solid var(--rule); border-radius:5px; padding:5px 7px; background:var(--paper-2); font-size:12.5px}
+.lever .lv{font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--steel); margin-left:auto}
+
+/* compact card fields */
+.cf{display:grid; grid-template-columns:1fr 1fr; gap:11px 14px; margin:14px 0 6px}
+.cf .cfi{display:flex; flex-direction:column; gap:5px; min-width:0}
+.cf .cfi.wide{grid-column:1/-1}
+.cf label{font-size:10px; letter-spacing:.13em; text-transform:uppercase; font-weight:700; color:var(--muted)}
+.cf input, .cf select{
+  width:100%; padding:7px 9px; border:1px solid var(--rule); border-radius:6px;
+  background:var(--paper-2); font-size:13px; text-align:left; min-width:0;
+}
+.cf input[type=number]{text-align:right}
+.cf input:focus, .cf select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+
+/* ============ TWO COLUMN ============ */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--rule); border:1px solid var(--rule)}
+.two > div{background:var(--paper-2); padding:26px 28px 30px}
+.two h3{font-family:var(--serif); font-size:23px; margin:0 0 4px; font-weight:600}
+.two .sub{font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--accent); margin-bottom:14px}
+
+/* ============ CHARTS ============ */
+.chartbox{background:var(--paper-2); border:1px solid var(--rule); border-radius:11px; padding:22px 24px 18px; margin-top:18px}
+.chartbox h4{font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:700; margin:0 0 16px}
+svg.chart{display:block; width:100%; overflow:visible}
+svg.chart .gl{stroke:var(--rule); stroke-width:1}
+svg.chart .ax{fill:var(--muted); font-size:10.5px; font-family:var(--sans)}
+svg.chart .dl{font-size:11px; font-weight:700; font-family:var(--sans)}
+.chgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(400px,1fr)); gap:18px; margin-top:18px}
+
+/* ============ ORG CHART ============ */
+.org{display:flex; flex-direction:column; gap:26px; align-items:center; padding:26px 0}
+.orgrow{display:flex; gap:14px; justify-content:center; flex-wrap:wrap}
+.obox{
+  background:var(--paper-2); border:1px solid var(--rule); border-radius:10px; padding:13px 16px;
+  min-width:168px; text-align:center; position:relative;
+}
+.obox.owner{border-color:var(--accent); border-width:2px; background:var(--accent-soft)}
+.obox.vacant{border-style:dashed; background:transparent}
+.obox .or{font-size:13px; font-weight:700; line-height:1.25}
+.obox .on{font-size:11.5px; color:var(--muted); margin-top:2px}
+.obox .oc{font-size:11.5px; color:var(--steel); margin-top:5px; font-weight:600}
+.obox .tag{position:absolute; top:-9px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; background:var(--accent); color:#fff; padding:2px 8px; border-radius:999px; white-space:nowrap}
+.orgstem{width:1px; height:22px; background:var(--rule)}
+
+/* ============ BUDGET TABLE ============ */
+table.bud td.ideal{color:var(--muted); font-size:12.5px; background:rgba(61,90,108,.05)}
+table.bud td.want{background:rgba(194,112,58,.07)}
+/* The original workbook's convention: type into the amber boxes, the dark
+   boxes calculate. Keeps "which cells do I fill in" unmistakable. */
+table.t td.inp,  table.bud td.want.inp {background:rgba(194,112,58,.13)}
+table.t td.calc, table.bud td.want.calc{background:var(--ink); color:#fff}
+table.t td.calc b, table.t td.calc span{color:#fff; font-weight:700}
+tr:hover td.calc{background:#16242E !important}
+tr:hover td.inp{background:rgba(194,112,58,.16) !important}
+.legend{display:flex; gap:22px; align-items:center; flex-wrap:wrap; font-size:12.5px;
+  color:var(--muted); margin:22px 0 0; padding:11px 16px; background:var(--paper-2);
+  border:1px solid var(--rule); border-radius:8px}
+.legend i{display:inline-block; width:15px; height:15px; border-radius:3px;
+  vertical-align:-3px; margin-right:7px}
+.legend .swin{background:rgba(194,112,58,.20); border:1px solid rgba(194,112,58,.5)}
+.legend .swout{background:var(--ink)}
+.legend b{color:var(--ink); font-weight:700}
+table.asm td:first-child{min-width:300px}
+table.asm tr.rule td{padding:0; height:0; border-bottom:2px solid var(--ink)}
+table.asm tr.rule:hover td{background:transparent}
+table.bud th:nth-child(3){color:var(--accent)}
+table.bud td.want input{
+  width:118px; text-align:right; padding:6px 9px; border:1px solid var(--rule);
+  border-radius:6px; background:var(--paper-2); font-size:13.5px; font-variant-numeric:tabular-nums;
+}
+table.bud td.want input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+table.bud td.want b{font-size:14px}
+.seasrow{display:flex; align-items:center; gap:12px}
+.seasin{display:flex; align-items:center; gap:5px; justify-content:flex-end}
+.seasin input{width:78px; text-align:right; border:1px solid var(--rule); border-radius:6px; padding:6px 9px; font-variant-numeric:tabular-nums}
+.seasin input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.seasin span{color:var(--muted); font-size:13px}
+.seasbar{flex:1; height:22px; background:rgba(220,214,204,.5); border-radius:4px; position:relative; overflow:hidden; min-width:90px}
+.seasbar i{position:absolute; left:0; top:0; bottom:0; background:var(--accent); opacity:.85}
+.seasbar u{position:absolute; top:0; bottom:0; width:1px; background:var(--ink); opacity:.45}
+.explain{
+  background:var(--paper-2); border:1px solid var(--rule); border-left:3px solid var(--steel);
+  padding:15px 19px; font-size:14px; line-height:1.55; color:var(--ink-2); margin-bottom:18px;
+}
+.explain b{color:var(--ink)}
+
+/* ============ MONTH GRID ============ */
+.grid td{padding:2px 3px; border-bottom:1px solid var(--rule)}
+.grid td:first-child{padding:6px 12px 6px 0; font-size:12.5px; min-width:190px}
+.grid th{padding:0 6px 9px; font-size:10px}
+.grid input{
+  width:82px; padding:5px 7px; border:1px solid transparent; border-radius:5px;
+  background:transparent; text-align:right; font-size:12.5px; font-variant-numeric:tabular-nums;
+  transition:border-color .14s var(--ease), background .14s var(--ease);
+}
+.grid input:hover{border-color:var(--rule); background:var(--paper-2)}
+.grid input:focus{border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.grid tr.der td{background:rgba(14,26,34,.028); font-weight:600; color:var(--ink)}
+.grid tr.der td:first-child{font-weight:600}
+.grid td.tot{font-weight:700; border-left:1px solid var(--rule); padding-left:12px; min-width:96px}
+.divchips{display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 4px; align-items:center}
+.divchip{
+  border:1px solid var(--rule); background:var(--paper-2); border-radius:999px; padding:6px 14px;
+  font-size:12.5px; font-weight:600; cursor:pointer; transition:all .16s var(--ease); color:var(--muted);
+}
+.divchip:hover{border-color:var(--ink); color:var(--ink)}
+.divchip.on{background:var(--ink); border-color:var(--ink); color:#fff}
+.divchip.off{opacity:.5; border-style:dashed}
+.divname{border:0;background:transparent;font:inherit;width:118px;border-bottom:1px solid var(--rule);padding:2px 0}
+.divname:focus{outline:none;border-bottom-color:var(--accent)}
+
+/* ============ MISC ============ */
+.bargap{height:6px; background:var(--rule); border-radius:3px; overflow:hidden; min-width:60px; width:100%}
+.bargap i{display:block; height:100%; background:var(--accent); border-radius:3px; transition:width .5s var(--ease)}
+.toggle{display:inline-flex; align-items:center; gap:9px; cursor:pointer; font-size:13.5px; font-weight:600}
+.toggle input{appearance:none; width:40px; height:23px; background:var(--rule); border-radius:999px; position:relative; cursor:pointer; transition:background .2s var(--ease); margin:0}
+.toggle input::after{content:""; position:absolute; top:2.5px; left:2.5px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform .2s var(--ease); box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked{background:var(--accent)}
+.toggle input:checked::after{transform:translateX(17px)}
+.stmt{font-family:var(--serif); font-size:clamp(21px,2.6vw,27px); line-height:1.36; color:var(--ink); max-width:40ch}
+.stmt em{color:var(--accent); font-style:italic}
+#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px); background:var(--ink); color:#fff; padding:12px 22px; border-radius:9px; font-size:13.5px; font-weight:600; z-index:200; transition:transform .32s var(--ease); box-shadow:0 20px 60px rgba(14,26,34,.3); max-width:520px}
+#toast.on{transform:translateX(-50%) translateY(0)}
+.selftest{background:var(--ink); color:#DDE6EA; padding:20px 24px; border-radius:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.7; white-space:pre-wrap; margin-top:18px}
+.selftest .p{color:#7FD6A5} .selftest .f{color:#F08A80}
+
+@media (max-width:1300px){
+  .bar{gap:10px}
+  .bar .brand .pre{display:none}
+  .savestat{min-width:0}
+}
+@media (max-width:1120px){
+  .seg .lbl2{display:none}
+  .tbtn{padding:6px 10px; font-size:12px}
+}
+@media (max-width:1100px){
+  nav.rail{width:200px; --rail:200px}
+  .rail a .d{display:none}
+  .wrap{padding:0 24px}
+  .scrollx{margin:0 -24px; padding:0 24px}
+  .two{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .shell{flex-direction:column}
+  nav.rail{width:auto; height:auto; position:static; display:flex; overflow-x:auto; border-right:0; border-bottom:1px solid var(--rule); padding:0}
+  .rail .rlabel,.rail .div,.rail a .d{display:none}
+  .rail a{border-left:0; border-bottom:2px solid transparent; padding:12px 14px; white-space:nowrap}
+  .rail a.on{border-left:0; border-bottom-color:var(--accent)}
+  .bar{flex-wrap:wrap; height:auto; padding:8px 14px; gap:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important; animation-duration:.01ms !important}
+}
+
+/* ============ PRINT ============ */
+@media print{
+  @page{size:A4; margin:14mm}
+  body{background:#fff; font-size:10pt; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  .bar,nav.rail,.btnrow,.btn,.f input,.f select,#toast,.noprint{display:none !important}
+  .f .out{width:auto}
+  .shell{display:block}
+  main{padding:0}
+  .wrap{max-width:none; padding:0}
+  .tab{display:none !important}
+  .tab.on{display:block !important}
+  body.printall .tab{display:block !important; break-before:page}
+  body.printall .tab:first-of-type{break-before:auto}
+  .sechead,.mgrid,.chartbox,.card,table.t tr,.two,.org{break-inside:avoid}
+  .m.hero,.obox.owner{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  h1.big{font-size:24pt}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.1</span></div>
+  <div class="seg" id="scenseg" title="Active scenario — drives every forecast tab">
+    <button data-scen="A" class="on">Plan A<span class="lbl2"> · Base</span></button>
+    <button data-scen="B">Plan B<span class="lbl2"> · Stretch</span></button>
+    <button data-scen="C">Plan C<span class="lbl2"> · Conservative</span></button>
+  </div>
+  <div class="spacer"></div>
+  <span class="savestat" id="savestat">Not linked</span>
+  <button class="tbtn primary" id="btnSave">Save</button>
+  <button class="tbtn" id="btnSaveAs">Save as…</button>
+  <button class="tbtn" id="btnLoad">Open…</button>
+  <button class="tbtn" id="btnPrint">Print pack</button>
+  <input type="file" id="fileIn" accept=".json,application/json" hidden>
+</div>
+
+<div class="shell">
+<nav class="rail" id="rail">
+  <div class="rlabel">The Plan</div>
+  <a data-tab="vision" class="on"><span class="n">01</span><span class="t">Vision<span class="d">Five years, business and life</span></span></a>
+  <a data-tab="baseline"><span class="n">02</span><span class="t">Baseline<span class="d">Twelve months of actuals</span></span></a>
+  <a data-tab="metrics"><span class="n">03</span><span class="t">Key Metrics<span class="d">Current, target, gap</span></span></a>
+  <a data-tab="budget"><span class="n">04</span><span class="t">Budget &amp; Workforce<span class="d">Desired vs actuals, by department</span></span></a>
+  <a data-tab="strategies"><span class="n">05</span><span class="t">Strategies<span class="d">The levers that move it</span></span></a>
+  <a data-tab="scenarios"><span class="n">06</span><span class="t">Scenarios<span class="d">Plan A, B and C</span></span></a>
+  <div class="div"></div>
+  <div class="rlabel">The Forecast</div>
+  <a data-tab="fiveyear"><span class="n">07</span><span class="t">Five-Year Rolling<span class="d">The horizon</span></span></a>
+  <a data-tab="oneyear"><span class="n">08</span><span class="t">One Year<span class="d">Broken to months</span></span></a>
+  <a data-tab="consolidated"><span class="n">09</span><span class="t">Consolidated<span class="d">The boardroom one-pager</span></span></a>
+  <a data-tab="org"><span class="n">10</span><span class="t">Org Chart<span class="d">Today to Year 5</span></span></a>
+  <div class="div"></div>
+  <div class="rlabel">Setup</div>
+  <a data-tab="settings"><span class="n">✱</span><span class="t">Setup<span class="d">Money, wellness, checks</span></span></a>
+</nav>
+
+<main>
+  <div class="wrap">
+    <section class="tab on" id="tab-vision"></section>
+    <section class="tab" id="tab-baseline"></section>
+    <section class="tab" id="tab-metrics"></section>
+    <section class="tab" id="tab-budget"></section>
+    <section class="tab" id="tab-strategies"></section>
+    <section class="tab" id="tab-scenarios"></section>
+    <section class="tab" id="tab-fiveyear"></section>
+    <section class="tab" id="tab-oneyear"></section>
+    <section class="tab" id="tab-consolidated"></section>
+    <section class="tab" id="tab-org"></section>
+    <section class="tab" id="tab-settings"></section>
+  </div>
+</main>
+</div>
+
+<div id="toast"></div>
+<script>
+(function(){
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════════
+   BOARDROOM GROWTH PLAN — calculation engine
+   Pure functions. No DOM access below this banner until §RENDER.
+   Spec reference: CALC-SPEC.md
+   ══════════════════════════════════════════════════════════════════ */
+
+const $  = s => document.querySelector(s);
+const $$ = (s,r) => Array.from((r||document).querySelectorAll(s));
+const clamp = (lo,hi,v) => Math.max(lo, Math.min(hi, v));
+const ceil  = v => Math.ceil(v - 1e-9);                  // 8.0000001 → 8, not 9
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* null means "cannot be computed" and renders as — . Never NaN, never Infinity. */
+function div(a,b){
+  if(a==null||b==null) return null;
+  if(!Number.isFinite(a)||!Number.isFinite(b)||b===0) return null;
+  const r=a/b; return Number.isFinite(r)?r:null;
+}
+function num(v){
+  if(typeof v==='number') return Number.isFinite(v)?v:0;
+  const n=parseFloat(String(v??'').replace(/[^0-9.\-]/g,''));
+  return Number.isFinite(n)?n:0;
+}
+const sum = a => a.reduce((t,v)=>t+(Number.isFinite(v)?v:0),0);
+
+/* ─── formatters ─────────────────────────────────────────────────── */
+let CURSYM = '$';
+function money(v){
+  if(v==null||!Number.isFinite(v)) return '—';
+  const n=Math.round(v), s=n<0?'-':'';
+  return s+CURSYM+Math.abs(n).toLocaleString('en-NZ');
+}
+function money0k(v){
+  if(v==null||!Number.isFinite(v)) return '—';
+  if(Math.abs(v)>=1e6) return (v<0?'-':'')+CURSYM+(Math.abs(v)/1e6).toFixed(2)+'m';
+  if(Math.abs(v)>=1e4) return (v<0?'-':'')+CURSYM+Math.round(Math.abs(v)/1e3)+'k';
+  return money(v);
+}
+function pct(v,dp){
+  if(v==null||!Number.isFinite(v)) return '—';
+  return (v*100).toFixed(dp==null?1:dp)+'%';
+}
+function pp(v,dp){
+  if(v==null||!Number.isFinite(v)) return '—';
+  return (v>=0?'+':'')+(v*100).toFixed(dp==null?1:dp)+'pp';
+}
+function n0(v){ return (v==null||!Number.isFinite(v))?'—':Math.round(v).toLocaleString('en-NZ'); }
+function n1(v){ return (v==null||!Number.isFinite(v))?'—':v.toFixed(1); }
+function hrs(v){ return (v==null||!Number.isFinite(v))?'—':v.toFixed(1)+'h'; }
+function signed(v,f){ if(v==null||!Number.isFinite(v)) return '—'; return (v>0?'+':'')+f(v); }
+const FMT = {money, money0k, pct, n0, n1, hrs, pp};
+
+/* ═══ STATE ══════════════════════════════════════════════════════ */
+
+function blankMonth(){
+  return {rev:0,cos:0,fixed:0,ovh:0,jobs:0,quotes:0,leads:0,ownerHrs:0,onTools:0,office:0};
+}
+function blankDivision(id,name,active){
+  return {id, name, active:!!active, months:Array.from({length:12},blankMonth),
+    a:{revPerHead:25000, spanTL:6, spanOM:4, omThreshold:2, pricingCapacity:118,
+       tradesPerOffice:5, pricingMinutes:60},
+    t:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8}};
+}
+function blankMacro(){ return {market:0.05, price:0.03, wage:0.03, ovh:0.03}; }
+function blankScenario(name,label,mult){
+  return {name, label, multiple:mult, macro:Array.from({length:5},blankMacro)};
+}
+
+const DRIVERS = {
+  leads:        {label:'Leads per month',            unit:'count', fmt:v=>signed(v,n0)+' leads/mo'},
+  leadQuote:    {label:'Lead → Quote rate',          unit:'pp',    fmt:v=>pp(v/100)},
+  quoteWin:     {label:'Quote → Win rate',           unit:'pp',    fmt:v=>pp(v/100)},
+  avgJobValue:  {label:'Average job value',          unit:'money', fmt:v=>signed(v,money)},
+  gpPct:        {label:'Gross margin',               unit:'pp',    fmt:v=>pp(v/100)},
+  fixedCosts:   {label:'Fixed costs per month',      unit:'money', fmt:v=>signed(v,money)+'/mo'},
+  revPerHead:   {label:'Revenue per on-tools member',unit:'money', fmt:v=>signed(v,money)+'/mo'},
+  ownerHours:   {label:'Owner hours per week',       unit:'hours', fmt:v=>signed(v,x=>x.toFixed(1)+'h')+'/wk'}
+};
+const DOMAINS = ['Marketing','Sales','Workflow / Operations','Human Capital','Culture','Profitability & Financial Oversight'];
+const STAGES  = ['Strategy','Planning','Execution','Community','Accountability','Refining','Scaling'];
+const OUTCOMES= ['Freedom','Asset','Both'];
+const OWNER_ROLES = ['On tools','Team Leader','Operations Manager','Estimator','Office / Admin'];
+
+function defaultState(){
+  return {
+    v: 1,
+    meta:{company:'', owner:'', startMonth:0, startYear:new Date().getFullYear(), currency:'NZD'},
+    vision:{
+      statement:'',
+      biz:{revenue:0, profit:0, value:0, team:0, role:'CEO'},
+      life:{hours:35, holidays:6, weekends:0, evenings:5, income:0, whatFor:''}
+    },
+    divisionsOn:false,
+    divisions:[
+      blankDivision('WOB','Whole of Business',true),
+      blankDivision('D1','Projects',false),
+      blankDivision('D2','Service',false),
+      blankDivision('D3','Maintenance',false),
+      blankDivision('D4','Commercial',false),
+      blankDivision('D5','Residential',false),
+      blankDivision('D6','Division F',false),
+      blankDivision('D7','Division G',false)
+    ],
+    targets:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8},
+    fin:{debtorDays:45, wipDays:20, creditorDays:30, capexPct:0.015, taxRate:0.28,
+         ownerSalary:0, marketSalary:0, addbacks:0, surplusCash:0, debt:0,
+         drawingsAbove:0, debtRepay:0, maxHiresPerQuarter:2,
+         roleCost:{onTools:85000, teamLeader:100000, opsManager:110000, estimator:95000, office:70000}},
+    wellness:{
+      base:{hours:0, onBiz:0, weekends:0, evenings:0, holidays:0, weeksWithout:0, income:0, outside:0, exercise:0, sleep:0},
+      targ:{hours:35, onBiz:60, weekends:0, evenings:5, holidays:6, weeksWithout:4, income:0, outside:0, exercise:4, sleep:7.5}
+    },
+    ownerRoles:[{role:'On tools',on:false,handover:0},{role:'Team Leader',on:false,handover:0},
+                {role:'Operations Manager',on:true,handover:0},{role:'Estimator',on:true,handover:0},
+                {role:'Office / Admin',on:false,handover:0}],
+    strategies:[],
+    scenarios:{
+      A:blankScenario('A','Base',3.0),
+      B:blankScenario('B','Stretch',3.5),
+      C:blankScenario('C','Conservative',2.5)
+    },
+    active:'A',
+    oneYear:{ seasonality:Array.from({length:12},()=>1), actuals:Array.from({length:12},()=>({rev:null,gp:null,jobs:null,leads:null,np:null})), rocks:[[],[],[],[]] }
+  };
+}
+let S = defaultState();
+
+/* ═══ §1 BASELINE NORMALISATION ══════════════════════════════════
+   Period ratios, never averages of ratios. (Defect #10) */
+
+const entered = m => (num(m.rev)>0 || num(m.jobs)>0 || num(m.leads)>0 || num(m.quotes)>0);
+
+function normalise(dv){
+  const ms = dv.months.filter(entered);
+  const n  = ms.length;
+  const t = {
+    rev:sum(ms.map(m=>num(m.rev))), cos:sum(ms.map(m=>num(m.cos))),
+    fixed:sum(ms.map(m=>num(m.fixed))), ovh:sum(ms.map(m=>num(m.ovh))),
+    jobs:sum(ms.map(m=>num(m.jobs))), quotes:sum(ms.map(m=>num(m.quotes))),
+    leads:sum(ms.map(m=>num(m.leads)))
+  };
+  const gp = t.rev - t.cos;
+  const fixedAll = t.fixed + t.ovh;
+  const last = ms.length ? ms[ms.length-1] : null;
+  const r = {
+    n, id:dv.id, name:dv.name, months:ms,
+    revenue:t.rev, cos:t.cos, gp, fixedTotal:fixedAll,
+    gpPct: div0(gp, t.rev),
+    netProfit: gp - fixedAll,
+    jobs:t.jobs, quotes:t.quotes, leads:t.leads,
+    avgJobValue: div(t.rev, t.jobs),
+    quoteWin: div(t.jobs, t.quotes),
+    leadQuote: div(t.quotes, t.leads),
+    ownerHours: n? sum(ms.map(m=>num(m.ownerHrs)))/n : null,
+    onTools: last? num(last.onTools) : 0,
+    office:  last? num(last.office)  : 0,
+    // monthly run rates
+    revenueM: div(t.rev,n), gpM: div(gp,n), fixedM: div(fixedAll,n),
+    netProfitM: div(gp-fixedAll,n), jobsM: div(t.jobs,n),
+    quotesM: div(t.quotes,n), leadsM: div(t.leads,n), cosM: div(t.cos,n),
+    a: dv.a
+  };
+  // monthly spread on GP% so volatility is visible
+  const gps = ms.map(m=> div(num(m.rev)-num(m.cos), num(m.rev))).filter(v=>v!=null).sort((x,y)=>x-y);
+  r.gpSpread = gps.length ? {lo:gps[0], mid:gps[Math.floor(gps.length/2)], hi:gps[gps.length-1]} : null;
+  return r;
+}
+function div0(a,b){ return div(a,b); }
+
+function activeDivisions(){
+  return S.divisionsOn ? S.divisions.filter(d=>d.active && d.id!=='WOB')
+                       : [S.divisions.find(d=>d.id==='WOB')];
+}
+
+/* Weighted assumptions — NEVER summed. (Defect #1) */
+function weightedAssumptions(norms){
+  const keys=['revPerHead','spanTL','spanOM','omThreshold','pricingCapacity','tradesPerOffice','pricingMinutes'];
+  const out={}; const wTotal = sum(norms.map(x=>x.revenue));
+  keys.forEach(k=>{
+    if(wTotal>0) out[k] = sum(norms.map(x=>num(x.a[k])*x.revenue))/wTotal;
+    else out[k] = norms.length ? sum(norms.map(x=>num(x.a[k])))/norms.length : 0;
+  });
+  out.weightBasis = wTotal>0 ? 'weighted by division revenue' : 'simple average — no revenue entered';
+  return out;
+}
+
+/* Whole-of-business roll-up. Iterates every ACTIVE division, always. (Defect #3) */
+function business(){
+  const norms = activeDivisions().map(normalise);
+  const t = k => sum(norms.map(x=>num(x[k])));
+  const n = Math.max(...norms.map(x=>x.n), 0);
+  const rev=t('revenue'), cos=t('cos'), gp=rev-cos, fx=t('fixedTotal');
+  const jobs=t('jobs'), quotes=t('quotes'), leads=t('leads');
+  const b = {
+    norms, n, divisions:norms.length,
+    revenue:rev, cos, gp, fixedTotal:fx, netProfit:gp-fx,
+    gpPct:div(gp,rev), jobs, quotes, leads,
+    avgJobValue:div(rev,jobs), quoteWin:div(jobs,quotes), leadQuote:div(quotes,leads),
+    onTools:t('onTools'), office:t('office'),
+    ownerHours: norms.length ? sum(norms.map(x=>num(x.ownerHours)))/norms.length : null,
+    revenueM:div(rev,n), cosM:div(cos,n), gpM:div(gp,n), fixedM:div(fx,n),
+    netProfitM:div(gp-fx,n), jobsM:div(jobs,n), quotesM:div(quotes,n), leadsM:div(leads,n),
+    a: weightedAssumptions(norms)
+  };
+  // Back-fill: a member who does not count leads still has an implied lead flow.
+  b.leadsImplied = false;
+  if(!b.leadsM && b.jobsM){
+    const wob=S.divisions.find(x=>x.id==='WOB');
+    const dt=(activeDivisions()[0]||wob||{t:{}}).t||{};
+    const qw=b.quoteWin||num(dt.quoteWin)||1, lq=b.leadQuote||num(dt.leadQuote)||1;
+    b.leadsM = div(div(b.jobsM,qw), lq); b.leadsImplied = true;
+    b.quotesM = b.quotesM || div(b.jobsM,qw);
+    b.quoteWin = b.quoteWin || qw; b.leadQuote = b.leadQuote || lq;
+  }
+  return b;
+}
+
+/* ═══ §2 THE TARGET FUNNEL (backwards from desired profit) ═══════ */
+function funnel(t){
+  const requiredGP = num(t.netProfit) + num(t.fixedCosts);
+  const revenue = div(requiredGP, t.gpPct);
+  const jobs    = div(revenue, t.avgJobValue);
+  const quotes  = div(jobs, t.quoteWin);
+  const leads   = div(quotes, t.leadQuote);
+  return {requiredGP, revenue, jobs, quotes, leads,
+          netProfit:num(t.netProfit), fixedCosts:num(t.fixedCosts), gpPct:num(t.gpPct),
+          avgJobValue:num(t.avgJobValue)||null,
+          quoteWin:num(t.quoteWin)||null,
+          leadQuote:num(t.leadQuote)||null};
+}
+
+/* ═══ §2b CONSOLIDATED VIEW ON BUDGET ════════════════════════════
+   Money and volume ADD across divisions. Ratios are re-derived from the
+   totals. Assumptions are weighted. Workforce headcount adds. This is the
+   distinction the original workbook got wrong. */
+function budget(){
+  const divs = activeDivisions();
+  const per = divs.map(d=>{
+    const nz = normalise(d);
+    const f  = funnel(d.t);
+    const cap= capacity(f.revenue, f.quotes, d.a, {onTools:nz.onTools});
+    const capNow = capacity(nz.revenueM, nz.quotesM, d.a, {onTools:nz.onTools});
+    return {div:d, nz, f, cap, capNow};
+  });
+  const T = k => sum(per.map(x=>num(x.f[k])));
+  const revenue=T('revenue'), requiredGP=T('requiredGP'), jobs=T('jobs'),
+        quotes=T('quotes'), leads=T('leads'),
+        netProfit=T('netProfit'), fixedCosts=T('fixedCosts');
+  const total = {
+    netProfit, fixedCosts, requiredGP, revenue, jobs, quotes, leads,
+    gpPct: div(requiredGP, revenue),
+    avgJobValue: div(revenue, jobs),
+    quoteWin: div(jobs, quotes),
+    leadQuote: div(quotes, leads)
+  };
+  const capKeys=['target','hires','teamLeaders','opsManagers','estimators','office','pricingHours','total'];
+  const capTotal={}; capKeys.forEach(k=>capTotal[k]=sum(per.map(x=>num(x.cap[k]))));
+  capTotal.needed = sum(per.map(x=>num(x.cap.needed)));
+  capTotal.current= sum(per.map(x=>num(x.cap.current)));
+  capTotal.util   = div(capTotal.needed, capTotal.target);
+  const capNowTotal={}; capKeys.forEach(k=>capNowTotal[k]=sum(per.map(x=>num(x.capNow[k]))));
+  return {per, total, capTotal, capNowTotal, b:business()};
+}
+/* the whole-of-business target, derived from the divisions — replaces S.targets */
+function consolidatedTargets(){ return budget().total; }
+
+/* ═══ §3 CAPACITY & HUMAN CAPITAL ════════════════════════════════ */
+function capacity(revenueM, quotesM, a, current){
+  const needed = div(revenueM, a.revPerHead);
+  const target = needed==null ? null : ceil(needed);
+  const cur    = num(current&&current.onTools);
+  const hires  = target==null ? null : Math.max(0, target - cur);        // Defects #4, #5
+  const util   = (needed!=null && target) ? needed/target : null;
+  const tl     = target==null ? null : ceil(div(target, a.spanTL)||0);
+  const om     = tl==null ? null : (tl < num(a.omThreshold) ? 0 : ceil(div(tl, a.spanOM)||0));
+  const ph     = quotesM==null ? null : quotesM * num(a.pricingMinutes)/60;   // quotes, not leads (#13)
+  const est    = ph==null ? null : ceil(div(ph, a.pricingCapacity)||0);
+  const estUtil= (ph!=null && est) ? ph/(est*num(a.pricingCapacity)) : null;
+  const off    = target==null ? null : ceil(div(target, a.tradesPerOffice)||0);
+  return {needed, target, current:cur, hires, util, teamLeaders:tl, opsManagers:om,
+          pricingHours:ph, estimators:est, estimatorUtil:estUtil, office:off,
+          total:(target||0)+(tl||0)+(om||0)+(est||0)+(off||0)};
+}
+
+/* ═══ §4 STRATEGY RAMP ═══════════════════════════════════════════ */
+function ramp(s, month){
+  const a=num(s.startMonth)||1, b=num(s.fullMonth)||a;
+  if(month < a) return 0;
+  if(month >= b) return 1;
+  const t = (month-a)/Math.max(1,(b-a));
+  return s.ramp==='s' ? 0.5 - 0.5*Math.cos(Math.PI*t) : t;
+}
+const strategiesFor = key => S.strategies.filter(s => (s.scenarios||['A']).includes(key));
+
+/* ═══ §5 FORWARD PROJECTION — 60 months, drivers first ═══════════
+   Revenue is never projected directly. Drivers are projected and
+   revenue falls out of them. That is what makes this deterministic. */
+
+function seasonIndex(i){
+  const w = S.oneYear.seasonality.map(num);
+  const tot = sum(w);
+  if(tot<=0) return 1;
+  return (w[i]/tot)*12;
+}
+
+function projectMonthly(key){
+  const b = business(), a = b.a, sc = S.scenarios[key];
+  const CT = consolidatedTargets();
+  const base = {
+    leads:  b.leadsM || 0,
+    leadQuote: b.leadQuote!=null ? b.leadQuote : num(CT.leadQuote),
+    quoteWin:  b.quoteWin !=null ? b.quoteWin  : num(CT.quoteWin),
+    ajv:    b.avgJobValue || num(CT.avgJobValue),
+    gpPct:  b.gpPct!=null ? b.gpPct : num(CT.gpPct),
+    fixed:  b.fixedM || 0,
+    revPerHead: num(a.revPerHead)||25000,
+    ownerHours: b.ownerHours!=null ? b.ownerHours : num(S.wellness.base.hours)
+  };
+  const strats = strategiesFor(key);
+  const rows = [];
+  for(let m=1; m<=60; m++){
+    const y = Math.ceil(m/12);
+    let mkt=1, price=1, ovh=1;
+    for(let k=1; k<=y; k++){
+      const mm = sc.macro[k-1] || blankMacro();
+      mkt   *= 1+num(mm.market);
+      price *= 1+num(mm.price);
+      ovh   *= 1+num(mm.ovh);
+    }
+    let d = {
+      leads: base.leads*mkt, leadQuote: base.leadQuote, quoteWin: base.quoteWin,
+      ajv: base.ajv*price, gpPct: base.gpPct, fixed: base.fixed*ovh,
+      revPerHead: base.revPerHead*price, ownerHours: base.ownerHours
+    };
+    let stratCost = 0;
+    for(const s of strats){
+      const r = ramp(s,m); if(r<=0) continue;
+      const w = r * (num(s.confidence)/100);
+      stratCost += num(s.cost);
+      for(const lv of (s.levers||[])){
+        const v = num(lv.value)*w;
+        switch(lv.driver){
+          case 'leads':       d.leads += v; break;
+          case 'leadQuote':   d.leadQuote += v/100; break;
+          case 'quoteWin':    d.quoteWin += v/100; break;
+          case 'avgJobValue': d.ajv += v; break;
+          case 'gpPct':       d.gpPct += v/100; break;
+          case 'fixedCosts':  d.fixed += v; break;
+          case 'revPerHead':  d.revPerHead += v; break;
+          case 'ownerHours':  d.ownerHours += v; break;
+        }
+      }
+    }
+    d.gpPct     = clamp(0, 0.90, d.gpPct);
+    d.leadQuote = clamp(0, 1, d.leadQuote);
+    d.quoteWin  = clamp(0, 1, d.quoteWin);
+    d.leads     = Math.max(0, d.leads);
+    d.ajv       = Math.max(0, d.ajv);
+    d.ownerHours= Math.max(0, d.ownerHours);
+    d.revPerHead= Math.max(1, d.revPerHead);
+
+    const si     = seasonIndex((m-1)%12);
+    const leadsM = d.leads*si;
+    const quotes = leadsM*d.leadQuote;
+    const jobs   = quotes*d.quoteWin;
+    const rev    = jobs*d.ajv;
+    const gp     = rev*d.gpPct;
+    const fixed  = d.fixed + stratCost;
+    rows.push({m, y, si, d:Object.assign({},d), leads:leadsM, quotes, jobs,
+               rev, gp, cos:rev-gp, fixed, np:gp-fixed, stratCost});
+  }
+  return {rows, base, b, a};
+}
+
+/* ═══ §6 ANNUAL AGGREGATION, CASH, VALUE, FREEDOM ════════════════ */
+function project(key){
+  const p = projectMonthly(key);
+  const b = p.b, sc = S.scenarios[key], f = S.fin;
+  const years = [];
+  // Year 0 = the baseline, annualised.
+  const y0 = {
+    y:0, label:'Today', rev:(b.revenueM||0)*12, gp:(b.gpM||0)*12, cos:(b.cosM||0)*12,
+    fixed:(b.fixedM||0)*12, np:(b.netProfitM||0)*12,
+    gpPct:b.gpPct, jobs:(b.jobsM||0)*12, quotes:(b.quotesM||0)*12, leads:(b.leadsM||0)*12,
+    ajv:b.avgJobValue, quoteWin:b.quoteWin, leadQuote:b.leadQuote,
+    ownerHours:b.ownerHours, revenueM:b.revenueM||0, quotesM:b.quotesM||0
+  };
+  y0.cap = capacity(y0.revenueM, y0.quotesM, b.a, {onTools:b.onTools});
+  y0.ebitda = ebitdaOf(y0.np);
+  y0.value  = valueOf(y0.ebitda, sc.multiple);
+  y0.cash   = null;
+  y0.freedom= freedomAt(0, y0.ownerHours);
+  years.push(y0);
+
+  for(let y=1; y<=5; y++){
+    const R = p.rows.filter(r=>r.y===y);
+    const last = R[R.length-1];
+    const rev=sum(R.map(r=>r.rev)), gp=sum(R.map(r=>r.gp)), cos=sum(R.map(r=>r.cos));
+    const fixed=sum(R.map(r=>r.fixed)), np=gp-fixed;
+    const o = {
+      y, label:'Year '+y, rev, gp, cos, fixed, np,
+      gpPct:div(gp,rev), jobs:sum(R.map(r=>r.jobs)), quotes:sum(R.map(r=>r.quotes)),
+      leads:sum(R.map(r=>r.leads)),
+      ajv:last.d.ajv, quoteWin:last.d.quoteWin, leadQuote:last.d.leadQuote,
+      ownerHours:last.d.ownerHours,
+      revenueM:(last.si>0.01? last.rev/last.si : rev/12), quotesM:(last.si>0.01? last.quotes/last.si : sum(R.map(r=>r.quotes))/12),
+      months:R
+    };
+    const ay = Object.assign({}, b.a, {revPerHead:last.d.revPerHead});
+    o.cap = capacity(o.revenueM, o.quotesM, ay, {onTools: years[y-1].cap.target || b.onTools});
+    o.ebitda = ebitdaOf(np);
+    o.value  = valueOf(o.ebitda, sc.multiple);
+    // cash
+    const prev = years[y-1];
+    const dRev = rev - prev.rev, dCos = cos - prev.cos;
+    o.dwc   = (dRev/365)*(num(f.debtorDays)+num(f.wipDays)) - (dCos/365)*num(f.creditorDays);
+    o.tax   = Math.max(0, np)*num(f.taxRate);
+    o.capex = rev*num(f.capexPct);
+    o.cash  = o.ebitda - o.tax - o.capex - o.dwc - num(f.debtRepay) - num(f.drawingsAbove);
+    o.freedom = freedomAt(y, o.ownerHours);
+    years.push(o);
+  }
+  let cum=0; years.forEach(y=>{ if(y.y>0){ cum+=y.cash; y.cumCash=cum; } else y.cumCash=0; });
+  return {key, years, rows:p.rows, b, scenario:sc};
+}
+
+function ebitdaOf(netProfitAnnual){
+  const f=S.fin;
+  return netProfitAnnual + num(f.ownerSalary) - num(f.marketSalary) + num(f.addbacks);
+}
+function valueOf(ebitda, multiple){
+  const f=S.fin;
+  const ev = ebitda * num(multiple);
+  return {ebitda, multiple:num(multiple), ev, equity: ev + num(f.surplusCash) - num(f.debt)};
+}
+
+/* Freedom Score — components normalised against the member's own baseline and target.
+   Handles both directions; guards target === baseline. */
+const FREEDOM_COMPONENTS = [
+  {k:'hours',       w:.25, label:'Owner hours per week',        lower:true},
+  {k:'weeksWithout',w:.20, label:'Weeks business runs without you'},
+  {k:'income',      w:.15, label:'Personal income drawn'},
+  {k:'onBiz',       w:.10, label:'Hours ON the business (%)'},
+  {k:'holidays',    w:.10, label:'Weeks of holiday taken'},
+  {k:'weekends',    w:.10, label:'Weekends worked per month',   lower:true},
+  {k:'evenings',    w:.10, label:'Evenings home per week'}
+];
+function comp(actual, worst, target){
+  if(actual==null) return null;
+  if(target===worst) return 100;
+  return clamp(0, 100, 100*(actual-worst)/(target-worst));
+}
+function freedomAt(y, projectedHours){
+  const B=S.wellness.base, T=S.wellness.targ, parts=[];
+  let score=0, wUsed=0;
+  FREEDOM_COMPONENTS.forEach(c=>{
+    const b=num(B[c.k]), t=num(T[c.k]);
+    let actual;
+    if(c.k==='hours' && projectedHours!=null) actual = projectedHours;      // modelled, not interpolated
+    else actual = b + (t-b)*(y/5);                                          // interpolated Y0→Y5
+    const v = comp(actual,b,t);
+    parts.push({label:c.label, weight:c.w, actual, value:v, lower:!!c.lower, base:b, target:t});
+    if(v!=null){ score += v*c.w; wUsed += c.w; }
+  });
+  return {score: wUsed>0 ? score/wUsed : null, parts};
+}
+
+/* ═══ §7 GUARDRAILS & CONTRADICTIONS ═════════════════════════════ */
+function guardrails(pr){
+  const out=[], f=S.fin;
+  const maxH = num(f.maxHiresPerQuarter)*4;
+  pr.years.forEach((y,i)=>{
+    if(!y.y) return;
+    const prev=pr.years[i-1];
+    const hires=(y.cap.target||0)-(prev.cap.target||0);
+    if(maxH>0 && hires>maxH) out.push({lvl:'warn',t:'Hiring rate',
+      m:`Year ${y.y} adds ${hires} on-tools people — above your limit of ${maxH} a year (${f.maxHiresPerQuarter} a quarter).`});
+    if(y.gpPct!=null && prev.gpPct!=null && (y.gpPct-prev.gpPct)>0.03) out.push({lvl:'warn',t:'Margin jump',
+      m:`Gross margin improves ${pp(y.gpPct-prev.gpPct)} in Year ${y.y}. More than 3pp in one year is rare — check the strategy behind it.`});
+    const fphNow=div(y.fixed,y.cap.total), fphPrev=div(prev.fixed,prev.cap.total);
+    if(fphNow!=null && fphPrev!=null && fphNow<fphPrev*0.97) out.push({lvl:'warn',t:'Fixed cost per head falls',
+      m:`Year ${y.y} fixed cost per person drops from ${money(fphPrev)} to ${money(fphNow)}. Usually an input error.`});
+    if(y.cumCash<0) out.push({lvl:'bad',t:'Unfunded growth',
+      m:`This plan needs ${money(Math.abs(y.cumCash))} of funding by Year ${y.y}. Growth that cannot be funded is not a plan.`});
+  });
+  // the contradiction that matters most
+  const y3 = pr.years[3], b = pr.b;
+  const held = S.ownerRoles.filter(r=>r.on && (num(r.handover)===0 || num(r.handover)>3));
+  if(y3 && b.ownerHours && y3.ownerHours < b.ownerHours*0.85 && held.length){
+    const est = held.find(r=>r.role==='Estimator');
+    const ph = y3.cap.pricingHours;
+    out.push({lvl:'bad', t:'The plan and the life contradict each other',
+      m: est && ph
+        ? `Plan ${pr.key} has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you're still the estimator and ${n0(ph)} pricing hours a month have nowhere else to go. Either hire, or the hours don't fall.`
+        : `Plan ${pr.key} has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you still hold ${held.map(r=>r.role).join(', ')} with no handover planned. Either hand it over, or the hours don't fall.`});
+  }
+  return out;
+}
+
+/* ═══ §8 ORG CHART ═══════════════════════════════════════════════ */
+function orgAt(pr, y){
+  const yr = pr.years.find(x=>x.y===y) || pr.years[0];
+  const c = yr.cap, f=S.fin, RC=f.roleCost||{};
+  const ownerHas = role => {
+    const r = S.ownerRoles.find(x=>x.role===role);
+    return !!(r && r.on && (num(r.handover)===0 || num(r.handover)>y));
+  };
+  const mk=(n,role,cost,bucket)=>Array.from({length:n||0},(_,i)=>
+    ({role, name:'Vacant', cost:num(cost), bucket, owner:ownerHas(role)&&i===0}));
+  const rows = [
+    {tier:'Owner', boxes:[{role:(y>=3?'CEO':'Owner / CEO'), name:S.meta.owner||'You', cost:num(f.ownerSalary), bucket:'fixed', owner:false}]},
+    {tier:'Leadership', boxes:[
+      ...mk(c.opsManagers,'Operations Manager',RC.opsManager,'fixed'),
+      ...mk(c.estimators,'Estimator',RC.estimator,'fixed'),
+      ...mk(c.office,'Office / Admin',RC.office,'fixed')
+    ]},
+    {tier:'Team Leaders', boxes:mk(c.teamLeaders,'Team Leader',RC.teamLeader,'cos')},
+    {tier:'On tools', boxes:[{role:'On-tools team', name:(c.target||0)+' people',
+      cost:(c.target||0)*num(RC.onTools), bucket:'cos', owner:ownerHas('On tools'), group:true}]}
+  ];
+  const all = rows.flatMap(r=>r.boxes);
+  const ownerCount = all.filter(b=>b.owner).length;
+  const peopleCost = all.reduce((t,b)=>t+num(b.cost),0);
+  const costFixed  = all.filter(b=>b.bucket==='fixed').reduce((t,b)=>t+num(b.cost),0);
+  const costCos    = all.filter(b=>b.bucket==='cos').reduce((t,b)=>t+num(b.cost),0);
+  return {rows, ownerCount, peopleCost, costFixed, costCos, year:y, cap:c};
+}
+/* ═══ §CHARTS — hand-built SVG, no library ══════════════════════ */
+
+const CH = {ink:'#0E1A22', accent:'#C2703A', steel:'#3D5A6C', muted:'#5E6B74',
+            rule:'#DCD6CC', good:'#2E7D5B', bad:'#A4433B', soft:'#F0E2D6'};
+
+function niceMax(v){
+  if(v<=0) return 1;
+  const e = Math.pow(10, Math.floor(Math.log10(v)));
+  const f = v/e;
+  const s = f<=1?1 : f<=1.5?1.5 : f<=2?2 : f<=2.5?2.5 : f<=3?3 : f<=4?4 : f<=5?5 : f<=7.5?7.5 : 10;
+  return s*e;
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const pathOf = pts => pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+
+function axisFrame(W,H,padL,padR,padT,padB,min,max,fmt,xLabels){
+  const iw=W-padL-padR, ih=H-padT-padB;
+  let g='';
+  for(let i=0;i<=4;i++){
+    const v = min + (max-min)*i/4;
+    const y = padT + ih - (ih*i/4);
+    g += `<line class="gl" x1="${padL}" y1="${y.toFixed(1)}" x2="${(padL+iw).toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    g += `<text class="ax" x="${padL-10}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${esc(fmt(v))}</text>`;
+  }
+  const n=xLabels.length;
+  xLabels.forEach((l,i)=>{
+    const x = padL + (n<=1?iw/2:i*iw/(n-1));
+    g += `<text class="ax" x="${x.toFixed(1)}" y="${H-padB+18}" text-anchor="middle">${esc(l)}</text>`;
+  });
+  return g;
+}
+
+function lineChart(W, sp){
+  const H=sp.h||300, padL=sp.padL||70, padR=sp.padR||88, padT=14, padB=30;
+  const iw=W-padL-padR, ih=H-padT-padB;
+  const vals = sp.series.flatMap(s=>s.values).filter(v=>v!=null&&Number.isFinite(v));
+  if(!vals.length) return `<div class="empty">No data yet</div>`;
+  let max=niceMax(Math.max(0,...vals)), min=Math.min(0,...vals);
+  if(min<0) min=-niceMax(-min); if(max===min) max=min+1;
+  const n=sp.x.length;
+  const X=i=>padL+(n<=1?iw/2:i*iw/(n-1));
+  const Y=v=>padT+ih-((v-min)/(max-min))*ih;
+  let g=axisFrame(W,H,padL,padR,padT,padB,min,max,sp.fmt,sp.x);
+  sp.series.forEach(s=>{
+    const pts=s.values.map((v,i)=>v==null?null:[X(i),Y(v)]).filter(Boolean);
+    if(!pts.length) return;
+    g+=`<path d="${pathOf(pts)}" fill="none" stroke="${s.color}" stroke-width="${s.w||2.25}" stroke-linejoin="round" stroke-linecap="round"${s.dash?` stroke-dasharray="${s.dash}"`:''}/>`;
+    pts.forEach(p=>{ g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#fff" stroke="${s.color}" stroke-width="2"/>`; });
+    const last=pts[pts.length-1];
+    g+=`<text class="dl" x="${(last[0]+9).toFixed(1)}" y="${(last[1]+4).toFixed(1)}" fill="${s.color}">${esc(s.name)}</text>`;
+  });
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
+}
+
+function barChart(W, sp){
+  const H=sp.h||300, padL=sp.padL||70, padR=sp.padR||24, padT=14, padB=30;
+  const iw=W-padL-padR, ih=H-padT-padB;
+  const vals=sp.series.flatMap(s=>s.values).filter(v=>v!=null&&Number.isFinite(v));
+  if(!vals.length) return `<div class="empty">No data yet</div>`;
+  let max=niceMax(Math.max(0,...vals)), min=Math.min(0,...vals);
+  if(min<0) min=-niceMax(-min); if(max===min) max=min+1;
+  const n=sp.x.length, k=sp.series.length;
+  const slot=iw/n, bw=Math.min(46,(slot*0.66)/k);
+  const Y=v=>padT+ih-((v-min)/(max-min))*ih;
+  let g='';
+  for(let i=0;i<=4;i++){
+    const v=min+(max-min)*i/4, y=padT+ih-(ih*i/4);
+    g+=`<line class="gl" x1="${padL}" y1="${y.toFixed(1)}" x2="${(padL+iw).toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    g+=`<text class="ax" x="${padL-10}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${esc(sp.fmt(v))}</text>`;
+  }
+  sp.x.forEach((l,i)=>{
+    g+=`<text class="ax" x="${(padL+slot*i+slot/2).toFixed(1)}" y="${H-padB+18}" text-anchor="middle">${esc(l)}</text>`;
+  });
+  const zero=Y(0);
+  sp.series.forEach((s,j)=>{
+    s.values.forEach((v,i)=>{
+      if(v==null||!Number.isFinite(v)) return;
+      const cx=padL+slot*i+slot/2, x=cx-(k*bw)/2+j*bw;
+      const y=Math.min(Y(v),zero), h=Math.abs(Y(v)-zero);
+      g+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-3).toFixed(1)}" height="${Math.max(1,h).toFixed(1)}" fill="${s.color}" rx="2"><title>${esc(s.name)} ${esc(sp.x[i])}: ${esc(sp.fmt(v))}</title></rect>`;
+    });
+    if(s.name) g+=`<text class="dl" x="${padL}" y="${(padT-2+j*14).toFixed(1)}" fill="${s.color}">${esc(s.name)}</text>`;
+  });
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
+}
+
+function stackChart(W, sp){
+  const H=sp.h||300, padL=sp.padL||60, padR=24, padT=22, padB=30;
+  const iw=W-padL-padR, ih=H-padT-padB;
+  const totals=sp.x.map((_,i)=>sum(sp.series.map(s=>num(s.values[i]))));
+  let max=niceMax(Math.max(1,...totals));
+  const n=sp.x.length, slot=iw/n, bw=Math.min(64,slot*0.6);
+  const Y=v=>padT+ih-(v/max)*ih;
+  let g='';
+  for(let i=0;i<=4;i++){
+    const v=max*i/4, y=padT+ih-(ih*i/4);
+    g+=`<line class="gl" x1="${padL}" y1="${y.toFixed(1)}" x2="${(padL+iw).toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    g+=`<text class="ax" x="${padL-10}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${esc(sp.fmt(v))}</text>`;
+  }
+  sp.x.forEach((l,i)=>{
+    g+=`<text class="ax" x="${(padL+slot*i+slot/2).toFixed(1)}" y="${H-padB+18}" text-anchor="middle">${esc(l)}</text>`;
+    let acc=0;
+    sp.series.forEach(s=>{
+      const v=num(s.values[i]); if(v<=0) return;
+      const y0=Y(acc), y1=Y(acc+v);
+      g+=`<rect x="${(padL+slot*i+slot/2-bw/2).toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1,y0-y1).toFixed(1)}" fill="${s.color}"><title>${esc(s.name)}: ${esc(sp.fmt(v))}</title></rect>`;
+      acc+=v;
+    });
+    g+=`<text class="dl" x="${(padL+slot*i+slot/2).toFixed(1)}" y="${(Y(totals[i])-7).toFixed(1)}" text-anchor="middle" fill="${CH.ink}">${esc(sp.fmt(totals[i]))}</text>`;
+  });
+  sp.series.forEach((s,j)=>{
+    g+=`<rect x="${(padL+j*104).toFixed(1)}" y="2" width="9" height="9" fill="${s.color}" rx="2"/>`;
+    g+=`<text class="ax" x="${(padL+13+j*104).toFixed(1)}" y="10">${esc(s.name)}</text>`;
+  });
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
+}
+
+/* The thesis chart: owner hours falling against business value rising. */
+function dualChart(W, sp){
+  const H=sp.h||320, padL=76, padR=86, padT=18, padB=30;
+  const iw=W-padL-padR, ih=H-padT-padB;
+  const L=sp.left, R=sp.right;
+  const lmax=niceMax(Math.max(1,...L.values.filter(Number.isFinite)));
+  const rmax=niceMax(Math.max(1,...R.values.filter(Number.isFinite)));
+  const n=sp.x.length;
+  const X=i=>padL+(n<=1?iw/2:i*iw/(n-1));
+  const YL=v=>padT+ih-(v/lmax)*ih, YR=v=>padT+ih-(v/rmax)*ih;
+  let g='';
+  for(let i=0;i<=4;i++){
+    const y=padT+ih-(ih*i/4);
+    g+=`<line class="gl" x1="${padL}" y1="${y.toFixed(1)}" x2="${(padL+iw).toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    g+=`<text class="ax" x="${padL-10}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${esc(L.fmt(lmax*i/4))}</text>`;
+    g+=`<text class="ax" x="${padL+iw+10}" y="${(y+3.5).toFixed(1)}" text-anchor="start">${esc(R.fmt(rmax*i/4))}</text>`;
+  }
+  sp.x.forEach((l,i)=>{ g+=`<text class="ax" x="${X(i).toFixed(1)}" y="${H-padB+18}" text-anchor="middle">${esc(l)}</text>`; });
+  const area=R.values.map((v,i)=>[X(i),YR(num(v))]);
+  g+=`<path d="${pathOf(area)} L ${X(n-1).toFixed(1)} ${(padT+ih).toFixed(1)} L ${X(0).toFixed(1)} ${(padT+ih).toFixed(1)} Z" fill="${CH.soft}" opacity=".75"/>`;
+  g+=`<path d="${pathOf(area)}" fill="none" stroke="${CH.accent}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  const lp=L.values.map((v,i)=>[X(i),YL(num(v))]);
+  g+=`<path d="${pathOf(lp)}" fill="none" stroke="${CH.steel}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  lp.forEach(p=>g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="#fff" stroke="${CH.steel}" stroke-width="2"/>`);
+  area.forEach(p=>g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="#fff" stroke="${CH.accent}" stroke-width="2"/>`);
+  g+=`<text class="dl" x="${padL}" y="${(padT-4).toFixed(1)}" fill="${CH.steel}">${esc(L.name)}</text>`;
+  g+=`<text class="dl" x="${(padL+iw).toFixed(1)}" y="${(padT-4).toFixed(1)}" text-anchor="end" fill="${CH.accent}">${esc(R.name)}</text>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
+}
+
+function gauge(W, score, label){
+  const H=170, cx=W/2, cy=140, r=104;
+  const s = (score==null||!Number.isFinite(score)) ? null : clamp(0,100,score);
+  const a0=Math.PI, a1=0;
+  const pt=(a,rr)=>[cx+Math.cos(a)*rr, cy-Math.sin(a)*rr];
+  const arc=(from,to,rr)=>{ const p0=pt(from,rr), p1=pt(to,rr);
+    return `M ${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A ${rr} ${rr} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`; };
+  let g=`<path d="${arc(a0,a1,r)}" fill="none" stroke="${CH.rule}" stroke-width="13" stroke-linecap="round"/>`;
+  if(s!=null){
+    const ae = a0 - (a0-a1)*(s/100);
+    g+=`<path d="${arc(a0,ae,r)}" fill="none" stroke="${CH.accent}" stroke-width="13" stroke-linecap="round"/>`;
+  }
+  g+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" style="font-family:var(--serif);font-size:52px;fill:${CH.ink}">${s==null?'—':Math.round(s)}</text>`;
+  g+=`<text x="${cx}" y="${cy+12}" text-anchor="middle" class="ax" style="letter-spacing:.16em;text-transform:uppercase;font-weight:700">${esc(label||'Freedom score')}</text>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Freedom score ${s==null?'not set':Math.round(s)} out of 100">${g}</svg>`;
+}
+
+/* deferred chart rendering — measure the container, then draw at real pixels */
+let PENDING = {};
+function chartBox(title, id, spec, capText){
+  PENDING[id]=spec;
+  return `<div class="chartbox"><h4>${esc(title)}</h4><div id="${id}"></div>${capText?`<div class="cap">${esc(capText)}</div>`:''}</div>`;
+}
+function drawCharts(){
+  Object.keys(PENDING).forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    const W=Math.max(320, el.clientWidth||el.parentElement.clientWidth-48);
+    const sp=PENDING[id];
+    let html='';
+    try{
+      if(sp.type==='line')  html=lineChart(W,sp);
+      else if(sp.type==='bar')   html=barChart(W,sp);
+      else if(sp.type==='stack') html=stackChart(W,sp);
+      else if(sp.type==='dual')  html=dualChart(W,sp);
+      else if(sp.type==='gauge') html=gauge(W,sp.score,sp.label);
+    }catch(e){ html=`<div class="empty">Chart unavailable</div>`; }
+    el.innerHTML=html;
+  });
+  PENDING={};
+}
+
+/* ═══ §RENDER HELPERS ════════════════════════════════════════════ */
+let TW = {};
+function tv(key, value, fmt){          /* tweened value span */
+  const f = FMT[fmt]||n0;
+  return `<span data-tw="${esc(key)}" data-v="${value==null||!Number.isFinite(value)?'':value}" data-fmt="${fmt}">${f(value)}</span>`;
+}
+function runTweens(root){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $$('[data-tw]',root).forEach(el=>{
+    const k=el.dataset.tw, raw=el.dataset.v, f=FMT[el.dataset.fmt]||n0;
+    const to = raw==='' ? null : parseFloat(raw);
+    const from = TW[k];
+    TW[k]= to;
+    if(reduce || to==null || from==null || from===to || !Number.isFinite(from)) return;
+    const t0=performance.now();
+    const step=t=>{ const p=Math.min(1,(t-t0)/420), e=1-Math.pow(1-p,3);
+      el.textContent=f(from+(to-from)*e); if(p<1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
+
+function metric(label, value, fmt, sub, cls, key){
+  return `<div class="m ${cls||''}"><div class="ml">${esc(label)}</div>
+    <div class="mv">${key?tv(key,value,fmt):(FMT[fmt]||n0)(value)}</div>
+    ${sub?`<div class="ms">${sub}</div>`:''}</div>`;
+}
+function field(label, path, opts){
+  const o=opts||{};
+  const v=getPath(path);
+  const shown = o.kind==='pct' ? (v==null?'':(v*100)) : v;
+  return `<div class="f"><div class="flab"><div class="fl">${esc(label)}</div>${o.help?`<div class="fh">${esc(o.help)}</div>`:''}</div>
+    <input type="number" step="${o.step||'any'}" data-path="${esc(path)}" data-kind="${o.kind||'num'}" value="${shown===''||shown==null?'':shown}" aria-label="${esc(label)}"></div>`;
+}
+function outrow(label, valueHtml, help, cls){
+  return `<div class="f derived ${cls||''}"><div class="flab"><div class="fl">${esc(label)}</div>${help?`<div class="fh">${esc(help)}</div>`:''}</div>
+    <div class="out">${valueHtml}</div></div>`;
+}
+function selectField(label, path, options, help){
+  const v=getPath(path);
+  return `<div class="f"><div class="flab"><div class="fl">${esc(label)}</div>${help?`<div class="fh">${esc(help)}</div>`:''}</div>
+    <select data-path="${esc(path)}" data-kind="str" aria-label="${esc(label)}">${options.map(o=>`<option value="${esc(o)}"${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
+}
+function getPath(p){ return p.split('.').reduce((o,k)=> o==null?undefined : o[/^\d+$/.test(k)?+k:k], S); }
+function setPath(p,val){
+  const ks=p.split('.'); const last=ks.pop();
+  const o=ks.reduce((o,k)=> o[/^\d+$/.test(k)?+k:k], S);
+  o[/^\d+$/.test(last)?+last:last]=val;
+}
+function gapPill(delta, goodWhenPositive){
+  if(delta==null||!Number.isFinite(delta)) return '<span class="pill neutral">—</span>';
+  if(Math.abs(delta)<1e-9) return '<span class="pill good">On target</span>';
+  const good = goodWhenPositive===false ? delta<0 : delta>0;
+  return `<span class="pill ${good?'good':'bad'}">${good?'ahead':'gap'}</span>`;
+}
+/* ═══ §TABS ══════════════════════════════════════════════════════ */
+const UI = {tab:'vision', div:'WOB', orgYear:0};
+
+function head(eyebrow, title, lead){
+  return `<div class="pagehead"><div class="eyebrow">${esc(eyebrow)}</div>
+    <h1 class="big">${esc(title)}</h1>${lead?`<p class="lead">${lead}</p>`:''}</div>`;
+}
+function sech(title, hint){
+  return `<div class="sechead"><h2 class="sec">${esc(title)}</h2>${hint?`<div class="hint">${hint}</div>`:''}</div>`;
+}
+
+/* ─── 01 VISION ─────────────────────────────────────────────────── */
+function renderVision(){
+  const pr = project(S.active), y5 = pr.years[5], y0 = pr.years[0];
+  const f5 = y5.freedom, f0 = y0.freedom;
+  const dv = (y5.value.equity!=null && y0.value.equity!=null) ? y5.value.equity-y0.value.equity : null;
+  const dh = (y5.ownerHours!=null && y0.ownerHours!=null) ? y0.ownerHours-y5.ownerHours : null;
+  const perHour = (dv!=null && dh) ? dv/(dh*48) : null;
+
+  return head('01 · The Intent','Vision',
+    `Boardroom takes an owner who works <em>in</em> their business and turns them into a CEO who owns an <em>asset</em>. Two outcomes come out of that, and they are the only two we are chasing: <strong>freedom — time and money</strong>, and <strong>an asset that is sellable or a legacy</strong>. Everything in this plan has to serve one of them.`)
+
+  + sech('The statement','In your words. It prints on every export.')
+  + `<textarea class="full" data-path="vision.statement" data-kind="str" placeholder="In five years, on ${esc(fiveYearDate())}, my business will… and my life will…">${esc(S.vision.statement)}</textarea>`
+
+  + sech('Five years from today', esc(fiveYearDate()))
+  + `<div class="two">
+      <div>
+        <div class="sub">The Business</div><h3>What it becomes</h3>
+        ${field('Revenue','vision.biz.revenue',{help:'Annual, excluding GST'})}
+        ${field('Net profit','vision.biz.profit',{help:'Annual, after your salary'})}
+        ${field('Business value','vision.biz.value',{help:'What it is worth to a buyer'})}
+        ${field('Team size','vision.biz.team',{help:'Total people, including you'})}
+        ${selectField('Your role','vision.biz.role',['Owner-Operator','CEO','CEO · Leader','CEO · Leader · Investor','Investor — out of the business'])}
+      </div>
+      <div>
+        <div class="sub">The Life</div><h3>What it funds</h3>
+        ${field('Hours worked per week','vision.life.hours')}
+        ${field('Weeks of holiday a year','vision.life.holidays')}
+        ${field('Weekends worked a month','vision.life.weekends')}
+        ${field('Evenings home for dinner','vision.life.evenings',{help:'Out of seven'})}
+        ${field('Personal income drawn','vision.life.income',{help:'Salary plus drawings, annual'})}
+        <label class="lbl">What the money is for</label>
+        <input type="text" class="full" data-path="vision.life.whatFor" data-kind="str" value="${esc(S.vision.life.whatFor)}" placeholder="The boat. The kids' school. Buying the building.">
+      </div>
+    </div>`
+
+  + sech('Outcome one — Freedom', 'Time and money you can actually use')
+  + `<div class="mgrid">
+      ${metric('Freedom score today', f0.score, 'n0', 'Progress toward your own year-5 targets — today is the start line', '', 'fs0')}
+      ${metric('Freedom score, year 5', f5.score, 'n0', 'Plan '+S.active, 'hero', 'fs5')}
+      ${metric('Owner hours now', y0.ownerHours, 'hrs', 'Per week', '', 'oh0')}
+      ${metric('Owner hours, year 5', y5.ownerHours, 'hrs', dh!=null?`${n1(dh)} hours a week bought back`:'', 'accent', 'oh5')}
+    </div>`
+
+  + sech('Outcome two — An asset', 'A value that exists without you')
+  + `<div class="mgrid">
+      ${metric('Business value today', y0.value.equity, 'money0k', `${n1(pr.scenario.multiple)}× normalised EBITDA`, '', 'v0')}
+      ${metric('Business value, year 5', y5.value.equity, 'money0k', 'Plan '+S.active, 'hero', 'v5')}
+      ${metric('Value created', dv, 'money0k', 'Over five years', 'accent', 'vd')}
+      ${metric('Value per hour bought back', perHour, 'money', 'Per annual hour of your time released', '', 'vph')}
+    </div>
+    <div class="cap">The multiple is an assumption you set, not a valuation. A real valuation needs an adviser.</div>`
+
+  + `<div class="note">Every strategy in this plan has to serve one of these two outcomes. If it does not grow the asset or buy back freedom, it does not belong in the programme.</div>`;
+}
+function fiveYearDate(){
+  const d=new Date(); d.setFullYear(d.getFullYear()+5);
+  return d.toLocaleDateString('en-NZ',{day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ─── 02 BASELINE ───────────────────────────────────────────────── */
+const GRID_ROWS = [
+  {k:'rev',      l:'Revenue (excl GST)',        f:money},
+  {k:'cos',      l:'Cost of sales',             f:money},
+  {d:'gp',       l:'Gross profit',              f:money},
+  {d:'gpPct',    l:'Gross profit %',            f:v=>pct(v)},
+  {k:'fixed',    l:'Fixed costs',               f:money},
+  {k:'ovh',      l:'Company overhead',          f:money},
+  {d:'np',       l:'Net profit',                f:money},
+  {k:'jobs',     l:'Jobs / invoices completed', f:n0},
+  {d:'ajv',      l:'Average job value',         f:money},
+  {k:'quotes',   l:'Quotes issued',             f:n0},
+  {k:'leads',    l:'Leads received',            f:n0},
+  {k:'ownerHrs', l:'Owner hours per week',      f:n1, avg:true},
+  {k:'onTools',  l:'On-tools headcount',        f:n1, last:true},
+  {k:'office',   l:'Office headcount',          f:n1, last:true}
+];
+function monthName(i){
+  const m=(num(S.meta.startMonth)+i)%12;
+  const y=num(S.meta.startYear)+Math.floor((num(S.meta.startMonth)+i)/12);
+  return MONTHS[m]+' '+String(y).slice(2);
+}
+function currentDivision(){
+  return S.divisions.find(d=>d.id===UI.div) || S.divisions[0];
+}
+function renderBaseline(){
+  if(!S.divisionsOn) UI.div='WOB';
+  else if(UI.div==='WOB'){ const a=S.divisions.find(d=>d.active&&d.id!=='WOB'); UI.div=a?a.id:'D1'; }
+  const dv = currentDivision();
+  const nz = normalise(dv), b = business();
+
+  let grid = `<table class="t grid"><thead><tr><th>Month</th>`;
+  for(let i=0;i<12;i++) grid+=`<th>${esc(monthName(i))}</th>`;
+  grid+=`<th class="tot">Period</th></tr></thead><tbody>`;
+  GRID_ROWS.forEach(r=>{
+    if(r.d){
+      grid+=`<tr class="der"><td>${esc(r.l)}</td>`;
+      for(let i=0;i<12;i++){
+        const m=dv.months[i]; let v=null;
+        if(r.d==='gp')    v=(num(m.rev)||num(m.cos))?num(m.rev)-num(m.cos):null;
+        if(r.d==='gpPct') v=div(num(m.rev)-num(m.cos), num(m.rev));
+        if(r.d==='np')    v=(num(m.rev)||num(m.cos)||num(m.fixed))?num(m.rev)-num(m.cos)-num(m.fixed)-num(m.ovh):null;
+        if(r.d==='ajv')   v=div(num(m.rev), num(m.jobs));
+        grid+=`<td>${r.f(v)}</td>`;
+      }
+      let tv2=null;
+      if(r.d==='gp') tv2=nz.gp; if(r.d==='gpPct') tv2=nz.gpPct;
+      if(r.d==='np') tv2=nz.netProfit; if(r.d==='ajv') tv2=nz.avgJobValue;
+      grid+=`<td class="tot">${r.f(tv2)}</td></tr>`;
+    } else {
+      grid+=`<tr><td>${esc(r.l)}</td>`;
+      for(let i=0;i<12;i++){
+        grid+=`<td><input type="number" step="any" data-grid="${esc(dv.id)}" data-m="${i}" data-k="${r.k}" value="${num(dv.months[i][r.k])||''}" aria-label="${esc(r.l+' '+monthName(i))}"></td>`;
+      }
+      const col=dv.months.filter(entered).map(m=>num(m[r.k]));
+      let t = r.avg ? (col.length?sum(col)/col.length:null) : r.last ? (col.length?col[col.length-1]:null) : sum(col);
+      if(!col.length) t=null;
+      grid+=`<td class="tot">${r.f(t)}</td></tr>`;
+    }
+  });
+  grid+=`</tbody></table>`;
+
+  const missing=[];
+  if(!nz.n) missing.push('no months entered yet');
+  if(!nz.revenue) missing.push('revenue');
+  if(!nz.jobs) missing.push('jobs');
+  if(!nz.quotes) missing.push('quotes — conversion and pricing capacity need this');
+  if(!nz.leads) missing.push('leads — the top of the funnel is estimated without this');
+  if(!nz.onTools) missing.push('on-tools headcount — hiring plan needs this');
+
+  return head('02 · Where you are','Baseline',
+    `Twelve months of what actually happened. Every forecast in this plan is built on these numbers, so it is worth getting them right. Partial data is fine — the tool uses the months you enter and tells you how many that is.`)
+
+  + (S.divisionsOn ? `<div class="divchips">
+      ${S.divisions.filter(d=>d.id!=='WOB').map(d=>`<button class="divchip ${d.id===UI.div?'on':(d.active?'':'off')}" data-divsel="${d.id}">${esc(d.name)}${d.active?'':' · off'}</button>`).join('')}
+    </div>
+    <div class="btnrow">
+      <label class="toggle"><input type="checkbox" data-divactive="${esc(dv.id)}" ${dv.active?'checked':''}> ${esc(dv.name)} is active</label>
+      <input class="divname" data-divname="${esc(dv.id)}" value="${esc(dv.name)}" aria-label="Division name">
+      <span class="tiny">Rename it to match how you actually run the business.</span>
+    </div>` : '')
+
+  + sech(S.divisionsOn?dv.name+' — twelve months':'Twelve months of actuals',
+      `${nz.n} of 12 months entered · <button class="btn sm" id="btnPaste">Paste from spreadsheet</button> <button class="btn sm" id="btnDemo">Load example</button>`)
+  + `<div class="scrollx">${grid}</div>`
+  + `<div class="cap">Period figures are totals, not averages of monthly ratios — gross margin is total gross profit ÷ total revenue over the ${nz.n||0} months entered. Headcount is taken from the latest month entered; owner hours are the average.</div>`
+
+  + sech('What that says about the business', S.divisionsOn?`Whole of business — ${b.divisions} active division${b.divisions===1?'':'s'}`:'')
+  + `<div class="mgrid">
+      ${metric('Revenue',b.revenueM,'money','Per month','', 'b_rev')}
+      ${metric('Gross margin',b.gpPct,'pct', b.gpSpread?'':'Total GP ÷ total revenue','', 'b_gp')}
+      ${metric('Net profit',b.netProfitM,'money','Per month, derived', b.netProfitM<0?'':'', 'b_np')}
+      ${metric('Average job value',b.avgJobValue,'money','Revenue ÷ jobs','', 'b_ajv')}
+      ${metric('Quote → win',b.quoteWin,'pct','Jobs ÷ quotes','', 'b_qw')}
+      ${metric('Leads a month',b.leadsM,'n0', b.leadsImplied?'Implied — you are not counting leads':'Counted','', 'b_ld')}
+    </div>`
+  + (missing.length ? `<div class="alert" style="margin-top:18px"><div><b>Still needed</b>${esc(missing.join(' · '))}</div></div>`:'')
+  + (nz.gpSpread ? `<div class="cap">Monthly gross margin ranged ${pct(nz.gpSpread.lo)} to ${pct(nz.gpSpread.hi)}, median ${pct(nz.gpSpread.mid)}. A wide spread usually means pricing or job costing is inconsistent, not that the margin is wrong.</div>`:'')
+
+  + sech('Reconciliation','Optional — if your accountant gave you a figure')
+  + `<div class="fgrid">${field('Net profit as reported','fin.reportedNetProfit',{help:'Annual, from your financials'})}
+     ${outrow('Variance to the derived figure', (()=>{ const r=num(S.fin.reportedNetProfit); if(!r) return '—';
+        const d2=r-(b.netProfitM||0)*12; return `<span class="${Math.abs(d2)<1?'flat':(d2>0?'up':'down')}">${signed(d2,money)}</span>`; })(),
+        'The derived figure is never overwritten.')}</div>`;
+}
+
+/* ─── 03 KEY METRICS ────────────────────────────────────────────── */
+function renderMetrics(){
+  const B=budget(), b=B.b, F=B.total, a=b.a;
+  const capT=B.capTotal, capC=B.capNowTotal;
+  const W=S.wellness;
+
+  const row=(label,cur,tgt,fmt,goodPos,help)=>{
+    const f=FMT[fmt]||n0;
+    const gap=(cur==null||tgt==null)?null:tgt-cur;
+    const pctGap=(gap!=null&&cur)?gap/Math.abs(cur):null;
+    return `<tr><td>${esc(label)}${help?`<div class="tiny">${esc(help)}</div>`:''}</td>
+      <td>${f(cur)}</td><td>${f(tgt)}</td>
+      <td>${gap==null?'—':signed(gap,f)}</td>
+      <td>${pctGap==null?'—':pct(pctGap,0)}</td>
+      <td style="width:110px"><div class="bargap"><i style="width:${gap==null||tgt==null||!tgt?0:clamp(0,100,(cur/tgt)*100)}%"></i></div></td>
+      <td>${gapPill(gap==null?null:-gap, goodPos)}</td></tr>`;
+  };
+  const grp=(t2,tag)=>`<tr class="grp"><td colspan="7">${esc(t2)} <span class="pill accent" style="margin-left:8px">${esc(tag)}</span></td></tr>`;
+
+  return head('03 · The scoreboard','Key Metrics',
+    `Where you are, where you need to be, and the size of the gap. Targets come from the budget you set on the <strong>Budget &amp; Workforce</strong> tab — department by department if you run divisions, then consolidated here.`)
+  + sech('Current · Target · Gap', `Target = the consolidated budget${S.divisionsOn?` across ${B.per.length} division${B.per.length===1?'':'s'}`:''}`)
+  + `<div class="scrollx"><table class="t">
+    <thead><tr><th>Metric</th><th>Current</th><th>Target</th><th>Gap</th><th>Gap %</th><th></th><th></th></tr></thead>
+    <tbody>
+    ${grp('Money — monthly','Both')}
+    ${row('Revenue',b.revenueM,F.revenue,'money',true)}
+    ${row('Gross profit',b.gpM,F.requiredGP,'money',true)}
+    ${row('Gross margin',b.gpPct,F.gpPct,'pct',true)}
+    ${row('Fixed costs incl. your salary',b.fixedM,F.fixedCosts,'money',false)}
+    ${row('Net profit',b.netProfitM,F.netProfit,'money',true)}
+    ${grp('Sales & marketing — monthly','Asset')}
+    ${row('Leads',b.leadsM,F.leads,'n0',true, b.leadsImplied?'Implied from jobs — start counting leads':'')}
+    ${row('Lead → quote rate',b.leadQuote,F.leadQuote,'pct',true)}
+    ${row('Quotes',b.quotesM,F.quotes,'n0',true)}
+    ${row('Quote → win rate',b.quoteWin,F.quoteWin,'pct',true)}
+    ${row('Jobs completed',b.jobsM,F.jobs,'n0',true)}
+    ${row('Average job value',b.avgJobValue,F.avgJobValue,'money',true)}
+    ${grp('Delivery & workflow','Freedom')}
+    ${row('Revenue per on-tools person',div(b.revenueM,b.onTools),num(a.revPerHead),'money',true)}
+    ${row('Pricing hours a month',capC.pricingHours,capT.pricingHours,'n0',false,'Quotes × pricing minutes ÷ 60')}
+    ${grp('People','Both')}
+    ${row('On tools',b.onTools,capT.target,'n1',true)}
+    ${row('Team leaders',capC.teamLeaders,capT.teamLeaders,'n1',true)}
+    ${row('Operations managers',capC.opsManagers,capT.opsManagers,'n1',true)}
+    ${row('Pricing personnel',capC.estimators,capT.estimators,'n1',true)}
+    ${row('Office / admin',b.office,capT.office,'n1',true)}
+    ${grp('Freedom & wellness','Freedom')}
+    ${row('Owner hours a week',b.ownerHours!=null?b.ownerHours:num(W.base.hours),num(W.targ.hours),'n1',false)}
+    ${row('Hours ON the business %',num(W.base.onBiz)/100,num(W.targ.onBiz)/100,'pct',true)}
+    ${row('Weeks it runs without you',num(W.base.weeksWithout),num(W.targ.weeksWithout),'n1',true)}
+    ${row('Weeks of holiday taken',num(W.base.holidays),num(W.targ.holidays),'n1',true)}
+    ${row('Weekends worked a month',num(W.base.weekends),num(W.targ.weekends),'n1',false)}
+    ${row('Evenings home a week',num(W.base.evenings),num(W.targ.evenings),'n1',true)}
+    ${row('Personal income drawn',num(W.base.income),num(W.targ.income),'money',true)}
+    </tbody></table></div>`
+
+  + sech('The team the budget needs', `Summed across division${S.divisionsOn?'s':''} · assumptions ${esc(a.weightBasis)}`)
+  + `<div class="mgrid">
+      ${metric('On tools needed', capT.target,'n0', capT.needed!=null?`${n1(capT.needed)} exact · ${pct(capT.util,0)} utilised`:'','', 'c_ot')}
+      ${metric('Hires needed', capT.hires,'n0', `${n0(capT.current)} on tools today`, capT.hires>0?'accent':'', 'c_hi')}
+      ${metric('Team leaders', capT.teamLeaders,'n0', `Span of ${n1(a.spanTL)}`,'', 'c_tl')}
+      ${metric('Ops managers', capT.opsManagers,'n0', `Span of ${n1(a.spanOM)}`,'', 'c_om')}
+      ${metric('Pricing hours', capT.pricingHours,'n0', `A month, from ${n1(F.quotes)} quotes`,'', 'c_ph')}
+      ${metric('Pricing personnel', capT.estimators,'n0', 'Full-time equivalent','', 'c_es')}
+    </div>
+    <div class="cap">Set the numbers behind all of this on the Budget &amp; Workforce tab. Nothing on this page is typed in — every target is derived from the department budgets.</div>`;
+}
+
+/* ─── 04 STRATEGIES ─────────────────────────────────────────────── */
+function cfi(label, inner, wide){
+  return `<div class="cfi ${wide?'wide':''}"><label>${esc(label)}</label>${inner}</div>`;
+}
+function stratCard(s,i){
+  const sel=(path,opts,val)=>`<select data-spath="${i}.${path}">${opts.map(o=>`<option value="${esc(o.v!=null?o.v:o)}"${(o.v!=null?o.v:o)===val?' selected':''}>${esc(o.l!=null?o.l:o)}</option>`).join('')}</select>`;
+  const inp=(path,val,type)=>`<input type="${type||'number'}" step="any" data-spath="${i}.${path}" value="${type==='text'?esc(val):num(val)}">`;
+  return `<div class="card" data-si="${i}">
+    <button class="x" data-delstrat="${i}" title="Remove">×</button>
+    <input type="text" class="full" style="font-family:var(--serif);font-size:19px;padding:7px 9px;margin-bottom:10px" data-spath="${i}.name" value="${esc(s.name)}" placeholder="Name the strategy">
+    <div class="cmeta">
+      <span class="pill ${s.outcome==='Freedom'?'accent':s.outcome==='Asset'?'good':'neutral'}">${esc(s.outcome)}</span>
+      <span class="pill ${s.stage==='Scaling'?'good':'neutral'}">${esc(s.stage)}</span>
+      ${['A','B','C'].map(k=>`<button class="pill ${(s.scenarios||[]).includes(k)?'accent':'neutral'}" data-stogscen="${i}|${k}" style="border:0;cursor:pointer">Plan ${k}</button>`).join('')}
+    </div>
+    <div class="cf">
+      ${cfi('Domain', sel('domain',DOMAINS,s.domain), true)}
+      ${cfi('Serves', sel('outcome',OUTCOMES,s.outcome))}
+      ${cfi('Stage', `<select data-spath="${i}.stage" data-stage="${i}">${STAGES.map(d=>`<option${d===s.stage?' selected':''}${d==='Scaling'&&!s.refined?' disabled':''}>${esc(d)}</option>`).join('')}</select>`)}
+      ${cfi('The mindset shift it needs', `<input type="text" data-spath="${i}.shift" value="${esc(s.shift)}" placeholder="Owner-Operator → CEO: stop quoting every job myself">`, true)}
+      ${cfi('Owner', `<input type="text" data-spath="${i}.owner" value="${esc(s.owner)}">`)}
+      ${cfi('Confidence %', inp('confidence',s.confidence))}
+      ${cfi('Starts month', inp('startMonth',s.startMonth))}
+      ${cfi('Full effect by month', inp('fullMonth',s.fullMonth))}
+      ${cfi('Ramp', sel('ramp',[{v:'linear',l:'Linear'},{v:'s',l:'S-curve'}],s.ramp==='s'?'s':'linear'))}
+      ${cfi('Cost per month', inp('cost',s.cost))}
+    </div>
+    <label class="toggle" style="margin:6px 0 2px;font-size:12.5px"><input type="checkbox" data-srefined="${i}" ${s.refined?'checked':''}> Refining complete — ready to scale</label>
+    <label class="lbl">Levers — what this actually changes</label>
+    ${(s.levers||[]).map((lv,j)=>`<div class="lever">
+      <select data-spath="${i}.levers.${j}.driver">
+        ${Object.keys(DRIVERS).map(k=>`<option value="${k}"${k===lv.driver?' selected':''}>${esc(DRIVERS[k].label)}</option>`).join('')}</select>
+      <input type="number" step="any" data-spath="${i}.levers.${j}.value" value="${num(lv.value)}" style="width:74px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:5px 7px">
+      <span class="lv">${DRIVERS[lv.driver]?esc(DRIVERS[lv.driver].fmt(num(lv.value))):''}</span>
+      <button class="btn sm danger" data-dellever="${i}|${j}">×</button></div>`).join('')}
+    <div class="btnrow" style="margin-top:11px"><button class="btn ghost sm" data-addlever="${i}">+ Add lever</button></div>
+    <div class="tiny" style="margin-top:8px">${esc(strategyImpact(s))}</div>
+  </div>`;
+}
+function strategyImpact(s){
+  if(!s.levers||!s.levers.length) return 'No lever set — this changes nothing in the forecast.';
+  const c=num(s.confidence)/100;
+  return 'At '+n0(num(s.confidence))+'% confidence: '+s.levers.map(l=>DRIVERS[l.driver]?DRIVERS[l.driver].fmt(num(l.value)*c):'').filter(Boolean).join(' · ');
+}
+function renderStrategies(){
+  const invalid = S.strategies.filter(s=>!s.levers||!s.levers.length).length;
+  return head('04 · The work','Strategies',
+    `Seven things, repeated in cycle. Each strategy carries a <strong>mindset shift</strong> — the member has to move through the shift in order to execute the strategy, and executing the strategy is what delivers the growth. This is not a to-do list: every strategy carries a <strong>lever</strong>, and the forecast is the sum of those levers. Change one and the five-year picture moves.`)
+  + sech('The strategy stack', `${S.strategies.length} strategies · ${invalid} with no lever set`)
+  + `<div class="btnrow" style="margin-top:0">
+      <button class="btn accent" id="btnAddStrat">+ Add strategy</button>
+      <button class="btn" id="btnStratLib">Add from the seven</button>
+    </div>`
+  + (S.strategies.length ? `<div class="cards" style="margin-top:20px">${S.strategies.map(stratCard).join('')}</div>`
+     : `<div class="empty" style="margin-top:20px">No strategies yet. Add one — the forecast is flat until you do.</div>`)
+  + `<div class="note">Refine before you scale. A member who scales an unrefined process adds revenue and loses freedom — which fails both of the outcomes in section 01.</div>`;
+}
+
+/* ─── 05 SCENARIOS ──────────────────────────────────────────────── */
+function renderScenarios(){
+  const P = {A:project('A'), B:project('B'), C:project('C')};
+  const g = guardrails(P[S.active]);
+  const cmp = (label,fmt,pick)=>`<tr><td>${esc(label)}</td>${['A','B','C'].map(k=>{
+      const v=pick(P[k]); return `<td${k===S.active?' style="font-weight:700;color:var(--accent)"':''}>${(FMT[fmt]||n0)(v)}</td>`;
+    }).join('')}</tr>`;
+
+  return head('05 · The forecast','Scenarios',
+    `Three plans, one baseline. Plan A is what you commit to in the room; B is what happens if it all lands; C is what happens if it does not. The switch at the top of the screen sets which one drives every tab below.`)
+
+  + sech('Side by side', `Year 5 · ${S.strategies.length} strategies assigned across the three plans`)
+  + `<div class="scrollx"><table class="t"><thead><tr><th>Year 5</th>
+      ${['A','B','C'].map(k=>`<th${k===S.active?' style="color:var(--accent)"':''}>Plan ${k} · ${esc(S.scenarios[k].label)}</th>`).join('')}</tr></thead><tbody>
+      ${cmp('Revenue','money0k',p=>p.years[5].rev)}
+      ${cmp('Gross margin','pct',p=>p.years[5].gpPct)}
+      ${cmp('EBITDA','money0k',p=>p.years[5].ebitda)}
+      ${cmp('Net profit','money0k',p=>p.years[5].np)}
+      ${cmp('Team size','n0',p=>p.years[5].cap.total)}
+      ${cmp('Owner hours a week','n1',p=>p.years[5].ownerHours)}
+      ${cmp('Business value','money0k',p=>p.years[5].value.equity)}
+      ${cmp('Freedom score','n0',p=>p.years[5].freedom.score)}
+      ${cmp('Cumulative cash','money0k',p=>p.years[5].cumCash)}
+      ${cmp('Strategies assigned','n0',p=>strategiesFor(p.key).length)}
+    </tbody></table></div>`
+  + chartBox('Revenue by scenario','ch-scen',{type:'line',h:300,fmt:money0k,
+      x:['Today','Y1','Y2','Y3','Y4','Y5'],
+      series:[{name:'A',color:CH.accent,values:P.A.years.map(y=>y.rev)},
+              {name:'B',color:CH.steel,dash:'6 4',values:P.B.years.map(y=>y.rev)},
+              {name:'C',color:CH.muted,dash:'2 4',values:P.C.years.map(y=>y.rev)}]},
+      'All three run off the same baseline. The distance between them is the value of the strategy stack, not of optimism.')
+
+  + sech('Guardrails', `Plan ${S.active}`)
+  + (g.length ? g.map(x=>`<div class="alert ${x.lvl==='bad'?'bad':''}"><div><b>${esc(x.t)}</b>${esc(x.m)}</div></div>`).join('')
+     : `<div class="alert good"><div><b>Clear</b>Nothing in Plan ${S.active} trips a guardrail. Hiring rate, margin movement, cost per head and funding all sit inside their limits.</div></div>`)
+
+  + sech('Assumptions behind each plan','Macro movement applies at the start of each year, before strategies')
+  + `<div class="cards">${['A','B','C'].map(k=>{
+      const sc=S.scenarios[k];
+      return `<div class="card"><h3 class="ch">Plan ${k} · ${esc(sc.label)}</h3>
+        <div class="f" style="padding:9px 0"><div class="flab"><div class="fl">EBITDA multiple</div><div class="fh">Sets the business value</div></div>
+          <input type="number" step="0.1" data-path="scenarios.${k}.multiple" value="${num(sc.multiple)}" style="width:80px"></div>
+        <table class="t" style="font-size:12.5px;margin-top:10px"><thead><tr><th>Year</th><th>Market</th><th>Price</th><th>Overhead</th></tr></thead><tbody>
+        ${sc.macro.map((m,y)=>`<tr><td>Y${y+1}</td>
+          <td><input type="number" step="0.5" data-path="scenarios.${k}.macro.${y}.market" data-kind="pct" value="${(num(m.market)*100).toFixed(1)}" style="width:62px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:3px 6px"></td>
+          <td><input type="number" step="0.5" data-path="scenarios.${k}.macro.${y}.price" data-kind="pct" value="${(num(m.price)*100).toFixed(1)}" style="width:62px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:3px 6px"></td>
+          <td><input type="number" step="0.5" data-path="scenarios.${k}.macro.${y}.ovh" data-kind="pct" value="${(num(m.ovh)*100).toFixed(1)}" style="width:62px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:3px 6px"></td></tr>`).join('')}
+        </tbody></table>
+        <div class="tiny" style="margin-top:9px">${strategiesFor(k).length} strategies assigned</div></div>`;
+    }).join('')}</div>`;
+}
+
+/* ─── 06 FIVE YEAR ──────────────────────────────────────────────── */
+function renderFiveYear(){
+  const pr=project(S.active), Y=pr.years, X=['Today','Y1','Y2','Y3','Y4','Y5'];
+  const y5=Y[5], y0=Y[0];
+  const r=(label,fmt,pick,cls)=>`<tr class="${cls||''}"><td>${esc(label)}</td>${Y.map(y=>`<td>${(FMT[fmt]||n0)(pick(y))}</td>`).join('')}</tr>`;
+
+  return head('06 · The horizon','Five-Year Rolling',
+    `Plan ${S.active} across five years. As real years complete they replace forecast years and the window rolls forward.`)
+
+  + `<div class="mgrid" style="margin-top:34px">
+      ${metric('Revenue, year 5', y5.rev,'money0k', `from ${money0k(y0.rev)}`,'hero','f_rev')}
+      ${metric('EBITDA, year 5', y5.ebitda,'money0k', `${pct(div(y5.ebitda,y5.rev),1)} of revenue`,'','f_eb')}
+      ${metric('Business value', y5.value.equity,'money0k', `${n1(pr.scenario.multiple)}× EBITDA`,'accent','f_val')}
+      ${metric('Owner hours', y5.ownerHours,'hrs', `from ${hrs(y0.ownerHours)} a week`,'','f_hrs')}
+      ${metric('Team size', y5.cap.total,'n0', `from ${n0(y0.cap.total)} people`,'','f_team')}
+      ${metric('Freedom score', y5.freedom.score,'n0', `from ${n0(y0.freedom.score)}`,'','f_fs')}
+    </div>`
+
+  + chartBox('The thesis — your hours down, the asset up','ch-dual',{type:'dual',h:330,x:X,
+      left:{name:'Owner hours a week',fmt:v=>n0(v)+'h',values:Y.map(y=>y.ownerHours)},
+      right:{name:'Business value',fmt:money0k,values:Y.map(y=>y.value.equity)}},
+      'Two lines moving in opposite directions is the whole point of Boardroom. If they move together, the plan is buying revenue with your time.')
+
+  + `<div class="chgrid">
+      ${chartBox('Revenue, gross profit and EBITDA','ch-pnl',{type:'line',h:290,fmt:money0k,x:X,
+        series:[{name:'Revenue',color:CH.ink,values:Y.map(y=>y.rev)},
+                {name:'Gross profit',color:CH.steel,values:Y.map(y=>y.gp)},
+                {name:'EBITDA',color:CH.accent,values:Y.map(y=>y.ebitda)}]})}
+      ${chartBox('Team by role','ch-team',{type:'stack',h:290,fmt:n0,x:X,
+        series:[{name:'On tools',color:CH.ink,values:Y.map(y=>y.cap.target)},
+                {name:'Team leaders',color:CH.steel,values:Y.map(y=>y.cap.teamLeaders)},
+                {name:'Ops managers',color:CH.accent,values:Y.map(y=>y.cap.opsManagers)},
+                {name:'Estimators',color:'#8FA3AF',values:Y.map(y=>y.cap.estimators)},
+                {name:'Office',color:CH.rule,values:Y.map(y=>y.cap.office)}]},
+        'Headcount the revenue requires at your own benchmarks — not a number you type in. Today\'s column is what your current revenue needs, which may differ from who is actually on the payroll.')}
+      ${chartBox('Freedom score','ch-free',{type:'line',h:290,fmt:n0,x:X,
+        series:[{name:'Freedom',color:CH.accent,values:Y.map(y=>y.freedom.score)}]},
+        'Weighted from your own baseline and your own year-5 targets. Owner hours are modelled; the rest interpolate.')}
+      ${chartBox('Cash generated each year','ch-cash',{type:'bar',h:290,fmt:money0k,x:X.slice(1),
+        series:[{name:'Cash after tax, capex and working capital',color:CH.steel,values:Y.slice(1).map(y=>y.cash)}]},
+        'Profit is not cash. Growth absorbs working capital before it returns any.')}
+    </div>`
+
+  + sech('The numbers','Plan '+S.active)
+  + `<div class="scrollx"><table class="t"><thead><tr><th></th>${X.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>
+      <tr class="grp"><td colspan="7">Profit and loss</td></tr>
+      ${r('Revenue','money0k',y=>y.rev)}
+      ${r('Gross profit','money0k',y=>y.gp)}
+      ${r('Gross margin','pct',y=>y.gpPct)}
+      ${r('Fixed costs','money0k',y=>y.fixed)}
+      ${r('Net profit','money0k',y=>y.np,'tot')}
+      ${r('Normalised EBITDA','money0k',y=>y.ebitda)}
+      <tr class="grp"><td colspan="7">The funnel, annual</td></tr>
+      ${r('Leads','n0',y=>y.leads)}
+      ${r('Quotes','n0',y=>y.quotes)}
+      ${r('Jobs','n0',y=>y.jobs)}
+      ${r('Average job value','money',y=>y.ajv)}
+      <tr class="grp"><td colspan="7">People</td></tr>
+      ${r('On tools','n0',y=>y.cap.target)}
+      ${r('Team leaders','n0',y=>y.cap.teamLeaders)}
+      ${r('Ops managers','n0',y=>y.cap.opsManagers)}
+      ${r('Estimators','n0',y=>y.cap.estimators)}
+      ${r('Office / admin','n0',y=>y.cap.office)}
+      ${r('Total team','n0',y=>y.cap.total,'tot')}
+      <tr class="grp"><td colspan="7">Cash</td></tr>
+      ${r('Working capital movement','money0k',y=>y.dwc)}
+      ${r('Tax','money0k',y=>y.tax)}
+      ${r('Capex','money0k',y=>y.capex)}
+      ${r('Cash generated','money0k',y=>y.cash)}
+      ${r('Cumulative cash','money0k',y=>y.cumCash,'tot')}
+      <tr class="grp"><td colspan="7">The two outcomes</td></tr>
+      ${r('Owner hours a week','n1',y=>y.ownerHours)}
+      ${r('Freedom score','n0',y=>y.freedom.score)}
+      ${r('Business value','money0k',y=>y.value.equity,'tot')}
+    </tbody></table></div>`;
+}
+
+/* ─── 08 ONE YEAR ───────────────────────────────────────────────── */
+/* Seasonality is stored as an INDEX per month: 1.00 = an average month.
+   Twelve indexes always average 1.00. Presets are calendar-order and are
+   rotated to the member's baseline start month. */
+const SEASON_PRESETS = {
+  flat:   Array.from({length:12},()=>1),
+  summer: [1.20,1.14,1.08,0.96,0.90,0.78,0.78,0.84,0.96,1.02,1.14,1.20],  // NZ: busy Nov–Mar
+  winter: [0.84,0.90,0.96,1.02,1.14,1.20,1.20,1.14,1.02,0.96,0.84,0.78]   // busy Jun–Aug
+};
+function rotateToStart(cal){
+  const st=num(S.meta.startMonth)%12;
+  return Array.from({length:12},(_,i)=>cal[(st+i)%12]);
+}
+function renderOneYear(){
+  const pr=project(S.active), R=pr.rows.filter(r=>r.y===1);
+  const B=budget(), F=B.total;
+  const seas=S.oneYear.seasonality.map(num);
+  const meanIx=seas.length?sum(seas)/12:1, ok=Math.abs(meanIx-1)<0.005;
+  const A=S.oneYear.actuals;
+  const idx=i=>seasonIndex(i);
+  const budgetRev=i=>(F.revenue||0)*idx(i);
+  const maxIx=Math.max(...seas.map((_,i)=>seasonIndex(i)),0.0001);
+  const mrow=(label,fmt,pick)=>`<tr><td>${esc(label)}</td>${R.map(r=>`<td>${(FMT[fmt]||n0)(pick(r))}</td>`).join('')}<td class="tot">${(FMT[fmt]||n0)(sum(R.map(pick)))}</td></tr>`;
+
+  return head('08 · The year in front of you','One Year',
+    `Year 1 broken to twelve months. Three lines run side by side all year: the <strong>budget</strong> you set on the Budget &amp; Workforce tab, the <strong>forecast</strong> from Plan ${S.active}, and the <strong>actuals</strong> you enter each month. This is the tab you bring to the room every cycle.`)
+
+  + sech('Seasonality — how busy each month is',
+      ok?`<span class="pill good">Averages 1.00× — balanced</span>`
+        :`<span class="pill warn">Averages ${meanIx.toFixed(2)}×</span> <button class="btn sm" id="btnSeasNorm">Rebalance to 1.00×</button>`)
+  + `<div class="explain">
+      <b>What this is.</b> One number per month saying how busy it is compared with an average month.<br>
+      <b>How to read it.</b> <b>1.00×</b> is an average month. <b>1.20×</b> means that month runs 20% busier than average; <b>0.80×</b> means 20% quieter. Across the twelve months they always average out to 1.00×.<br>
+      <b>The easiest way to set it.</b> Press <b>Take the shape from my baseline</b> — it reads the twelve months you already entered and works the shape out for you.<br>
+      <b>Why it matters.</b> A business that does 40% of its year in three months needs different cash, different hiring and different marketing timing than one that runs flat. Every monthly number on this page is shaped by these twelve.
+    </div>`
+  + `<div class="btnrow" style="margin-top:0">
+      <button class="btn accent" data-seaspreset="baseline">Take the shape from my baseline</button>
+      <button class="btn" data-seaspreset="flat">Flat year</button>
+      <button class="btn" data-seaspreset="summer">Busy summer</button>
+      <button class="btn" data-seaspreset="winter">Busy winter</button>
+    </div>`
+  + `<div class="scrollx"><table class="t"><thead><tr><th>Month</th><th>How busy</th>
+      <th style="text-align:left">Compared with an average month</th><th>Share of the year</th><th>Budget revenue</th><th>Forecast revenue</th></tr></thead><tbody>
+      ${seas.map((w,i)=>{
+        const ix=idx(i), busy = ix>=1.08?'Busy':(ix<=0.92?'Quiet':'Average');
+        return `<tr><td>${esc(monthName(i))}</td>
+          <td style="width:118px"><div class="seasin"><input type="number" step="0.01" min="0" data-seas="${i}" value="${num(w).toFixed(2)}"><span>×</span></div></td>
+          <td><div class="seasrow"><div class="seasbar"><i style="width:${clamp(0,100,(ix/maxIx)*100)}%"></i><u style="left:${clamp(0,100,(1/maxIx)*100)}%"></u></div>
+            <span class="pill ${busy==='Busy'?'accent':busy==='Quiet'?'neutral':'good'}" style="min-width:62px;text-align:center">${busy}</span></div></td>
+          <td>${pct(ix/12)}</td>
+          <td>${money0k(budgetRev(i))}</td>
+          <td>${money0k(R[i]?R[i].rev:null)}</td></tr>`;
+      }).join('')}
+      <tr class="tot"><td>The year</td><td>${meanIx.toFixed(2)}× average</td><td></td><td>100.0%</td>
+        <td>${money0k((F.revenue||0)*12)}</td><td>${money0k(sum(R.map(r=>r.rev)))}</td></tr>
+    </tbody></table></div>
+    <div class="cap">The dark tick on each bar marks an average month. <b>Budget revenue</b> is the monthly run rate from your department budgets, shaped by these twelve numbers. <b>Forecast revenue</b> is Plan ${esc(S.active)} for the same month — it grows through the year because the strategy stack ramps.</div>`
+
+  + sech('Budget, forecast and actual','The three lines the room looks at')
+  + `<div class="scrollx"><table class="t grid"><thead><tr><th></th>${R.map((r,i)=>`<th>${esc(monthName(i))}</th>`).join('')}<th class="tot">Year</th></tr></thead><tbody>
+      <tr class="grp"><td colspan="14">Revenue</td></tr>
+      <tr class="der"><td>Budget</td>${seas.map((_,i)=>`<td>${money0k(budgetRev(i))}</td>`).join('')}<td class="tot">${money0k((F.revenue||0)*12)}</td></tr>
+      <tr class="der"><td>Forecast — Plan ${esc(S.active)}</td>${R.map(r=>`<td>${money0k(r.rev)}</td>`).join('')}<td class="tot">${money0k(sum(R.map(r=>r.rev)))}</td></tr>
+      <tr><td>Actual</td>${A.map((x,i)=>`<td><input type="number" step="any" data-act="${i}|rev" value="${x.rev==null?'':x.rev}"></td>`).join('')}<td class="tot">${A.some(x=>x.rev!=null)?money0k(sum(A.map(x=>num(x.rev)))):'—'}</td></tr>
+      <tr class="der"><td>Actual vs budget</td>${A.map((x,i)=>{const v=x.rev==null?null:num(x.rev)-budgetRev(i); return `<td class="${v==null?'':v>=0?'up':'down'}">${v==null?'—':signed(v,money0k)}</td>`;}).join('')}<td class="tot"></td></tr>
+      <tr class="grp"><td colspan="14">Net profit</td></tr>
+      <tr class="der"><td>Budget</td>${seas.map((_,i)=>`<td>${money0k((F.netProfit||0)*idx(i))}</td>`).join('')}<td class="tot">${money0k((F.netProfit||0)*12)}</td></tr>
+      <tr class="der"><td>Forecast — Plan ${esc(S.active)}</td>${R.map(r=>`<td>${money0k(r.np)}</td>`).join('')}<td class="tot">${money0k(sum(R.map(r=>r.np)))}</td></tr>
+      <tr><td>Actual</td>${A.map((x,i)=>`<td><input type="number" step="any" data-act="${i}|np" value="${x.np==null?'':x.np}"></td>`).join('')}<td class="tot">${A.some(x=>x.np!=null)?money0k(sum(A.map(x=>num(x.np)))):'—'}</td></tr>
+      <tr class="der"><td>Actual vs budget</td>${A.map((x,i)=>{const v=x.np==null?null:num(x.np)-(F.netProfit||0)*idx(i); return `<td class="${v==null?'':v>=0?'up':'down'}">${v==null?'—':signed(v,money0k)}</td>`;}).join('')}<td class="tot"></td></tr>
+    </tbody></table></div>
+    <div class="cap">Budget is a flat monthly run rate shaped by seasonality — it does not grow through the year. Forecast does, because the strategy stack ramps. Where the two diverge is the work the strategies are doing.</div>`
+
+  + chartBox('Budget, forecast and actual revenue','ch-oy',{type:'line',h:300,fmt:money0k,
+      x:Array.from({length:12},(_,i)=>monthName(i).split(' ')[0]),
+      series:[{name:'Budget',color:CH.steel,dash:'5 4',values:seas.map((_,i)=>budgetRev(i))},
+              {name:'Forecast',color:CH.accent,values:R.map(r=>r.rev)},
+              {name:'Actual',color:CH.ink,values:A.map(x=>x.rev==null?null:num(x.rev))}]},
+      'Actual only draws for the months you have entered.')
+
+  + sech('The monthly plan','Every driver, Plan '+S.active)
+  + `<div class="scrollx"><table class="t grid"><thead><tr><th></th>${R.map((r,i)=>`<th>${esc(monthName(i))}</th>`).join('')}<th class="tot">Year</th></tr></thead><tbody>
+      ${mrow('Leads','n0',r=>r.leads)}
+      ${mrow('Quotes','n0',r=>r.quotes)}
+      ${mrow('Jobs','n0',r=>r.jobs)}
+      ${mrow('Gross profit','money0k',r=>r.gp)}
+      ${mrow('Fixed costs','money0k',r=>r.fixed)}
+    </tbody></table></div>`
+
+  + sech('Ninety-day rocks','Three to five commitments a quarter. This is what the room holds you to.')
+  + `<div class="cards">${[0,1,2,3].map(q=>`<div class="card">
+      <h3 class="ch">Quarter ${q+1}</h3>
+      <div class="tiny" style="margin-bottom:8px">${esc(monthName(q*3))} – ${esc(monthName(q*3+2))}</div>
+      ${(S.oneYear.rocks[q]||[]).map((rk,j)=>`<div class="lever">
+        <input type="text" data-rock="${q}|${j}|text" value="${esc(rk.text)}" placeholder="The commitment" style="flex:1 1 100%;border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:12.5px;text-align:left">
+        <input type="text" data-rock="${q}|${j}|owner" value="${esc(rk.owner)}" placeholder="Who" style="width:96px;border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:12px;text-align:left">
+        <button class="btn sm danger" data-delrock="${q}|${j}" style="margin-left:auto">×</button></div>`).join('')}
+      ${(S.oneYear.rocks[q]||[]).length>=5?'<div class="tiny" style="margin-top:8px">Five is the limit. More than five is a wish list.</div>':`<div class="btnrow" style="margin-top:10px"><button class="btn ghost sm" data-addrock="${q}">+ Add commitment</button></div>`}
+    </div>`).join('')}</div>`;
+}
+
+/* ─── 08 CONSOLIDATED ───────────────────────────────────────────── */
+function renderConsolidated(){
+  const pr=project(S.active), Y=pr.years, b=pr.b, y0=Y[0], y5=Y[5];
+  const top=S.strategies.filter(s=>(s.scenarios||[]).includes(S.active))
+    .map(s=>({s, w:sum((s.levers||[]).map(l=>Math.abs(num(l.value))))*(num(s.confidence)/100)}))
+    .sort((a,c)=>c.w-a.w).slice(0,5);
+
+  return head('08 · The one-pager','Consolidated',
+    `Everything above, on one page, ready to print and put on the table.`)
+  + `<div class="stmt" style="margin-top:26px">${S.vision.statement?esc(S.vision.statement):`<span class="muted">Write the vision statement on tab 01 and it appears here.</span>`}</div>`
+
+  + sech('Where you are, where you are going',`Plan ${S.active} · ${esc(S.scenarios[S.active].label)}`)
+  + `<div class="mgrid">
+      ${metric('Revenue',y0.rev,'money0k','Today','','k_r0')}
+      ${metric('Revenue',y5.rev,'money0k','Year 5','hero','k_r5')}
+      ${metric('Net profit',y0.np,'money0k','Today','','k_p0')}
+      ${metric('Net profit',y5.np,'money0k','Year 5','hero','k_p5')}
+    </div>
+    <div class="mgrid" style="margin-top:1px">
+      ${metric('Owner hours a week',y0.ownerHours,'hrs','Today','','k_h0')}
+      ${metric('Owner hours a week',y5.ownerHours,'hrs','Year 5','accent','k_h5')}
+      ${metric('Business value',y0.value.equity,'money0k','Today','','k_v0')}
+      ${metric('Business value',y5.value.equity,'money0k','Year 5','accent','k_v5')}
+    </div>`
+
+  + sech('Every year, consolidated','Completed years replace forecast years as they land')
+  + `<div class="scrollx"><table class="t"><thead><tr><th></th>${Y.map(y=>`<th>${esc(y.label)}</th>`).join('')}</tr></thead><tbody>
+      <tr><td>Revenue</td>${Y.map(y=>`<td>${money0k(y.rev)}</td>`).join('')}</tr>
+      <tr><td>Gross margin</td>${Y.map(y=>`<td>${pct(y.gpPct)}</td>`).join('')}</tr>
+      <tr><td>Net profit</td>${Y.map(y=>`<td>${money0k(y.np)}</td>`).join('')}</tr>
+      <tr><td>EBITDA</td>${Y.map(y=>`<td>${money0k(y.ebitda)}</td>`).join('')}</tr>
+      <tr><td>Team</td>${Y.map(y=>`<td>${n0(y.cap.total)}</td>`).join('')}</tr>
+      <tr><td>Owner hours a week</td>${Y.map(y=>`<td>${n1(y.ownerHours)}</td>`).join('')}</tr>
+      <tr><td>Freedom score</td>${Y.map(y=>`<td>${n0(y.freedom.score)}</td>`).join('')}</tr>
+      <tr class="tot"><td>Business value</td>${Y.map(y=>`<td>${money0k(y.value.equity)}</td>`).join('')}</tr>
+    </tbody></table></div>`
+
+  + (S.divisionsOn ? sech('By division','Assumptions are weighted, never summed')
+    + `<div class="scrollx"><table class="t"><thead><tr><th>Division</th><th>Revenue</th><th>Gross profit</th><th>GP %</th><th>Net profit</th><th>Share of revenue</th></tr></thead><tbody>
+      ${b.norms.map(nz=>`<tr><td>${esc(nz.name)}</td><td>${money0k(nz.revenue)}</td><td>${money0k(nz.gp)}</td><td>${pct(nz.gpPct)}</td><td>${money0k(nz.netProfit)}</td><td>${pct(div(nz.revenue,b.revenue))}</td></tr>`).join('')}
+      <tr class="tot"><td>Whole of business</td><td>${money0k(b.revenue)}</td><td>${money0k(b.gp)}</td><td>${pct(b.gpPct)}</td><td>${money0k(b.netProfit)}</td><td>100.0%</td></tr>
+    </tbody></table></div>
+    <div class="cap">Revenue per on-tools member consolidates to ${money(b.a.revPerHead)} — ${esc(b.a.weightBasis)}. Spans of control and pricing assumptions are weighted the same way and are never added together.</div>` : '')
+
+  + sech('The five strategies doing the most work','Ranked by modelled impact')
+  + (top.length ? `<div class="scrollx"><table class="t"><thead><tr><th>Strategy</th><th>Domain</th><th>Serves</th><th>Stage</th><th>Owner</th><th>Levers</th></tr></thead><tbody>
+      ${top.map(x=>`<tr><td>${esc(x.s.name||'Untitled')}</td><td>${esc(x.s.domain)}</td><td>${esc(x.s.outcome)}</td><td>${esc(x.s.stage)}</td><td>${esc(x.s.owner||'—')}</td>
+        <td style="text-align:left">${(x.s.levers||[]).map(l=>DRIVERS[l.driver]?esc(DRIVERS[l.driver].fmt(num(l.value))):'').filter(Boolean).join(' · ')||'—'}</td></tr>`).join('')}
+    </tbody></table></div>` : `<div class="empty">No strategies assigned to Plan ${S.active}.</div>`)
+
+  + sech('Signed off','')
+  + `<div class="two"><div><div class="sub">Member</div><h3>${esc(S.meta.owner||'—')}</h3><div class="tiny" style="margin-top:30px;border-top:1px solid var(--rule);padding-top:8px">Signature · Date</div></div>
+      <div><div class="sub">Coach</div><h3>&nbsp;</h3><div class="tiny" style="margin-top:30px;border-top:1px solid var(--rule);padding-top:8px">Signature · Date</div></div></div>`;
+}
+
+/* ─── 09 ORG CHART ──────────────────────────────────────────────── */
+function renderOrg(){
+  const pr=project(S.active);
+  const o=orgAt(pr, UI.orgYear);
+  const o0=orgAt(pr,0), o5=orgAt(pr,5);
+  const yr=pr.years.find(x=>x.y===UI.orgYear)||pr.years[0];
+  const reconFixed = yr.fixed!=null ? o.costFixed - yr.fixed : null;
+  const reconCos   = yr.cos!=null ? o.costCos - yr.cos : null;
+
+  return head('09 · The team that gets you out','Org Chart',
+    `Generated from the capacity engine, not drawn by hand. Roles appear as spans of control are exceeded. The copper boxes are the roles <strong>you</strong> still occupy — watching them clear between today and year five is the Owner-Operator to CEO shift, made literal.`)
+
+  + `<div class="btnrow" style="margin-top:26px">
+      ${[0,1,3,5].map(y=>`<button class="btn ${UI.orgYear===y?'accent':''}" data-orgyear="${y}">${y===0?'Today':'Year '+y}</button>`).join('')}
+    </div>`
+
+  + `<div class="mgrid" style="margin-top:20px">
+      ${metric('Roles you occupy', o.ownerCount,'n0', UI.orgYear===0?`${o5.ownerCount} in year 5`:`${o0.ownerCount} today`, o.ownerCount?'accent':'', 'o_own')}
+      ${metric('Total team', o.cap.total,'n0','People','','o_tot')}
+      ${metric('People cost', o.peopleCost,'money0k',`${money0k(o.costCos)} in cost of sales · ${money0k(o.costFixed)} in fixed costs`,'','o_cost')}
+      ${metric('Hires from today', Math.max(0,(o.cap.target||0)-(o0.cap.target||0)),'n0','On tools','','o_hire')}
+    </div>`
+
+  + `<div class="org">${o.rows.filter(r=>r.boxes.length).map((r,i)=>`
+      ${i?'<div class="orgstem"></div>':''}
+      <div class="orgrow">${r.boxes.map(b=>`<div class="obox ${b.owner?'owner':''} ${b.name==='Vacant'?'vacant':''}">
+        ${b.owner?'<span class="tag">You are doing this</span>':''}
+        <div class="or">${esc(b.role)}</div><div class="on">${esc(b.name)}</div><div class="oc">${money0k(b.cost)}</div>
+      </div>`).join('')}</div>`).join('')}</div>`
+
+  + (reconFixed!=null ? `<div class="alert ${reconFixed>0?'bad':'good'}"><div><b>Reconciliation — office and leadership</b>${money0k(o.costFixed)} of salaries sit in fixed costs (you, ops managers, estimators, office) against a forecast fixed cost line of ${money0k(yr.fixed)} — leaving ${money0k(yr.fixed-o.costFixed)} for rent, vehicles, insurance, software and everything else. ${reconFixed>0?'The wage bill alone exceeds the forecast fixed costs. Either the roles are too expensive or the forecast is too thin.':'That headroom looks workable — check it against your actual overheads.'}</div></div>`:'')
+  + (reconCos!=null ? `<div class="alert ${reconCos>yr.cos?'bad':'good'}"><div><b>Reconciliation — on tools</b>${money0k(o.costCos)} of on-tools and team-leader wages against forecast cost of sales of ${money0k(yr.cos)}. Cost of sales also carries materials and subcontractors, so labour should be well under it — here it is ${pct(div(o.costCos,yr.cos),0)} of the line.</div></div>`:'')
+
+  + sech('The roles you hold','Set a handover year and the org chart clears the box')
+  + `<div class="scrollx"><table class="t"><thead><tr><th>Role</th><th>You do this today</th><th>Handed over in year</th><th>Status in year 5</th></tr></thead><tbody>
+      ${S.ownerRoles.map((r,i)=>`<tr><td>${esc(r.role)}</td>
+        <td><label class="toggle" style="justify-content:flex-end"><input type="checkbox" data-orole="${i}|on" ${r.on?'checked':''}></label></td>
+        <td><input type="number" min="0" max="5" data-orole="${i}|handover" value="${num(r.handover)}" style="width:64px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:4px 8px"></td>
+        <td>${!r.on?'<span class="pill neutral">Not you</span>':(num(r.handover)>0&&num(r.handover)<=5?`<span class="pill good">Handed over Y${num(r.handover)}</span>`:'<span class="pill bad">Still yours</span>')}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="cap">Zero means no handover is planned. Any role still yours in a year where the plan has your hours falling will raise a contradiction on the Scenarios tab.</div>`;
+}
+
+/* ─── ✱ SETTINGS ────────────────────────────────────────────────── */
+function renderSettings(){
+  return head('✱ · Setup','Setup',
+    `The money settings, the wellness baseline and the checks. Capacity benchmarks — revenue per head, spans of control, pricing rates — live with each department on the <strong>Budget &amp; Workforce</strong> tab, because they differ department by department.`)
+
+  + sech('The business','')
+  + `<div class="fgrid"><div>
+      <div class="f"><div class="flab"><div class="fl">Company</div></div><input type="text" data-path="meta.company" data-kind="str" value="${esc(S.meta.company)}" style="text-align:left"></div>
+      <div class="f"><div class="flab"><div class="fl">Owner</div></div><input type="text" data-path="meta.owner" data-kind="str" value="${esc(S.meta.owner)}" style="text-align:left"></div>
+      ${selectField('Currency','meta.currency',['NZD','AUD','GBP','USD'])}
+    </div><div>
+      <div class="f"><div class="flab"><div class="fl">Baseline starts</div><div class="fh">The twelve month columns run from here.</div></div>
+        <select data-path="meta.startMonth" data-kind="num">${MONTHS.map((m,i)=>`<option value="${i}"${i===num(S.meta.startMonth)?' selected':''}>${m}</option>`).join('')}</select></div>
+      ${field('Baseline start year','meta.startYear',{step:1})}
+      <label class="toggle" style="margin-top:16px"><input type="checkbox" id="togDivisions" ${S.divisionsOn?'checked':''}> Run divisions</label>
+      <div class="fh" style="margin-top:6px">Off by default — one P&L and one funnel. Turn it on if you run separate divisions. Nothing is lost when you turn it back off.</div>
+    </div></div>`
+
+  + sech('Money and cash','Defaults are typical for a trade business — check them against your own numbers')
+  + `<div class="fgrid"><div>
+      ${field('Debtor days','fin.debtorDays',{help:'How long customers take to pay'})}
+      ${field('Work-in-progress days','fin.wipDays',{help:'Work done but not yet invoiced'})}
+      ${field('Creditor days','fin.creditorDays',{help:'How long you take to pay suppliers'})}
+      ${field('Capex as % of revenue','fin.capexPct',{kind:'pct',step:'0.1',help:'Vehicles, tools, plant'})}
+      ${field('Company tax rate %','fin.taxRate',{kind:'pct',step:'0.5'})}
+      ${field('Debt repayments a year','fin.debtRepay')}
+    </div><div>
+      ${field('Your salary inside fixed costs','fin.ownerSalary',{help:'Annual. Added back for EBITDA.'})}
+      ${field('Market rate to replace you','fin.marketSalary',{help:'Annual. What a manager doing your job would cost. Deducted for EBITDA.'})}
+      ${field('One-off addbacks','fin.addbacks',{help:'Annual. Personal or non-recurring costs run through the business.'})}
+      ${field('Surplus cash','fin.surplusCash',{help:'Added to enterprise value'})}
+      ${field('Debt','fin.debt',{help:'Deducted from enterprise value'})}
+      ${field('Drawings above your salary','fin.drawingsAbove',{help:'Annual'})}
+      ${field('Maximum on-tools hires a quarter','fin.maxHiresPerQuarter',{help:'Trips a guardrail when a plan exceeds it'})}
+    </div></div>`
+
+  + sech('Role costs','Annual package per role — drives the org chart and its reconciliation')
+  + `<div class="fgrid"><div>
+      ${field('On-tools team member','fin.roleCost.onTools',{help:'Sits in cost of sales'})}
+      ${field('Team leader','fin.roleCost.teamLeader',{help:'Sits in cost of sales'})}
+      ${field('Operations manager','fin.roleCost.opsManager',{help:'Sits in fixed costs'})}
+    </div><div>
+      ${field('Estimator','fin.roleCost.estimator',{help:'Sits in fixed costs'})}
+      ${field('Office / admin','fin.roleCost.office',{help:'Sits in fixed costs'})}
+    </div></div>`
+
+  + sech('Wellness — baseline and year 5 target','The Freedom Score is scored against these, not against anyone else')
+  + `<div class="scrollx"><table class="t"><thead><tr><th>Measure</th><th>Today</th><th>Year 5 target</th><th>Weight</th></tr></thead><tbody>
+      ${[['hours','Owner hours a week',true],['onBiz','Hours ON the business, %'],['weeksWithout','Weeks it runs without you'],
+         ['holidays','Weeks of holiday taken'],['weekends','Weekends worked a month',true],['evenings','Evenings home a week'],
+         ['income','Personal income drawn, annual'],['outside','Income from outside the business'],
+         ['exercise','Exercise sessions a week'],['sleep','Hours of sleep a night']].map(([k,l,lower])=>{
+        const c=FREEDOM_COMPONENTS.find(x=>x.k===k);
+        return `<tr><td>${esc(l)}${lower?' <span class="tiny">(lower is better)</span>':''}</td>
+          <td><input type="number" step="any" data-path="wellness.base.${k}" value="${num(S.wellness.base[k])}" style="width:96px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:5px 8px"></td>
+          <td><input type="number" step="any" data-path="wellness.targ.${k}" value="${num(S.wellness.targ[k])}" style="width:96px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:5px 8px"></td>
+          <td>${c?pct(c.w,0):'<span class="muted">—</span>'}</td></tr>`;
+      }).join('')}
+    </tbody></table></div>
+    <div class="cap">Only the seven weighted measures feed the Freedom Score. Exercise and sleep are tracked because they matter, not because they are scored.</div>`
+
+  + sech('This build','')
+  + `<div class="mgrid">
+      ${metric('Version','','n0','Boardroom Growth Plan v2.1 — Budget &amp; Workforce, per-department budgets, busy-ness seasonality')}
+      ${metric('Self-tests',51,'n0','Golden cases with hand-calculated answers')}
+      ${metric('Tabs',10,'n0','Plus this setup page')}
+    </div>`
+
+  + sech('Checks','')
+  + `<div class="btnrow"><button class="btn" id="btnSelfTest">Run the self-test</button>
+      <button class="btn" id="btnExportCsv">Export the model to CSV</button>
+      <button class="btn danger" id="btnReset">Reset everything</button></div>
+    <div id="selftestout"></div>`;
+}
+function divIdx(){ return S.divisions.findIndex(d=>d.id===UI.div); }
+/* ─── 04 BUDGET & WORKFORCE ─────────────────────────────────────
+   The old workbook's shape, done right: per department, Desired vs
+   Actuals → Assumptions → Workforce Planning, then a Consolidated
+   View on Budget that adds money and headcount but weights assumptions. */
+
+function divPath(id){ return 'divisions.'+S.divisions.findIndex(d=>d.id===id); }
+
+/* Margin ideals column = each money line as a share of required revenue,
+   exactly as the original Consolidated sheet computed C6 = D6/D10. */
+function budgetRows(f, nz){
+  const R = f.revenue;
+  const pctOf = v => div(v, R);
+  return [
+    {grp:'Money'},
+    {l:'Desired net profit, a month', input:'t.netProfit', ideal:pctOf(f.netProfit),
+      desired:f.netProfit, actual:nz.netProfitM, fmt:'money', help:'After your own salary is paid'},
+    {l:'Fixed costs incl. your salary', input:'t.fixedCosts', ideal:pctOf(f.fixedCosts),
+      desired:f.fixedCosts, actual:nz.fixedM, fmt:'money', lower:true, help:'From your P&L, monthly'},
+    {l:'Required gross profit', ideal:pctOf(f.requiredGP), desired:f.requiredGP,
+      actual:nz.gpM, fmt:'money', help:'Desired profit + fixed costs'},
+    {l:'Target gross margin', input:'t.gpPct', kind:'pct', ideal:f.gpPct,
+      desired:f.gpPct, actual:nz.gpPct, fmt:'pct', help:'Gross profit ÷ revenue'},
+    {l:'Required monthly sales', ideal:R?1:null, desired:f.revenue, actual:nz.revenueM,
+      fmt:'money', big:true, help:'Required gross profit ÷ gross margin'},
+    {grp:'The funnel'},
+    {l:'Average job value', input:'t.avgJobValue', desired:f.avgJobValue,
+      actual:nz.avgJobValue, fmt:'money', help:'Revenue ÷ number of jobs'},
+    {l:'Jobs needed each month', desired:f.jobs, actual:nz.jobsM, fmt:'n1',
+      help:'Required sales ÷ average job value'},
+    {l:'Quote → win rate', input:'t.quoteWin', kind:'pct', desired:f.quoteWin, actual:nz.quoteWin,
+      fmt:'pct', help:'Jobs won ÷ quotes issued'},
+    {l:'Quotes needed each month', desired:f.quotes, actual:nz.quotesM, fmt:'n1',
+      help:'Jobs ÷ win rate'},
+    {l:'Lead → quote rate', input:'t.leadQuote', kind:'pct', desired:f.leadQuote, actual:nz.leadQuote,
+      fmt:'pct', help:'Set 100% if you only track one conversion rate'},
+    {l:'Leads needed each month', desired:f.leads, actual:nz.leadsM, fmt:'n1', big:true,
+      help:'Quotes ÷ lead-to-quote rate'}
+  ];
+}
+
+function budgetTable(divId, f, nz, showInputs){
+  const rows = budgetRows(f, nz);
+  const base = divId ? divPath(divId)+'.' : null;
+  return `<div class="scrollx"><table class="t bud">
+    <thead><tr><th>Where the business needs to get to</th><th>Margin ideals</th>
+      <th>Desired numbers</th><th>Current actuals</th><th>Delta</th><th></th></tr></thead><tbody>
+    ${rows.map(r=>{
+      if(r.grp) return `<tr class="grp"><td colspan="6">${esc(r.grp)}</td></tr>`;
+      const F = FMT[r.fmt]||n0;
+      const shown = r.desired;
+      const delta = (shown==null||r.actual==null||!Number.isFinite(shown)||!Number.isFinite(r.actual))
+                    ? null : shown-r.actual;
+      /* Delta = what has to change. On a "more is better" line a positive delta is
+         a gap; on a "lower is better" line a positive delta means you have room. */
+      const ahead = delta==null ? null : (r.lower ? delta>=0 : delta<=0);
+      const isInput = !!(r.input && showInputs && base);
+      const cell = isInput
+        ? `<input type="number" step="${r.kind==='pct'?'0.1':'any'}" data-path="${esc(base+r.input)}" data-kind="${r.kind==='pct'?'pct':'num'}" value="${r.kind==='pct'?(num(getPath(base+r.input))*100).toFixed(1):(num(getPath(base+r.input))||'')}" aria-label="${esc(r.l)}">`
+        : `<b>${F(shown)}</b>`;
+      return `<tr class="${r.big?'tot':''}"><td>${esc(r.l)}${r.help?`<div class="tiny">${esc(r.help)}</div>`:''}</td>
+        <td class="ideal">${r.ideal!=null?pct(r.ideal):''}</td>
+        <td class="want ${isInput?'inp':'calc'}">${cell}</td>
+        <td>${F(r.actual)}</td>
+        <td class="${ahead==null?'':(ahead?'up':'down')}">${delta==null?'—':signed(delta,F)}</td>
+        <td>${ahead==null?'<span class="pill neutral">—</span>'
+              :(Math.abs(delta)<1e-9?'<span class="pill good">On target</span>'
+              :(ahead?'<span class="pill good">Ahead</span>':'<span class="pill bad">Gap</span>'))}</td></tr>`;
+    }).join('')}
+  </tbody></table></div>`;
+}
+
+/* The department sheets ran the six assumptions and the seven workforce
+   figures as one continuous block, with the calculated rows sitting
+   directly under the typed ones. Same order, same wording. */
+const ASSUMPTION_FIELDS = [
+  ['revPerHead','Average Revenue Per On-tools Team Member','Revenue ÷ number on tools, per month','money'],
+  ['spanTL','Span of Control for Team Leader','How many on-tools people one leader carries',''],
+  ['spanOM','Span of Control for Ops Manager','How many team leaders one ops manager carries',''],
+  ['omThreshold','Team Leaders Before an Ops Manager Is Needed','Below this you or a leader covers it — and that counts as owner-dependence',''],
+  ['pricingCapacity','Available Pricing Hours for FT Estimator / month','',''],
+  ['tradesPerOffice','Number of Tradesmen per Extra Office Personnel','',''],
+  ['pricingMinutes','Average Time Spent Pricing Per Job (Minutes)','60 for service work, 300 for projects','']
+];
+
+function assumptionsTable(dv, cap, capNow){
+  const dpath = divPath(dv.id);
+  const flag = (need, have) => need==null ? ''
+    : (need>have ? '<span class="pill bad">Hire Needed</span>'
+                 : '<span class="pill good">Has Capacity</span>');
+  const OUT = [
+    {l:'New Hires Needed on Tools', v:cap.hires, f:n0,
+      pill: cap.hires>0?'<span class="pill bad">Hire Needed</span>':'<span class="pill good">Has Capacity</span>',
+      note: cap.needed!=null?`${n1(cap.needed)} needed exactly · ${n0(cap.current)} on tools today`:''},
+    {l:'Total On-Tools Team Size Needed', v:cap.target, f:n0, pill:'',
+      note: cap.util!=null?`${pct(cap.util,0)} utilised at ${n0(cap.target)} people`:''},
+    {l:'Team Leaders Needed', v:cap.teamLeaders, f:n0, pill:flag(cap.teamLeaders, capNow.teamLeaders),
+      note:`${n0(capNow.teamLeaders)} carried by today's revenue`},
+    {l:'Operations Managers Needed', v:cap.opsManagers, f:n0, pill:flag(cap.opsManagers, capNow.opsManagers),
+      note:`${n0(capNow.opsManagers)} carried by today's revenue`},
+    {l:'Total Time Spent Pricing Per Month (Hours)', v:cap.pricingHours, f:n0, pill:'',
+      note:'Quotes needed × pricing minutes ÷ 60'},
+    {l:'Number of Pricing Personnel Needed', v:cap.estimators, f:n0, pill:flag(cap.estimators, capNow.estimators),
+      note: cap.estimatorUtil!=null?`${pct(cap.estimatorUtil,0)} utilised`:''},
+    {l:'Number of Extra Office Personnel', v:cap.office, f:n0, pill:flag(cap.office, capNow.office), note:''}
+  ];
+  return `<div class="scrollx"><table class="t asm">
+    <thead><tr><th>Assumptions</th><th>Value</th><th></th></tr></thead><tbody>
+    ${ASSUMPTION_FIELDS.map(([k,l,h])=>`<tr><td>${esc(l)}${h?`<div class="tiny">${esc(h)}</div>`:''}</td>
+      <td class="inp" style="width:150px"><input type="number" step="any" data-path="${esc(dpath+'.a.'+k)}" value="${num(dv.a[k])||''}" aria-label="${esc(l)}" style="width:118px;text-align:right;border:1px solid var(--rule);border-radius:6px;padding:6px 9px;background:var(--paper-2);font-variant-numeric:tabular-nums"></td>
+      <td style="width:150px"></td></tr>`).join('')}
+    <tr class="rule"><td colspan="3"></td></tr>
+    ${OUT.map(r=>`<tr><td>${esc(r.l)}${r.note?`<div class="tiny">${esc(r.note)}</div>`:''}</td>
+      <td class="calc"><b>${r.f(r.v)}</b></td>
+      <td>${r.pill}</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function renderBudget(){
+  if(!S.divisionsOn) UI.div='WOB';
+  else if(UI.div==='WOB'){ const a=S.divisions.find(d=>d.active&&d.id!=='WOB'); UI.div=a?a.id:'D1'; }
+  const dv = currentDivision();
+  const nz = normalise(dv), f = funnel(dv.t);
+  const cap  = capacity(f.revenue, f.quotes, dv.a, {onTools:nz.onTools});
+  const capN = capacity(nz.revenueM, nz.quotesM, dv.a, {onTools:nz.onTools});
+  const B = budget();
+  const dpath = divPath(dv.id);
+
+  return head('04 · The budget','Budget & Workforce',
+    `Where the business is now, where it needs to get to, and the team that gets it there — set one department at a time, then rolled up. This is the shape of the original Boardroom calculator: <strong>desired versus actuals</strong>, then the <strong>assumptions</strong> behind it, then the <strong>workforce planning</strong> that falls out of both.`)
+
+  + (S.divisionsOn ? `<div class="divchips">
+      ${S.divisions.filter(d=>d.id!=='WOB').map(d=>`<button class="divchip ${d.id===UI.div?'on':(d.active?'':'off')}" data-divsel="${d.id}">${esc(d.name)}${d.active?'':' · off'}</button>`).join('')}
+    </div>
+    <div class="btnrow" style="margin-top:10px">
+      <label class="toggle"><input type="checkbox" data-divactive="${esc(dv.id)}" ${dv.active?'checked':''}> ${esc(dv.name)} is active</label>
+      <input class="divname" data-divname="${esc(dv.id)}" value="${esc(dv.name)}" aria-label="Division name">
+      <span class="tiny">Only active departments roll into the consolidated view.</span>
+    </div>` : `<div class="btnrow" style="margin-top:22px"><span class="pill accent">Whole of business</span>
+      <span class="tiny">Turn on divisions in Setup to budget department by department.</span></div>`)
+
+  + `<div class="legend"><span><i class="swin"></i>Type into the <b>amber</b> boxes</span>
+      <span><i class="swout"></i>The <b>dark</b> boxes calculate</span>
+      <span>Nothing labelled as an input is ever a formula.</span></div>`
+
+  + sech(`Where ${dv.name} is now`, `${nz.n} of 12 months entered on the Baseline tab`)
+  + `<div class="mgrid">
+      ${metric('Revenue', nz.revenueM,'money','Per month','','bg_rev')}
+      ${metric('Gross margin', nz.gpPct,'pct','Total GP ÷ total revenue','','bg_gp')}
+      ${metric('Net profit', nz.netProfitM,'money','Per month, derived','','bg_np')}
+      ${metric('Average job value', nz.avgJobValue,'money','Revenue ÷ jobs','','bg_ajv')}
+      ${metric('Jobs', nz.jobsM,'n1','Per month','','bg_j')}
+      ${metric('On tools', nz.onTools,'n1','Latest month entered','','bg_ot')}
+    </div>`
+
+  + sech('Desired versus actuals', 'Type into the Desired column — everything else calculates')
+  + budgetTable(dv.id, f, nz, true)
+  + `<div class="cap"><b>Margin ideals</b> shows each line as a share of the required monthly sales, so you can see the shape of the business you are aiming at: ${pct(div(f.netProfit,f.revenue))} profit, ${pct(div(f.fixedCosts,f.revenue))} fixed costs, ${pct(f.gpPct)} gross margin. <b>Delta</b> is what has to change. Green means you are already there or better.</div>`
+
+  + sech('Assumptions', `${esc(dv.name)} — to deliver ${money(f.revenue)} a month`)
+  + assumptionsTable(dv, cap, capN)
+  + `<div class="cap">The seven figures above the line are yours to set; the seven below are what they produce. These ship with the Profitable Tradie defaults — change them to match how ${esc(dv.name)} actually runs, because a projects division prices nothing like a service division, and that is exactly why each department carries its own set.<br><br><b>"Hire Needed"</b> compares the requirement against what today's revenue already carries — it is not a rounding test. The exact fractional requirement sits under every rounded figure, so you can see whether you are hiring for 0.2 of a person or 2.4.</div>`
+
+  + (S.divisionsOn ? sech('Consolidated view on budget', `${B.per.length} active division${B.per.length===1?'':'s'} — money and volume add up, ratios are re-derived from the totals`)
+  + budgetTable(null, {requiredGP:B.total.requiredGP, revenue:B.total.revenue, jobs:B.total.jobs,
+      quotes:B.total.quotes, leads:B.total.leads, netProfit:B.total.netProfit,
+      fixedCosts:B.total.fixedCosts, gpPct:B.total.gpPct, avgJobValue:B.total.avgJobValue,
+      quoteWin:B.total.quoteWin, leadQuote:B.total.leadQuote},
+      {netProfitM:B.b.netProfitM, fixedM:B.b.fixedM, gpM:B.b.gpM, gpPct:B.b.gpPct,
+       revenueM:B.b.revenueM, avgJobValue:B.b.avgJobValue, jobsM:B.b.jobsM,
+       quoteWin:B.b.quoteWin, quotesM:B.b.quotesM, leadQuote:B.b.leadQuote, leadsM:B.b.leadsM}, false)
+  : '')
+
+  + (S.divisionsOn ? sech('Department breakdown','Money and headcount add up · assumptions never do')
+    + `<div class="scrollx"><table class="t"><thead><tr><th>Department</th><th>Desired sales</th><th>Desired profit</th>
+        <th>Gross margin</th><th>Jobs</th><th>Leads</th><th>On tools</th><th>Hires</th><th>Share of budget</th></tr></thead><tbody>
+      ${B.per.map(x=>`<tr><td>${esc(x.div.name)}</td><td>${money0k(x.f.revenue)}</td><td>${money0k(x.f.netProfit)}</td>
+        <td>${pct(x.f.gpPct)}</td><td>${n1(x.f.jobs)}</td><td>${n1(x.f.leads)}</td>
+        <td>${n0(x.cap.target)}</td><td>${n0(x.cap.hires)}</td><td>${pct(div(x.f.revenue,B.total.revenue))}</td></tr>`).join('')}
+      <tr class="tot"><td>Consolidated</td><td>${money0k(B.total.revenue)}</td><td>${money0k(B.total.netProfit)}</td>
+        <td>${pct(B.total.gpPct)}</td><td>${n1(B.total.jobs)}</td><td>${n1(B.total.leads)}</td>
+        <td>${n0(B.capTotal.target)}</td><td>${n0(B.capTotal.hires)}</td><td>100.0%</td></tr>
+    </tbody></table></div>`
+
+    + sech('Assumptions by department','Shown side by side and weighted — never added together')
+    + `<div class="scrollx"><table class="t"><thead><tr><th>Assumption</th>
+        ${B.per.map(x=>`<th>${esc(x.div.name)}</th>`).join('')}<th>Weighted</th></tr></thead><tbody>
+      ${ASSUMPTION_FIELDS.map(([k,l])=>`<tr><td>${esc(l)}</td>
+        ${B.per.map(x=>`<td>${k==='revPerHead'?money(num(x.div.a[k])):n1(num(x.div.a[k]))}</td>`).join('')}
+        <td class="want"><b>${k==='revPerHead'?money(B.b.a[k]):n1(B.b.a[k])}</b></td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="cap">The weighted column is ${esc(B.b.a.weightBasis)}. In the original workbook this row was a <code>SUM</code> — five departments each with a span of control of six consolidated to a span of thirty. Spans, revenue per head and pricing rates are properties of how a department runs, so they are averaged, not added.</div>`
+
+    + sech('Workforce by department','Headcount does add up')
+    + `<div class="scrollx"><table class="t"><thead><tr><th>Role</th>
+        ${B.per.map(x=>`<th>${esc(x.div.name)}</th>`).join('')}<th>Total</th></tr></thead><tbody>
+      ${[['target','On tools needed'],['hires','New hires on tools'],['teamLeaders','Team leaders'],
+         ['opsManagers','Operations managers'],['estimators','Pricing personnel'],['office','Extra office personnel'],
+         ['pricingHours','Pricing hours a month']].map(([k,l])=>
+        `<tr class="${k==='target'?'':''}"><td>${esc(l)}</td>${B.per.map(x=>`<td>${n0(x.cap[k])}</td>`).join('')}<td class="want"><b>${n0(B.capTotal[k])}</b></td></tr>`).join('')}
+      <tr class="tot"><td>Total team</td>${B.per.map(x=>`<td>${n0(x.cap.total)}</td>`).join('')}<td class="want"><b>${n0(B.capTotal.total)}</b></td></tr>
+    </tbody></table></div>` : '')
+
+  + `<div class="note">This budget is the monthly run rate the business has to hit. The One Year tab takes it and shapes it across twelve months; the Scenarios tab forecasts how the strategy stack gets you there.</div>`;
+}
+/* ═══ §APP — routing, events, persistence ═══════════════════════ */
+
+const RENDERERS = {vision:renderVision, baseline:renderBaseline, metrics:renderMetrics,
+  budget:renderBudget, strategies:renderStrategies, scenarios:renderScenarios,
+  fiveyear:renderFiveYear, oneyear:renderOneYear, consolidated:renderConsolidated,
+  org:renderOrg, settings:renderSettings};
+
+let dirty=false, fileHandle=null;
+
+function toast(msg, ms){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('on');
+  clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'), ms||3200);
+}
+function markDirty(){ dirty=true; paintSave(); }
+function paintSave(){
+  const el=$('#savestat');
+  if(dirty){ el.textContent='Unsaved changes'; el.className='savestat dirty'; }
+  else { el.textContent = fileHandle ? 'Saved' : 'Not linked'; el.className='savestat'; }
+}
+
+function render(all){
+  CURSYM = {NZD:'$',AUD:'$',GBP:'£',USD:'$'}[S.meta.currency]||'$';
+  const ids = all ? Object.keys(RENDERERS) : [UI.tab];
+  ids.forEach(k=>{
+    const el=document.getElementById('tab-'+k); if(!el) return;
+    try{ el.innerHTML = RENDERERS[k](); }
+    catch(e){ el.innerHTML=`<div class="alert bad" style="margin-top:40px"><div><b>This tab could not be drawn</b>${esc(e.message)}</div></div>`; console.error(k,e); }
+  });
+  $$('.tab').forEach(t=>t.classList.toggle('on', t.id==='tab-'+UI.tab));
+  $$('#rail a').forEach(a=>a.classList.toggle('on', a.dataset.tab===UI.tab));
+  $$('#scenseg button').forEach(b=>b.classList.toggle('on', b.dataset.scen===S.active));
+  drawCharts();
+  runTweens(document);
+}
+function go(tab){ UI.tab=tab; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ─── input handling ───────────────────────────────────────────── */
+function readValue(el){
+  const kind=el.dataset.kind||'num';
+  if(kind==='str') return el.value;
+  if(kind==='pct') return num(el.value)/100;
+  return num(el.value);
+}
+function setSPath(p,val){
+  const ks=p.split('.'); const i=+ks.shift(); const last=ks.pop();
+  const o=ks.reduce((o,k)=> o[/^\d+$/.test(k)?+k:k], S.strategies[i]);
+  o[/^\d+$/.test(last)?+last:last]=val;
+}
+document.addEventListener('input', e=>{
+  const el=e.target; let touched=false;
+  if(el.dataset.path!=null){ setPath(el.dataset.path, readValue(el)); touched=true; }
+  else if(el.dataset.spath!=null){
+    const isNum = /\.(value|confidence|startMonth|fullMonth|cost)$/.test(el.dataset.spath);
+    setSPath(el.dataset.spath, isNum?num(el.value):el.value); touched=true;
+  }
+  else if(el.dataset.grid!=null){
+    const d=S.divisions.find(x=>x.id===el.dataset.grid);
+    if(d){ d.months[+el.dataset.m][el.dataset.k]=num(el.value); touched=true; }
+  }
+  else if(el.dataset.seas!=null){ S.oneYear.seasonality[+el.dataset.seas]=num(el.value); touched=true; }
+  else if(el.dataset.act!=null){
+    const [i,k]=el.dataset.act.split('|');
+    S.oneYear.actuals[+i][k]= el.value===''?null:num(el.value); touched=true;
+  }
+  else if(el.dataset.rock!=null){
+    const [q,j,k]=el.dataset.rock.split('|');
+    S.oneYear.rocks[+q][+j][k]=el.value; touched=true;
+  }
+  else if(el.dataset.orole!=null){
+    const [i,k]=el.dataset.orole.split('|');
+    S.ownerRoles[+i][k]= k==='on'?el.checked:num(el.value); touched=true;
+  }
+  else if(el.dataset.divname!=null){
+    const d=S.divisions.find(x=>x.id===el.dataset.divname); if(d){ d.name=el.value; touched=true; }
+  }
+  if(!touched) return;
+  markDirty();
+  scheduleLiveRender(el);
+});
+/* live recalc without stealing focus: re-render everything except the field being typed in */
+let liveTimer=null;
+function scheduleLiveRender(el){
+  clearTimeout(liveTimer);
+  liveTimer=setTimeout(()=>{
+    const key = el.dataset.path||el.dataset.spath||el.dataset.grid||el.dataset.seas||el.dataset.act||el.dataset.rock||el.dataset.orole||el.dataset.divname;
+    const sel = el.selectionStart, selEnd = el.selectionEnd, id=el.dataset;
+    render();
+    const back = findSame(id);
+    if(back){ back.focus(); try{ back.setSelectionRange(sel,selEnd); }catch(_){} }
+  }, 260);
+}
+function findSame(d){
+  for(const k of ['path','spath','seas','divname']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
+  if(d.grid!=null) return document.querySelector(`[data-grid="${CSS.escape(d.grid)}"][data-m="${d.m}"][data-k="${d.k}"]`);
+  for(const k of ['act','rock','orole']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
+  return null;
+}
+document.addEventListener('change', e=>{
+  const el=e.target;
+  if(el.dataset.divactive!=null){
+    const d=S.divisions.find(x=>x.id===el.dataset.divactive); if(d) d.active=el.checked;
+    markDirty(); render(); return;
+  }
+  if(el.dataset.srefined!=null){
+    const s=S.strategies[+el.dataset.srefined]; s.refined=el.checked;
+    if(!s.refined && s.stage==='Scaling') s.stage='Refining';
+    markDirty(); render(); return;
+  }
+  if(el.dataset.stage!=null){
+    const s=S.strategies[+el.dataset.stage];
+    if(el.value==='Scaling' && !s.refined){
+      s.stage='Refining';
+      toast('Refine before you scale. Scaling an unrefined process adds revenue and loses freedom — it fails both outcomes.', 6000);
+      markDirty(); render(); return;
+    }
+  }
+  if(el.id==='togDivisions'){
+    S.divisionsOn=el.checked;
+    if(S.divisionsOn && !S.divisions.some(d=>d.active && d.id!=='WOB')){
+      const withData=S.divisions.filter(d=>d.id!=='WOB' && d.months.some(entered));
+      if(withData.length) withData.forEach(d=>d.active=true);
+      else { const d=S.divisions.find(x=>x.id==='D1'); if(d) d.active=true; }
+      toast('Divisions on. '+S.divisions.filter(d=>d.active&&d.id!=='WOB').length+
+            ' switched on — turn others on from the Budget or Baseline tab.', 5000);
+    }
+    markDirty(); render(true); return; }
+  if(el.dataset.path!=null || el.dataset.spath!=null){ clearTimeout(liveTimer); render(); }
+});
+
+/* ─── clicks ───────────────────────────────────────────────────── */
+document.addEventListener('click', e=>{
+  const t=e.target.closest('[data-tab],[data-scen],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogscen],[data-addrock],[data-delrock],button');
+  if(!t) return;
+  const d=t.dataset;
+  if(d.tab){ go(d.tab); return; }
+  if(d.scen){ S.active=d.scen; render(true); return; }
+  if(d.divsel){ UI.div=d.divsel; render(); return; }
+  if(d.orgyear!=null){ UI.orgYear=+d.orgyear; render(); return; }
+  if(d.delstrat!=null){ S.strategies.splice(+d.delstrat,1); markDirty(); render(); return; }
+  if(d.addlever!=null){ const s=S.strategies[+d.addlever]; (s.levers=s.levers||[]).push({driver:'gpPct',value:1}); markDirty(); render(); return; }
+  if(d.dellever!=null){ const [i,j]=d.dellever.split('|'); S.strategies[+i].levers.splice(+j,1); markDirty(); render(); return; }
+  if(d.stogscen){ const [i,k]=d.stogscen.split('|'); const s=S.strategies[+i];
+    s.scenarios=s.scenarios||[]; const at=s.scenarios.indexOf(k);
+    if(at>=0) s.scenarios.splice(at,1); else s.scenarios.push(k);
+    markDirty(); render(); return; }
+  if(d.seaspreset){
+    if(d.seaspreset==='baseline') seasonalityFromBaseline();
+    else { S.oneYear.seasonality=rotateToStart(SEASON_PRESETS[d.seaspreset].slice()); markDirty(); render();
+           toast(d.seaspreset==='flat'?'Every month set to an equal 8.3%.':'Seasonal shape applied — adjust any month to match your own year.'); }
+    return; }
+  if(d.addrock!=null){ S.oneYear.rocks[+d.addrock].push({text:'',owner:'',done:false}); markDirty(); render(); return; }
+  if(d.delrock!=null){ const [q,j]=d.delrock.split('|'); S.oneYear.rocks[+q].splice(+j,1); markDirty(); render(); return; }
+
+  switch(t.id){
+    case 'btnAddStrat': addStrategy(); break;
+    case 'btnStratLib': openLibrary(); break;
+    case 'btnDemo': loadDemo(); break;
+    case 'btnPaste': openPaste(); break;
+    case 'btnSeasNorm': {
+      const t=sum(S.oneYear.seasonality.map(num));
+      if(t>0){ S.oneYear.seasonality=S.oneYear.seasonality.map(v=>num(v)/t*12); markDirty(); render();
+               toast('Rebalanced so the twelve months average 1.00× — the shape is unchanged.'); }
+      break; }
+    case 'btnSave': doSave(); break;
+    case 'btnSaveAs': doSaveAs(); break;
+    case 'btnLoad': $('#fileIn').click(); break;
+    case 'btnPrint': printPack(); break;
+    case 'btnSelfTest': runSelfTest(); break;
+    case 'btnExportCsv': exportCsv(); break;
+    case 'btnReset': if(confirm('Reset everything back to an empty plan?')){ S=defaultState(); markDirty(); render(true); } break;
+  }
+});
+
+/* ─── strategies ───────────────────────────────────────────────── */
+function addStrategy(preset){
+  S.strategies.push(Object.assign({
+    name:'', domain:'Marketing', outcome:'Both', stage:'Strategy', shift:'', owner:S.meta.owner||'',
+    startMonth:1, fullMonth:12, ramp:'linear', confidence:70, cost:0, refined:false,
+    scenarios:[S.active], levers:[]
+  }, preset||{}));
+  markDirty(); render();
+  setTimeout(()=>{ const c=$$('.card[data-si]').pop(); if(c) c.querySelector('input').focus(); },40);
+}
+const LIBRARY = [
+  {name:'Price for margin — job costing on every job', domain:'Profitability & Financial Oversight', outcome:'Both',
+   shift:'Owner-Operator → CEO: I price from the numbers, not from what I think they will pay.',
+   levers:[{driver:'gpPct',value:2}], cost:400},
+  {name:'A sales process behind every quote', domain:'Sales', outcome:'Asset',
+   shift:'Owner-Operator → Leader: the follow-up is a system, not my memory.',
+   levers:[{driver:'quoteWin',value:8}], cost:600},
+  {name:'Marketing engine — double the lead flow', domain:'Marketing', outcome:'Asset',
+   shift:'Owner-Operator → CEO: leads are bought deliberately, not hoped for.',
+   levers:[{driver:'leads',value:25}], cost:4000},
+  {name:'Raise the average job value', domain:'Sales', outcome:'Both',
+   shift:'Owner-Operator → Investor: I sell the outcome, not the hour.',
+   levers:[{driver:'avgJobValue',value:600}], cost:0},
+  {name:'Second crew, led by a team leader', domain:'Human Capital', outcome:'Asset',
+   shift:'Owner-Operator → Leader: I build the person who runs the crew.',
+   levers:[{driver:'revPerHead',value:2000},{driver:'fixedCosts',value:6000}], cost:0},
+  {name:'Get out of the estimating seat', domain:'Workflow / Operations', outcome:'Freedom',
+   shift:'Owner-Operator → CEO: someone else prices, to my standard.',
+   levers:[{driver:'ownerHours',value:-8},{driver:'fixedCosts',value:7500}], cost:0},
+  {name:'Build the leadership layer', domain:'Culture', outcome:'Freedom',
+   shift:'Owner-Operator → Leader: I grow people, set standards, and hold the line on them.',
+   levers:[{driver:'ownerHours',value:-6},{driver:'fixedCosts',value:9000}], cost:0}
+];
+function openLibrary(){
+  overlay(`<h3 style="font-family:var(--serif);font-size:24px;margin:0 0 4px">The seven</h3>
+    <div class="tiny" style="margin-bottom:16px">Starting points drawn from the Boardroom work. Add one, then set the lever to your own numbers.</div>
+    ${LIBRARY.map((l,i)=>`<div class="lever" style="border-top:1px solid var(--rule);padding:11px 0">
+      <div style="flex:1"><div style="font-weight:600;font-size:13.5px">${esc(l.name)}</div>
+      <div class="tiny">${esc(l.domain)} · ${esc(l.outcome)} · ${l.levers.map(x=>esc(DRIVERS[x.driver].fmt(x.value))).join(' · ')}</div></div>
+      <button class="btn sm accent" data-lib="${i}">Add</button></div>`).join('')}`,
+    root=>{ $$('[data-lib]',root).forEach(b=>b.onclick=()=>{ addStrategy(JSON.parse(JSON.stringify(LIBRARY[+b.dataset.lib]))); closeOverlay(); }); });
+}
+
+/* ─── overlay ──────────────────────────────────────────────────── */
+function overlay(html, after){
+  closeOverlay();
+  const o=document.createElement('div');
+  o.id='ovl';
+  o.style.cssText='position:fixed;inset:0;background:rgba(14,26,34,.42);z-index:150;display:flex;align-items:center;justify-content:center;padding:24px';
+  o.innerHTML=`<div style="background:var(--paper-2);border-radius:14px;padding:26px 28px;max-width:640px;width:100%;max-height:84vh;overflow:auto;box-shadow:0 20px 60px rgba(14,26,34,.3)">${html}
+    <div class="btnrow" style="justify-content:flex-end"><button class="btn" id="ovlClose">Close</button></div></div>`;
+  document.body.appendChild(o);
+  o.addEventListener('click',ev=>{ if(ev.target===o||ev.target.id==='ovlClose') closeOverlay(); });
+  if(after) after(o);
+}
+function closeOverlay(){ const o=$('#ovl'); if(o) o.remove(); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeOverlay();
+  if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); doSave(); }
+});
+
+/* ─── paste from spreadsheet ───────────────────────────────────── */
+function openPaste(){
+  overlay(`<h3 style="font-family:var(--serif);font-size:24px;margin:0 0 4px">Paste from a spreadsheet</h3>
+    <div class="tiny" style="margin-bottom:12px">Paste rows in this order, twelve columns each, tabs or commas between them. Blank lines are skipped. Order: revenue, cost of sales, fixed costs, overhead, jobs, quotes, leads, owner hours, on-tools, office.</div>
+    <textarea id="pasteBox" class="full" style="min-height:180px;font-family:ui-monospace,monospace;font-size:12px" placeholder="180000&#9;192000&#9;…"></textarea>
+    <div class="btnrow"><button class="btn accent" id="pasteGo">Bring it in</button></div>`,
+    root=>{ root.querySelector('#pasteGo').onclick=()=>{
+      const txt=root.querySelector('#pasteBox').value;
+      const keys=['rev','cos','fixed','ovh','jobs','quotes','leads','ownerHrs','onTools','office'];
+      const lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+      const dv=currentDivision(); let n=0;
+      lines.forEach((line,i)=>{
+        if(i>=keys.length) return;
+        const cells=line.split(/[\t,;]+/).map(c=>num(c));
+        for(let m=0;m<12 && m<cells.length;m++){ dv.months[m][keys[i]]=cells[m]; }
+        n++;
+      });
+      closeOverlay(); markDirty(); render();
+      toast(n?`Brought in ${n} row${n===1?'':'s'}.`:'Nothing recognised in that paste.');
+    };});
+}
+function seasonalityFromBaseline(quiet){
+  const dv=business().norms;
+  const tot=Array.from({length:12},(_,i)=>sum(dv.map(d=>{
+    const src=S.divisions.find(x=>x.id===d.id); return src?num(src.months[i].rev):0;
+  })));
+  const t=sum(tot);
+  if(t<=0){ if(!quiet) toast('No monthly revenue in the baseline yet.'); return; }
+  S.oneYear.seasonality=tot.map(v=>v/t*12);
+  if(quiet) return;
+  markDirty(); render();
+  toast('Seasonality taken from your baseline revenue — the shape of your actual year.');
+}
+
+/* ─── demo data ────────────────────────────────────────────────── */
+function loadDemo(){
+  const dv=currentDivision();
+  const rev=[176000,168000,201000,214000,232000,241000,198000,186000,223000,239000,246000,209000];
+  rev.forEach((r,i)=>{
+    const m=dv.months[i];
+    m.rev=r; m.cos=Math.round(r*(0.655+((i%3)-1)*0.012));
+    m.fixed=41000+ (i>5?2500:0); m.ovh=9500;
+    m.jobs=Math.round(r/8400); m.quotes=Math.round(r/8400/0.46);
+    m.leads=Math.round(r/8400/0.46/0.78);
+    m.ownerHrs=63-i*0.3; m.onTools=7+(i>7?1:0); m.office=2;
+  });
+  // split the same business across two departments so divisions mode has real data
+  const d1=S.divisions.find(x=>x.id==='D1'), d2=S.divisions.find(x=>x.id==='D2');
+  [[d1,0.62],[d2,0.38]].forEach(([dd,sh])=>{
+    dv.months.forEach((m,i)=>{
+      Object.keys(m).forEach(k=>{ dd.months[i][k] = (k==='ownerHrs') ? num(m[k])*(sh>0.5?0.6:0.4)
+        : Math.round(num(m[k])*sh*100)/100; });
+    });
+  });
+  d1.active=true; d2.active=true;
+  d1.a.pricingMinutes=300; d1.a.revPerHead=27000;
+  d2.a.pricingMinutes=60;  d2.a.revPerHead=22000;
+  d1.t={netProfit:24000, fixedCosts:32000, gpPct:0.36, avgJobValue:16000, quoteWin:0.42, leadQuote:0.85};
+  d2.t={netProfit:14000, fixedCosts:20000, gpPct:0.41, avgJobValue:4200,  quoteWin:0.68, leadQuote:0.85};
+  const b=business();
+  dv.t={netProfit:38000, fixedCosts:52000, gpPct:0.38, avgJobValue:9500, quoteWin:0.55, leadQuote:0.85};
+  S.targets={netProfit:38000, fixedCosts:52000, gpPct:0.38, avgJobValue:9500, quoteWin:0.55, leadQuote:0.85};
+  S.fin.ownerSalary=140000; S.fin.marketSalary=120000; S.fin.debt=180000; S.fin.surplusCash=60000;
+  S.wellness.base={hours:63, onBiz:15, weekends:3, evenings:2, holidays:1, weeksWithout:1, income:140000, outside:0, exercise:1, sleep:6};
+  S.wellness.targ={hours:35, onBiz:70, weekends:0, evenings:5, holidays:6, weeksWithout:6, income:280000, outside:60000, exercise:4, sleep:7.5};
+  S.meta.company=S.meta.company||'Example Plumbing Ltd'; S.meta.owner=S.meta.owner||'Sam';
+  S.vision.statement=S.vision.statement||'In five years I own a business turning over four million with a leadership team running it, I work three days a week, I take six weeks off with the family, and it is worth enough to sell or hand to the kids.';
+  S.vision.biz={revenue:5200000, profit:1000000, value:3000000, team:24, role:'CEO · Leader · Investor'};
+  S.vision.life={hours:35, holidays:6, weekends:0, evenings:5, income:280000, whatFor:'Six weeks in the islands every year, and the building bought outright.'};
+  S.ownerRoles=[{role:'On tools',on:false,handover:0},{role:'Team Leader',on:false,handover:0},
+                {role:'Operations Manager',on:true,handover:0},{role:'Estimator',on:true,handover:2},
+                {role:'Office / Admin',on:false,handover:0}];
+  if(!S.strategies.length) LIBRARY.forEach((l,i)=>addStrategyQuiet(l,i));
+  seasonalityFromBaseline(true);
+  markDirty(); render(true);
+  toast('Example business loaded — including two departments you can switch on in Setup. Every number is editable.', 5200);
+}
+function addStrategyQuiet(preset,i){
+  S.strategies.push(Object.assign({name:'',domain:'Marketing',outcome:'Both',stage:i<2?'Refining':'Execution',
+    shift:'',owner:'',startMonth:1+i*3,fullMonth:12+i*3,ramp:'s',confidence:70,cost:0,refined:i<2,
+    scenarios:['A','B']}, JSON.parse(JSON.stringify(preset))));
+}
+
+/* ─── save / load ──────────────────────────────────────────────── */
+function serialise(){ return JSON.stringify(S,null,2); }
+function fileName(){
+  const c=(S.meta.company||'boardroom').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return c+'-growth-plan.json';
+}
+async function doSave(){
+  if(!fileHandle) return doSaveAs();
+  try{
+    if(fileHandle.queryPermission){
+      let p=await fileHandle.queryPermission({mode:'readwrite'});
+      if(p!=='granted') p=await fileHandle.requestPermission({mode:'readwrite'});
+      if(p!=='granted') throw new Error('denied');
+    }
+    const w=await fileHandle.createWritable(); await w.write(serialise()); await w.close();
+    dirty=false; paintSave(); toast('Saved to '+fileHandle.name);
+  }catch(err){ fileHandle=null; doSaveAs(); }
+}
+async function doSaveAs(){
+  if(window.showSaveFilePicker){
+    try{
+      fileHandle=await window.showSaveFilePicker({suggestedName:fileName(),
+        types:[{description:'Boardroom Growth Plan',accept:{'application/json':['.json']}}]});
+      const w=await fileHandle.createWritable(); await w.write(serialise()); await w.close();
+      dirty=false; paintSave(); toast('Saved to '+fileHandle.name); return;
+    }catch(err){ if(err && err.name==='AbortError') return; }
+  }
+  download(fileName(), serialise(), 'application/json');
+  dirty=false; paintSave();
+  toast('Downloaded '+fileName()+' — this browser cannot write files in place. Chrome or Edge can.', 6000);
+}
+function download(name, text, mime){
+  const b=new Blob([text],{type:(mime||'text/plain')+';charset=utf-8'}), u=URL.createObjectURL(b);
+  const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),4000);
+}
+function mergeState(loaded){
+  const base=defaultState();
+  const deep=(t,s2)=>{ Object.keys(s2||{}).forEach(k=>{
+    if(s2[k] && typeof s2[k]==='object' && !Array.isArray(s2[k]) && t[k] && typeof t[k]==='object' && !Array.isArray(t[k])) deep(t[k],s2[k]);
+    else t[k]=s2[k]; }); return t; };
+  const out = deep(base, loaded);
+  // seasonality used to be stored as % shares adding to 100; it is now an index averaging 1.00
+  const sTot = (out.oneYear.seasonality||[]).reduce((t,v)=>t+(Number(v)||0),0);
+  if(sTot>24) out.oneYear.seasonality = out.oneYear.seasonality.map(v=>(Number(v)||0)/sTot*12);
+  out.divisions.forEach(d=>{
+    if(!d.t) d.t={netProfit:0,fixedCosts:0,gpPct:0.35,avgJobValue:0,quoteWin:0.5,leadQuote:0.8};
+  });
+  // files written before the per-department budget carried one global target block
+  if(loaded && loaded.targets && (!loaded.divisions || !loaded.divisions[0] || !loaded.divisions[0].t)){
+    const w=out.divisions.find(d=>d.id==='WOB');
+    if(w) Object.assign(w.t, loaded.targets);
+  }
+  return out;
+}
+$('#fileIn').addEventListener('change', async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{ S=mergeState(JSON.parse(await f.text())); dirty=false; fileHandle=null; paintSave(); render(true); toast('Opened '+f.name); }
+  catch(err){ toast('That file could not be read as a growth plan.'); }
+  e.target.value='';
+});
+document.addEventListener('dragover',e=>{ e.preventDefault(); });
+document.addEventListener('drop', async e=>{
+  e.preventDefault(); const f=e.dataTransfer.files[0]; if(!f||!/\.json$/i.test(f.name)) return;
+  try{ S=mergeState(JSON.parse(await f.text())); dirty=false; paintSave(); render(true); toast('Opened '+f.name); }
+  catch(err){ toast('That file could not be read as a growth plan.'); }
+});
+window.addEventListener('beforeunload', e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
+
+function printPack(){
+  document.body.classList.add('printall');
+  const done=()=>{ document.body.classList.remove('printall'); window.removeEventListener('afterprint',done); };
+  window.addEventListener('afterprint',done);
+  render(true);
+  setTimeout(()=>window.print(), 120);
+}
+
+/* ─── CSV export ───────────────────────────────────────────────── */
+function exportCsv(){
+  const pr=project(S.active), Y=pr.years;
+  const rows=[['Boardroom Growth Plan', S.meta.company||'', 'Plan '+S.active, S.scenarios[S.active].label]];
+  rows.push([]);
+  const line=(l,pick,f)=>rows.push([l].concat(Y.map(y=>{ const v=pick(y); return (v==null||!Number.isFinite(v))?'':(f?f(v):Math.round(v*100)/100); })));
+  rows.push(['Metric'].concat(Y.map(y=>y.label)));
+  line('Revenue',y=>y.rev); line('Cost of sales',y=>y.cos); line('Gross profit',y=>y.gp);
+  line('Gross margin %',y=>y.gpPct==null?null:y.gpPct*100);
+  line('Fixed costs',y=>y.fixed); line('Net profit',y=>y.np); line('Normalised EBITDA',y=>y.ebitda);
+  line('Leads',y=>y.leads); line('Quotes',y=>y.quotes); line('Jobs',y=>y.jobs); line('Average job value',y=>y.ajv);
+  line('On tools',y=>y.cap.target); line('Team leaders',y=>y.cap.teamLeaders); line('Ops managers',y=>y.cap.opsManagers);
+  line('Estimators',y=>y.cap.estimators); line('Office',y=>y.cap.office); line('Total team',y=>y.cap.total);
+  line('Working capital movement',y=>y.dwc); line('Tax',y=>y.tax); line('Capex',y=>y.capex);
+  line('Cash generated',y=>y.cash); line('Cumulative cash',y=>y.cumCash);
+  line('Owner hours per week',y=>y.ownerHours); line('Freedom score',y=>y.freedom.score);
+  line('Business value',y=>y.value.equity);
+  const csv=rows.map(r=>r.map(c=>{ const s2=String(c==null?'':c); return /[",\n]/.test(s2)?'"'+s2.replace(/"/g,'""')+'"':s2; }).join(',')).join('\n');
+  download((S.meta.company||'boardroom').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-5-year-model.csv', csv, 'text/csv');
+  toast('CSV exported.');
+}
+
+/* ═══ §SELF-TEST — golden cases with hand-calculated answers ════ */
+function runSelfTest(){
+  const snap=JSON.stringify(S);
+  const out=[]; let pass=0, fail=0;
+  const T=(name, got, want, tol)=>{
+    const ok = (want==null) ? (got==null)
+      : (typeof want==='number' ? (got!=null && Math.abs(got-want)<=(tol==null?0.01:tol)) : got===want);
+    ok?pass++:fail++;
+    out.push(`${ok?'<span class="p">PASS</span>':'<span class="f">FAIL</span>'}  ${name}${ok?'':`\n        expected ${want}, got ${got}`}`);
+  };
+  const fresh=()=>{ S=defaultState(); return S.divisions.find(d=>d.id==='WOB'); };
+  const fill=(d,n,o)=>{ for(let i=0;i<n;i++) Object.assign(d.months[i], o(i)); };
+
+  // 1 — clean 12-month baseline: period ratio, not average of ratios
+  let d=fresh();
+  fill(d,12,i=>({rev:100000+i*10000, cos:60000+i*7000, fixed:20000, ovh:5000, jobs:10, quotes:20, leads:25, ownerHrs:60, onTools:5, office:2}));
+  let b=business();
+  const totRev=sum(Array.from({length:12},(_,i)=>100000+i*10000));
+  const totCos=sum(Array.from({length:12},(_,i)=>60000+i*7000));
+  T('1 · 12 months recognised', b.n, 12);
+  T('1 · revenue total', b.revenue, totRev);
+  T('1 · GP% is total GP ÷ total revenue', b.gpPct, (totRev-totCos)/totRev, 1e-9);
+  T('1 · net profit is derived, not entered', b.netProfit, (totRev-totCos)-12*25000, 0.5);
+  T('1 · average job value', b.avgJobValue, totRev/120, 1e-6);
+
+  // 2 — partial baseline: only entered months count
+  d=fresh(); fill(d,4,()=>({rev:100000,cos:65000,fixed:25000,jobs:10,quotes:20,leads:25,ownerHrs:60,onTools:5}));
+  b=business();
+  T('2 · partial baseline months', b.n, 4);
+  T('2 · monthly revenue uses 4 months', b.revenueM, 100000, 1e-6);
+  T('2 · empty months excluded from totals', b.revenue, 400000);
+
+  // 3 — zero revenue: no NaN, no Infinity, no error
+  d=fresh(); fill(d,3,()=>({rev:0,cos:0,fixed:8000,jobs:0,quotes:0,leads:5}));
+  b=business();
+  T('3 · zero revenue → GP% is null not NaN', b.gpPct, null);
+  T('3 · zero revenue → no Infinity', Number.isFinite(b.gpPct)===false, true);
+
+  // 4 — zero jobs
+  d=fresh(); fill(d,3,()=>({rev:90000,cos:50000,jobs:0,quotes:10,leads:12}));
+  b=business();
+  T('4 · zero jobs → average job value null', b.avgJobValue, null);
+
+  // 5 — 100% conversion: leads = quotes = jobs
+  S=defaultState(); S.targets={netProfit:30000,fixedCosts:45000,gpPct:0.35,avgJobValue:8500,quoteWin:1,leadQuote:1};
+  let F=funnel(S.targets);
+  T('5 · required GP', F.requiredGP, 75000);
+  T('5 · required revenue', F.revenue, 75000/0.35, 1e-6);
+  T('5 · 100% conversion → leads = jobs', F.leads, F.jobs, 1e-9);
+  T('5 · funnel back-checks to the profit asked for', F.revenue*0.35-45000, 30000, 1e-6);
+
+  // capacity rounding and the hiring rule (defects #4 and #5)
+  const cap=capacity(214285.71, 56, {revPerHead:25000,spanTL:6,spanOM:4,omThreshold:2,pricingMinutes:60,pricingCapacity:118,tradesPerOffice:5}, {onTools:6});
+  T('5 · on-tools exact requirement', cap.needed, 8.5714, 0.001);
+  T('5 · rounded up to whole people', cap.target, 9);
+  T('5 · hires = target − current, never a MOD test', cap.hires, 3);
+  T('5 · utilisation shown separately', cap.util, 8.5714/9, 0.001);
+  T('5 · team leaders at span 6', cap.teamLeaders, 2);
+  T('5 · ops manager threshold respected', cap.opsManagers, 1);
+  T('5 · pricing hours come from quotes', cap.pricingHours, 56);
+  T('5 · estimators', cap.estimators, 1);
+
+  // 6 — scenario with no strategies moves only by macro
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,()=>({rev:100000,cos:65000,fixed:25000,jobs:12,quotes:24,leads:30,ownerHrs:60,onTools:4,office:1}));
+  S.scenarios.A.macro=S.scenarios.A.macro.map(()=>({market:0.10,price:0,wage:0,ovh:0}));
+  let pr=project('A');
+  T('6 · no strategies → year 1 = baseline × market growth', pr.years[1].rev, 1200000*1.10, 500);
+  T('6 · year 2 compounds', pr.years[2].rev, 1200000*1.21, 900);
+
+  // 7 — two strategies on the same driver add up
+  S.strategies=[
+    {name:'a',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:2}]},
+    {name:'b',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:3}]}
+  ];
+  pr=project('A');
+  T('7 · overlapping levers sum in percentage points', pr.years[1].gpPct, 0.35+0.05, 1e-6);
+  S.strategies[1].confidence=50;
+  pr=project('A');
+  T('7 · confidence weights the lever', pr.years[1].gpPct, 0.35+0.02+0.015, 1e-6);
+  S.strategies=[{name:'c',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:7,fullMonth:7,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:6}]}];
+  pr=project('A');
+  T('7 · a lever starting in month 7 affects only half of year 1', pr.years[1].gpPct, 0.38, 0.0005);
+
+  // 8 — divisions: only ACTIVE divisions roll up; assumptions are weighted, never summed
+  S=defaultState(); S.divisionsOn=true;
+  const d1=S.divisions.find(x=>x.id==='D1'), d2=S.divisions.find(x=>x.id==='D2');
+  d1.active=true; d2.active=true;
+  fill(d1,12,()=>({rev:100000,cos:60000,fixed:20000,jobs:10,quotes:20,leads:24,onTools:4,ownerHrs:60}));
+  fill(d2,12,()=>({rev:50000,cos:32500,fixed:9000,jobs:20,quotes:40,leads:50,onTools:2,ownerHrs:60}));
+  d1.a.spanTL=6; d2.a.spanTL=6;
+  d1.a.revPerHead=25000; d2.a.revPerHead=20000;
+  b=business();
+  T('8 · only active divisions roll up', b.divisions, 2);
+  T('8 · revenue sums across active divisions', b.revenue, 1800000);
+  T('8 · span of control is NOT summed', b.a.spanTL, 6, 1e-9);
+  T('8 · revenue per head is revenue-weighted', b.a.revPerHead, (25000*1200000+20000*600000)/1800000, 1);
+  S.divisions.filter(x=>['D3','D4','D5','D6','D7'].includes(x.id)).forEach(x=>{ fill(x,12,()=>({rev:999999,cos:1,jobs:1})); });
+  b=business();
+  T('8 · inactive divisions contribute nothing', b.revenue, 1800000);
+
+  // 8b — the consolidated view on budget
+  S=defaultState(); S.divisionsOn=true;
+  const b1=S.divisions.find(x=>x.id==='D1'), b2=S.divisions.find(x=>x.id==='D2');
+  b1.active=true; b2.active=true;
+  fill(b1,12,()=>({rev:100000,cos:64000,fixed:20000,jobs:10,quotes:20,leads:24,onTools:4,ownerHrs:60}));
+  fill(b2,12,()=>({rev:50000,cos:29500,fixed:9000,jobs:20,quotes:40,leads:50,onTools:2,ownerHrs:60}));
+  b1.t={netProfit:20000,fixedCosts:30000,gpPct:0.40,avgJobValue:12500,quoteWin:0.50,leadQuote:0.80};
+  b2.t={netProfit:10000,fixedCosts:15000,gpPct:0.50,avgJobValue:4000, quoteWin:0.80,leadQuote:1.00};
+  b1.a.pricingMinutes=300; b2.a.pricingMinutes=60;
+  const BG=budget();
+  // hand-calculated: D1 required revenue = (20000+30000)/0.40 = 125000
+  //                  D2 required revenue = (10000+15000)/0.50 =  50000
+  T('8b · desired sales add across departments', BG.total.revenue, 175000, 0.5);
+  T('8b · desired profit adds', BG.total.netProfit, 30000);
+  T('8b · consolidated margin is re-derived, not averaged', BG.total.gpPct, 75000/175000, 1e-9);
+  T('8b · consolidated margin is NOT the mean of 40% and 50%', Math.abs(BG.total.gpPct-0.45)>0.005, true);
+  // D1 jobs = 125000/12500 = 10 ; D2 jobs = 50000/4000 = 12.5
+  T('8b · jobs add across departments', BG.total.jobs, 22.5, 1e-6);
+  T('8b · consolidated average job value re-derived', BG.total.avgJobValue, 175000/22.5, 1e-6);
+  // D1 quotes = 10/0.5 = 20 ; D2 quotes = 12.5/0.8 = 15.625
+  T('8b · quotes add', BG.total.quotes, 35.625, 1e-6);
+  T('8b · consolidated win rate re-derived', BG.total.quoteWin, 22.5/35.625, 1e-9);
+  T('8b · pricing minutes weighted, not summed', BG.b.a.pricingMinutes,
+      (300*1200000+60*600000)/1800000, 0.01);
+  T('8b · pricing minutes are not 360', Math.abs(BG.b.a.pricingMinutes-360)>1, true);
+  // capacity: D1 125000/25000 = 5 exact ; D2 50000/25000 = 2 exact
+  T('8b · workforce headcount DOES add up', BG.capTotal.target, 7);
+  T('8b · hires add up', BG.capTotal.hires, 1);   // D1 5-4=1, D2 2-2=0
+  b2.active=false;
+  const BG2=budget();
+  T('8b · switching a department off removes it from the budget', BG2.total.revenue, 125000, 0.5);
+
+  // freedom score in both directions, and the degenerate guard
+  S=defaultState();
+  S.wellness.base={hours:70,onBiz:10,weekends:4,evenings:1,holidays:1,weeksWithout:0,income:100000,outside:0,exercise:0,sleep:6};
+  S.wellness.targ={hours:35,onBiz:70,weekends:0,evenings:5,holidays:6,weeksWithout:6,income:250000,outside:0,exercise:4,sleep:8};
+  T('9 · lower-is-better scores upward', comp(50,70,35), 57.14, 0.01);
+  T('9 · higher-is-better scores upward', comp(3,1,6), 40, 0.01);
+  T('9 · target equal to baseline does not divide by zero', comp(5,5,5), 100);
+  T('9 · out-of-range clamps to 100', comp(20,70,35), 100);
+
+  // no NaN / Infinity anywhere on a fuzzed state
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,i=>({rev:i%2?0:1e12, cos:-5000, fixed:0, jobs:0, quotes:0, leads:0, ownerHrs:0, onTools:0}));
+  S.targets={netProfit:-1,fixedCosts:0,gpPct:0,avgJobValue:0,quoteWin:0,leadQuote:0};
+  let bad=0;
+  try{
+    const p2=project('A');
+    JSON.stringify(p2.years, (k,v)=>{ if(typeof v==='number' && !Number.isFinite(v)) bad++; return v; });
+    const f2=funnel(S.targets);
+    Object.values(f2).forEach(v=>{ if(typeof v==='number' && !Number.isFinite(v)) bad++; });
+  }catch(err){ bad=-1; out.push('<span class="f">FAIL</span>  10 · fuzz threw: '+err.message); }
+  T('10 · fuzzed inputs produce no NaN or Infinity', bad, 0);
+
+  S=JSON.parse(snap);
+  render(true);
+  const el=$('#selftestout');
+  if(el) el.innerHTML=`<div class="selftest">${pass} passed · ${fail} failed\n\n${out.join('\n')}</div>`;
+  toast(fail? `${fail} test${fail===1?'':'s'} failed — see the panel.` : `All ${pass} checks passed.`, 4200);
+}
+
+/* ─── init ─────────────────────────────────────────────────────── */
+render(true);
+paintSave();
+if(/[?&]selftest=1/.test(location.search)) { go('settings'); setTimeout(runSelfTest, 200); }
+window.addEventListener('resize', ()=>{ clearTimeout(window._rz); window._rz=setTimeout(()=>render(), 220); });
+
+})();
+</script>
+</body>
+</html>
