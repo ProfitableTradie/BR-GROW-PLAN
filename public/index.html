@@ -1812,6 +1812,22 @@ function thriveReflection(){
 function renderThrive(){
   const T=S.thrive, X=thriveScores();
   const lvls=['Surviving','Stable','Comfortable','Thriving','Optimal'];
+
+  /* The score, drawn twice: as the summary up top and again as the payoff at
+     the foot of a long page, so you are not scrolling back up to see what the
+     nine rows did. One function, so the two can never disagree.
+     The tween keys must differ. runTweens() keeps one previous value per key
+     in TW and overwrites it as it walks the DOM, so two spans sharing a key
+     leave the second reading from===to — it would snap while its twin
+     counted up. */
+  const scoreBlock = (sfx, unscored) => `<div class="mgrid" style="margin-top:18px">
+      ${metric('Thrive Index today', X.tis,'n1', X.level?`${X.level} · out of 100`:unscored,'', 'ti_now'+sfx)}
+      ${metric('Thrive Index wanted', X.tisD,'n1', X.levelD?`${X.levelD}`:'', 'hero', 'ti_want'+sfx)}
+      ${metric('The lift', X.lift,'n1', X.lift!=null?'Points between today and wanted':'', 'accent','ti_lift'+sfx)}
+      ${metric('To the next level', X.toNext,'n1', X.level&&X.toNext!=null?(X.toNext>0?`points to leave ${X.level}`:'Already at the top band'):'','', 'ti_next'+sfx)}
+    </div>
+    <div class="lvlbar">${lvls.map(l=>`<div class="${X.level===l?'on':(X.levelD===l?'want':'')}">${esc(l)}</div>`).join('')}</div>`;
+
   return head('02 · The why','Thrive Index',
     `The rest of this plan is the business. This page is the life it is supposed to be funding — and it is the honest answer to <em>why bother</em>. Score it before you go near the numbers, and again every time you come back to the room.`)
 
@@ -1822,14 +1838,8 @@ function renderThrive(){
       <b>Score it honestly.</b> Not the answer you would give in the room. The gap between the two bars is the whole point — a row with no gap needs no work, and a row with a gap of six is where your five years actually go.
     </div>`
 
-  + `<div class="mgrid" style="margin-top:18px">
-      ${metric('Thrive Index today', X.tis,'n1', X.level?`${X.level} · out of 100`:'Score the nine rows below','', 'ti_now')}
-      ${metric('Thrive Index wanted', X.tisD,'n1', X.levelD?`${X.levelD}`:'', 'hero', 'ti_want')}
-      ${metric('The lift', X.lift,'n1', X.lift!=null?'Points between today and wanted':'', 'accent','ti_lift')}
-      ${metric('To the next level', X.toNext,'n1', X.level&&X.toNext!=null?(X.toNext>0?`points to leave ${X.level}`:'Already at the top band'):'','', 'ti_next')}
-    </div>
-    <div class="lvlbar">${lvls.map(l=>`<div class="${X.level===l?'on':(X.levelD===l?'want':'')}">${esc(l)}</div>`).join('')}</div>
-    <div class="cap">Solid copper is where you are now. The pale band is where you are heading. Bands follow the Thrive Index: under 40 Surviving, under 60 Stable, under 80 Comfortable, under 90 Thriving, then Optimal.</div>`
+  + scoreBlock('', 'Score the nine rows below')
+    + `<div class="cap">Solid copper is where you are now. The pale band is where you are heading. Bands follow the Thrive Index: under 40 Surviving, under 60 Stable, under 80 Comfortable, under 90 Thriving, then Optimal.</div>`
 
   + `<div class="scrollx" style="margin-top:26px"><table class="t thrive">
       <thead><tr><th>Life category</th><th style="text-align:center">Where you are today</th>
@@ -1899,7 +1909,10 @@ function renderThrive(){
           <input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="thrive.fin.${i}.income" data-kind="numn" data-raw="${esc(r.income==null?'':String(r.income))}" value="${UI.editing==='thrive.fin.'+i+'.income'?(r.income==null?'':r.income):grouped(r.income)}" aria-label="${esc(r.level)} monthly income"></div></td>
         <td style="text-align:left"><input type="text" class="full" style="font-size:13.5px" data-path="thrive.fin.${i}.shifts" data-kind="str" value="${esc(r.shifts||'')}" placeholder="${esc(i===1?'e.g. reduce workdays; hire help':i===2?'e.g. relocate; invest; outsource':i===3?'e.g. multiple income streams; legacy projects':'')}"></td></tr>`).join('')}
     </tbody></table></div>
-    <div class="cap">This is the line between the Thrive Index and the Budget tab. Whatever "Thriving" costs you a month is what the business has to pay you — put that figure into your desired net profit and personal income, and the rest of the plan works backwards from it.</div>`;
+    <div class="cap">This is the line between the Thrive Index and the Budget tab. Whatever "Thriving" costs you a month is what the business has to pay you — put that figure into your desired net profit and personal income, and the rest of the plan works backwards from it.</div>`
+
+  + sech('Where you landed','The same score, now that you have filled the page in')
+  + scoreBlock('_foot', 'Score the nine rows above');
 }
 
 function fiveYearDate(){
