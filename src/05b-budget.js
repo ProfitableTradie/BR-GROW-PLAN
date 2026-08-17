@@ -117,7 +117,7 @@ function assumptionsTable(dv, cap, capNow){
 
 function renderBudget(){
   if(!S.divisionsOn) UI.div='WOB';
-  else if(UI.div==='WOB'){ const a=S.divisions.find(d=>d.active&&d.id!=='WOB'); UI.div=a?a.id:'D1'; }
+  else if(UI.div==='WOB' || UI.div==='CONS'){ const a=S.divisions.find(d=>d.active&&d.id!=='WOB'); UI.div=a?a.id:'D1'; }
   const dv = currentDivision();
   const nz = normalise(dv), f = funnel(dv.t);
   const cap  = capacity(f.revenue, f.quotes, dv.a, {onTools:nz.onTools});
@@ -125,7 +125,7 @@ function renderBudget(){
   const B = budget();
   const dpath = divPath(dv.id);
 
-  return head('04 · The budget','Budget & Workforce',
+  return head('06 · The budget','Budget & Workforce',
     `Where the business is now, where it needs to get to, and the team that gets it there — set one department at a time, then rolled up. This is the shape of the original Boardroom calculator: <strong>desired versus actuals</strong>, then the <strong>assumptions</strong> behind it, then the <strong>workforce planning</strong> that falls out of both.`)
 
   + (S.divisionsOn ? `<div class="divchips">
@@ -142,7 +142,7 @@ function renderBudget(){
       <span><i class="swout"></i>The <b>dark</b> boxes calculate</span>
       <span>Nothing labelled as an input is ever a formula.</span></div>`
 
-  + sech(`Where ${dv.name} is now`, `${nz.n} of 12 months entered on the Baseline tab`)
+  + sech(`Where ${dv.name} is now`, `${nz.n} of 12 months entered on the Scenario Forecaster`)
   + `<div class="mgrid">
       ${metric('Revenue', nz.revenueM,'money','Per month','','bg_rev')}
       ${metric('Gross margin', nz.gpPct,'pct','Total GP ÷ total revenue','','bg_gp')}
@@ -200,5 +200,5 @@ function renderBudget(){
       <tr class="tot"><td>Total team</td>${B.per.map(x=>`<td>${n0(x.cap.total)}</td>`).join('')}<td class="want"><b>${n0(B.capTotal.total)}</b></td></tr>
     </tbody></table></div>` : '')
 
-  + `<div class="note">This budget is the monthly run rate the business has to hit. The One Year tab takes it and shapes it across twelve months; the Scenarios tab forecasts how the strategy stack gets you there.</div>`;
+  + `<div class="note">This budget is the monthly run rate the business has to hit. The One Year tab takes it and shapes it across twelve months; the Strategies tab is how the plan gets you there.</div>`;
 }

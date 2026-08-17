@@ -6,9 +6,19 @@
 <title>Boardroom Growth Plan — Profitable Tradie</title>
 <style>
 :root{
-  --ink:#0E1A22; --ink-2:#1C2C38; --paper:#F7F5F1; --paper-2:#FFFFFF;
-  --rule:#DCD6CC; --muted:#5E6B74; --accent:#C2703A; --accent-soft:#F0E2D6;
-  --steel:#3D5A6C; --good:#2E7D5B; --warn:#B8862F; --bad:#A4433B;
+  /* Palette lifted from Boardroom Growth Plan v2.0 — ink navy and brand gold.
+     Two gold tokens, deliberately:
+       --brand      #FFE600  a FILL. Only ever sits under --on-brand ink text.
+       --accent     #8A6508  a MARK. Gold dark enough to be read as text or
+                             drawn as a hairline on paper (7.0:1 on --paper).
+     Never put white on --brand and never set --brand as text on paper. */
+  --ink:#16213C; --ink-2:#0B0C0F; --ink-3:#243354;
+  --paper:#ECEDF1; --paper-2:#FFFFFF; --paper-3:#F3F4F7;
+  --rule:#E2E3E9; --rule-2:#C9CBD4; --muted:#565D71; --muted-2:#7C8299;
+  --brand:#FFE600; --on-brand:#16213C; --accent:#8A6508;
+  --accent-soft:#FBF7DE; --accent-edge:#ECE3B8;
+  --steel:#46587A; --good:#146341; --warn:#7A5205; --bad:#96271F;
+  --ring:0 0 0 3px rgba(255,230,0,.42);
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
   --ease:cubic-bezier(.32,.72,0,1);
@@ -17,7 +27,10 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
-  margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+  margin:0; color:var(--ink); font-family:var(--sans);
+  background-color:var(--paper);
+  background-image:radial-gradient(rgba(22,33,60,.028) 1px, transparent 1px);
+  background-size:26px 26px;
   font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
   font-variant-numeric:tabular-nums;
 }
@@ -28,29 +41,29 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ============ TOP BAR ============ */
 .bar{
   position:sticky; top:0; z-index:80; display:flex; align-items:center; gap:14px;
-  padding:0 20px; min-height:52px; background:var(--ink); color:#EDE8E1;
-  border-bottom:1px solid #000; flex-wrap:wrap; row-gap:7px;
+  padding:0 20px; min-height:52px; background:var(--ink-2); color:#EDE9DC;
+  border-bottom:3px solid var(--brand); flex-wrap:wrap; row-gap:7px;
 }
-.bar .brand{font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:#9FB0BB; white-space:nowrap}
+.bar .brand{font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:#A7ADBE; white-space:nowrap}
 .bar .brand b{color:#fff}
-.bar .brand .ver{color:var(--accent); letter-spacing:.08em; margin-left:4px}
+.bar .brand .ver{color:var(--brand); letter-spacing:.08em; margin-left:4px}
 .bar .spacer{margin-left:auto}
 .seg{display:flex; background:rgba(255,255,255,.07); border-radius:7px; padding:2px; gap:2px}
 .seg button{
-  border:0; background:transparent; color:#9FB0BB; font-size:12px; font-weight:600;
+  border:0; background:transparent; color:#A7ADBE; font-size:12px; font-weight:600;
   padding:5px 13px; border-radius:5px; cursor:pointer; transition:all .18s var(--ease); white-space:nowrap;
 }
 .seg button:hover{color:#EDE8E1}
-.seg button.on{background:var(--accent); color:#fff}
+.seg button.on{background:var(--brand); color:var(--on-brand)}
 .tbtn{
   border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); color:#EDE8E1;
   font-size:12.5px; font-weight:600; padding:6px 13px; border-radius:6px; cursor:pointer;
   transition:background .18s var(--ease); white-space:nowrap;
 }
 .tbtn:hover{background:rgba(255,255,255,.15)}
-.tbtn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
-.tbtn.primary:hover{background:#D07C41}
-.savestat{font-size:11px; font-weight:600; color:#8FA3AF; min-width:104px; text-align:right}
+.tbtn.primary{background:var(--brand); border-color:var(--brand); color:var(--on-brand); font-weight:700}
+.tbtn.primary:hover{background:#F5DE00}
+.savestat{font-size:11px; font-weight:600; color:#8FA3AF; min-width:92px; text-align:right}
 .savestat.dirty{color:#F0B87A}
 .savestat.ok{color:#7FD6A5}
 
@@ -65,8 +78,8 @@ nav.rail{
   display:flex; gap:12px; align-items:baseline; padding:10px 24px; text-decoration:none;
   color:var(--ink); border-left:2px solid transparent; cursor:pointer; transition:background .16s var(--ease);
 }
-.rail a:hover{background:rgba(194,112,58,.06)}
-.rail a.on{border-left-color:var(--accent); background:rgba(194,112,58,.09)}
+.rail a:hover{background:rgba(255,230,0,.10)}
+.rail a.on{border-left-color:var(--brand); background:rgba(255,230,0,.15)}
 .rail a .n{font-family:var(--serif); font-size:15px; color:var(--accent); flex:none; width:22px}
 .rail a .t{font-size:13.5px; font-weight:600; letter-spacing:.01em}
 .rail a .d{display:block; font-size:11.5px; color:var(--muted); font-weight:400; margin-top:1px; line-height:1.35}
@@ -90,17 +103,65 @@ h2.sec{font-family:var(--serif); font-size:25px; font-weight:600; letter-spacing
 .tiny{font-size:12px; color:var(--muted); line-height:1.45}
 .cap{font-size:12.5px; color:var(--muted); margin-top:10px; max-width:70ch}
 
+/* ── Numbers are typed, not nudged. No spinner arrows anywhere. ── */
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+
 /* ============ METRICS ============ */
 .mgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px; background:transparent}
 .m{background:var(--paper-2); padding:20px 20px 22px; outline:1px solid var(--rule)}
 .m .ml{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:8px; line-height:1.3}
 .m .mv{font-family:var(--serif); font-size:34px; line-height:1; letter-spacing:-.02em}
 .m .ms{font-size:12.5px; color:var(--muted); margin-top:7px}
-.m.hero{background:var(--ink); color:#fff}
+.m.hero{background:var(--ink); color:#fff; box-shadow:inset 0 3px 0 var(--brand)}
 .m.hero .ml{color:#8FA3AF}
 .m.hero .mv{color:#fff; font-size:42px}
-.m.hero .ms{color:#9FB0BB}
+.m.hero .ms{color:#A7ADBE}
 .m.accent .mv{color:var(--accent)}
+/* editable metric — keeps the serif figure, adds a typing affordance */
+.mrow{display:flex; align-items:baseline; gap:7px}
+.m .minput{
+  font-family:var(--serif); font-size:34px; line-height:1.05; letter-spacing:-.02em;
+  width:100%; min-width:0; border:0; border-bottom:1.5px dashed var(--rule);
+  background:transparent; padding:0 0 5px; color:inherit; border-radius:0;
+}
+.m .minput::placeholder{color:inherit; opacity:.45}
+.m .minput:hover{border-bottom-color:var(--accent)}
+.m .minput:focus{outline:none; border-bottom-style:solid; border-bottom-color:var(--accent)}
+.m .msuf{font-family:var(--serif); font-size:21px; color:var(--muted); flex:none}
+.m.hero .minput{color:#fff; font-size:42px; border-bottom-color:rgba(255,255,255,.28)}
+.m.hero .msuf{color:#8FA3AF}
+.m.accent .minput{color:var(--accent)}
+.mreset{font-size:11.5px; color:var(--accent); cursor:pointer; background:none;
+  border:0; padding:0; text-decoration:underline; font-weight:600}
+.mreset:hover{color:var(--ink)}
+
+/* role chips — Owner-Operator is on the board, struck out, unselectable */
+.roles{display:flex; gap:9px; align-items:center; flex-wrap:wrap; margin-top:8px}
+.rolechip{
+  border:1px solid var(--rule); background:var(--paper-2); border-radius:999px;
+  padding:8px 17px; font-size:13px; font-weight:600; cursor:pointer;
+  transition:all .16s var(--ease); color:var(--ink);
+}
+.rolechip:hover{border-color:var(--ink)}
+.rolechip.on{background:var(--ink); border-color:var(--ink); color:#fff; box-shadow:inset 0 2px 0 var(--brand)}
+.rolechip.gone{
+  text-decoration:line-through; text-decoration-thickness:1.5px;
+  text-decoration-color:var(--bad); color:var(--muted); background:transparent;
+  border-style:dashed; cursor:not-allowed;
+}
+.rolechip.gone:hover{border-color:var(--rule)}
+.rolearrow{color:var(--accent); font-size:19px; font-weight:700; padding:0 2px}
+
+/* the NLP prompt panel above the statement */
+.prompts{background:var(--ink); color:#EDE9DC; border-radius:11px; padding:24px 28px 26px; margin-bottom:18px}
+.prompts h4{font-family:var(--serif); font-size:21px; color:#fff; margin:0 0 4px; font-weight:600}
+.prompts .pl{font-size:12.5px; color:#A7ADBE; margin-bottom:16px; line-height:1.5}
+.prompts ol{margin:0; padding-left:22px}
+.prompts li{font-family:var(--serif); font-size:17px; line-height:1.5; margin-bottom:11px; color:#EDE9DC}
+.prompts li:last-child{margin-bottom:0}
+.prompts li b{color:var(--brand); font-family:var(--sans); font-size:14px; font-weight:700}
 .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
 
 /* ============ TABLES ============ */
@@ -119,7 +180,7 @@ table.t tr.grp td{
 }
 table.t tr.tot td{font-weight:700; border-bottom:2px solid var(--ink); color:var(--ink)}
 table.t tr.sub td:first-child{padding-left:16px; color:var(--muted)}
-table.t tbody tr:hover td{background:rgba(194,112,58,.045)}
+table.t tbody tr:hover td{background:#F3F6FC}
 table.t tr.grp:hover td, table.t tr.spacer:hover td{background:transparent}
 .scrollx{overflow-x:auto; margin:0 -40px; padding:0 40px}
 
@@ -135,9 +196,25 @@ table.t tr.grp:hover td, table.t tr.spacer:hover td{background:transparent}
   transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
 }
 .f select{text-align:left; width:150px}
-.f input:focus, .f select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.f input:focus, .f select:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 .f input:hover, .f select:hover{border-color:#C3BBAE}
 .f input.wide{width:100%}
+/* money field — the currency symbol sits inside the box, so it reads as
+   part of the figure rather than as a label */
+.f .fmoney{
+  display:flex; align-items:center; flex:none; width:132px;
+  border:1px solid var(--rule); border-radius:6px; background:var(--paper-2);
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.f .fmoney:hover{border-color:#C3BBAE}
+.f .fmoney:focus-within{border-color:var(--ink); box-shadow:var(--ring)}
+.f .fmoney > span{padding:0 2px 0 10px; color:var(--muted); font-size:14px; flex:none; line-height:1}
+.f .fmoney > input{
+  width:100%; min-width:0; flex:1; border:0; background:transparent;
+  padding:7px 10px 7px 3px; text-align:right;
+}
+.f .fmoney > input:focus{outline:none; box-shadow:none; border:0}
+.f .fmoney > input:hover{border:0}
 .f .out{width:132px; flex:none; text-align:right; font-weight:700; font-size:14.5px; padding:7px 0}
 .f.derived{background:linear-gradient(90deg,transparent,rgba(14,26,34,.028))}
 input[type=text].full, textarea.full{
@@ -145,7 +222,7 @@ input[type=text].full, textarea.full{
   background:var(--paper-2); font-size:15px; text-align:left;
 }
 textarea.full{min-height:82px; resize:vertical; line-height:1.55; font-family:var(--serif); font-size:17px}
-input[type=text].full:focus, textarea.full:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+input[type=text].full:focus, textarea.full:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); margin:18px 0 7px}
 
 /* ============ PILLS / NOTES ============ */
@@ -154,8 +231,8 @@ label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:
 .pill.warn{background:rgba(184,134,47,.15); color:#8A6318}
 .pill.bad{background:rgba(164,67,59,.13); color:var(--bad)}
 .pill.neutral{background:rgba(94,107,116,.12); color:var(--muted)}
-.pill.accent{background:var(--accent-soft); color:#8A4A1E}
-.note{margin:22px 0 0; padding:17px 21px; border-left:3px solid var(--accent); background:var(--accent-soft); font-family:var(--serif); font-size:17px; line-height:1.5; color:#4A3527}
+.pill.accent{background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent-edge)}
+.note{margin:22px 0 0; padding:17px 21px; border-left:3px solid var(--brand); background:var(--accent-soft); font-family:var(--serif); font-size:17px; line-height:1.5; color:var(--ink)}
 .alert{display:flex; gap:12px; align-items:flex-start; padding:13px 17px; border:1px solid var(--rule); border-left:3px solid var(--warn); background:var(--paper-2); font-size:13.5px; margin-bottom:8px; line-height:1.45}
 .alert.bad{border-left-color:var(--bad)}
 .alert.good{border-left-color:var(--good)}
@@ -166,8 +243,8 @@ label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:
 /* ============ BUTTONS ============ */
 .btn{border:1px solid var(--rule); background:var(--paper-2); font-size:13px; font-weight:600; padding:8px 15px; border-radius:7px; cursor:pointer; transition:all .16s var(--ease)}
 .btn:hover{border-color:var(--ink); background:#fff}
-.btn.accent{background:var(--accent); border-color:var(--accent); color:#fff}
-.btn.accent:hover{background:#D07C41; border-color:#D07C41}
+.btn.accent{background:var(--brand); border-color:var(--on-brand); color:var(--on-brand); font-weight:700}
+.btn.accent:hover{background:#F5DE00; border-color:var(--on-brand)}
 .btn.ghost{background:transparent; border-style:dashed; color:var(--steel)}
 .btn.sm{font-size:11.5px; padding:5px 11px}
 .btn.danger:hover{border-color:var(--bad); color:var(--bad)}
@@ -196,7 +273,7 @@ label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:
   background:var(--paper-2); font-size:13px; text-align:left; min-width:0;
 }
 .cf input[type=number]{text-align:right}
-.cf input:focus, .cf select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.cf input:focus, .cf select:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 
 /* ============ TWO COLUMN ============ */
 .two{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--rule); border:1px solid var(--rule)}
@@ -220,30 +297,52 @@ svg.chart .dl{font-size:11px; font-weight:700; font-family:var(--sans)}
   background:var(--paper-2); border:1px solid var(--rule); border-radius:10px; padding:13px 16px;
   min-width:168px; text-align:center; position:relative;
 }
-.obox.owner{border-color:var(--accent); border-width:2px; background:var(--accent-soft)}
+.obox.owner{border-color:var(--on-brand); border-width:2px; background:var(--accent-soft); box-shadow:inset 0 3px 0 var(--brand)}
 .obox.vacant{border-style:dashed; background:transparent}
 .obox .or{font-size:13px; font-weight:700; line-height:1.25}
 .obox .on{font-size:11.5px; color:var(--muted); margin-top:2px}
 .obox .oc{font-size:11.5px; color:var(--steel); margin-top:5px; font-weight:600}
-.obox .tag{position:absolute; top:-9px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; background:var(--accent); color:#fff; padding:2px 8px; border-radius:999px; white-space:nowrap}
+.obox .tag{position:absolute; top:-9px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; background:var(--brand); color:var(--on-brand); border:1px solid var(--on-brand); padding:2px 8px; border-radius:999px; white-space:nowrap}
 .orgstem{width:1px; height:22px; background:var(--rule)}
 
+/* ============ THRIVE INDEX ============ */
+.scale{display:flex; gap:3px}
+.scale button{
+  width:27px; height:27px; padding:0; border:1px solid var(--rule);
+  background:var(--paper-2); border-radius:5px; font-size:11px; font-weight:600;
+  color:var(--muted); cursor:pointer; transition:all .12s var(--ease); flex:none;
+}
+.scale button:hover{border-color:var(--ink); color:var(--ink)}
+.scale.cur button.on{background:var(--ink); border-color:var(--ink); color:#fff}
+.scale.des button.on{background:var(--brand); border-color:var(--on-brand); color:var(--on-brand)}
+.scale.cap button.on{background:var(--steel); border-color:var(--steel); color:#fff}
+table.thrive td{padding:7px 12px; vertical-align:middle}
+table.thrive td:first-child{min-width:210px; font-size:13px}
+table.thrive td.sc{width:1%; white-space:nowrap}
+table.thrive .gapcell{font-weight:700; width:70px}
+.tishead{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:transparent; margin-bottom:4px}
+.lvlbar{display:flex; gap:3px; margin-top:12px}
+.lvlbar div{flex:1; text-align:center; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; padding:7px 4px; background:var(--paper-2); color:var(--muted); outline:1px solid var(--rule)}
+.lvlbar div.on{background:var(--brand); color:var(--on-brand); outline-color:var(--on-brand)}
+.lvlbar div.want{background:var(--accent-soft); color:var(--accent); outline-color:var(--accent-edge)}
+
 /* ============ BUDGET TABLE ============ */
-table.bud td.ideal{color:var(--muted); font-size:12.5px; background:rgba(61,90,108,.05)}
-table.bud td.want{background:rgba(194,112,58,.07)}
+table.bud td.ideal{color:var(--muted); font-size:12.5px; background:var(--paper-3)}
+table.bud td.want{background:var(--accent-soft)}
 /* The original workbook's convention: type into the amber boxes, the dark
    boxes calculate. Keeps "which cells do I fill in" unmistakable. */
-table.t td.inp,  table.bud td.want.inp {background:rgba(194,112,58,.13)}
+table.t td.inp,  table.bud td.want.inp {background:var(--accent-soft)}
 table.t td.calc, table.bud td.want.calc{background:var(--ink); color:#fff}
 table.t td.calc b, table.t td.calc span{color:#fff; font-weight:700}
 tr:hover td.calc{background:#16242E !important}
-tr:hover td.inp{background:rgba(194,112,58,.16) !important}
+tr:hover td.inp{background:#FCF6C9 !important}
 .legend{display:flex; gap:22px; align-items:center; flex-wrap:wrap; font-size:12.5px;
   color:var(--muted); margin:22px 0 0; padding:11px 16px; background:var(--paper-2);
   border:1px solid var(--rule); border-radius:8px}
 .legend i{display:inline-block; width:15px; height:15px; border-radius:3px;
   vertical-align:-3px; margin-right:7px}
-.legend .swin{background:rgba(194,112,58,.20); border:1px solid rgba(194,112,58,.5)}
+.legend .swin{background:var(--accent-soft); border:1px solid var(--accent)}
 .legend .swout{background:var(--ink)}
 .legend b{color:var(--ink); font-weight:700}
 table.asm td:first-child{min-width:300px}
@@ -254,15 +353,15 @@ table.bud td.want input{
   width:118px; text-align:right; padding:6px 9px; border:1px solid var(--rule);
   border-radius:6px; background:var(--paper-2); font-size:13.5px; font-variant-numeric:tabular-nums;
 }
-table.bud td.want input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+table.bud td.want input:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 table.bud td.want b{font-size:14px}
 .seasrow{display:flex; align-items:center; gap:12px}
 .seasin{display:flex; align-items:center; gap:5px; justify-content:flex-end}
 .seasin input{width:78px; text-align:right; border:1px solid var(--rule); border-radius:6px; padding:6px 9px; font-variant-numeric:tabular-nums}
-.seasin input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.seasin input:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 .seasin span{color:var(--muted); font-size:13px}
 .seasbar{flex:1; height:22px; background:rgba(220,214,204,.5); border-radius:4px; position:relative; overflow:hidden; min-width:90px}
-.seasbar i{position:absolute; left:0; top:0; bottom:0; background:var(--accent); opacity:.85}
+.seasbar i{position:absolute; left:0; top:0; bottom:0; background:var(--brand); box-shadow:inset 0 0 0 1px rgba(22,33,60,.3)}
 .seasbar u{position:absolute; top:0; bottom:0; width:1px; background:var(--ink); opacity:.45}
 .explain{
   background:var(--paper-2); border:1px solid var(--rule); border-left:3px solid var(--steel);
@@ -279,8 +378,8 @@ table.bud td.want b{font-size:14px}
   background:transparent; text-align:right; font-size:12.5px; font-variant-numeric:tabular-nums;
   transition:border-color .14s var(--ease), background .14s var(--ease);
 }
-.grid input:hover{border-color:var(--rule); background:var(--paper-2)}
-.grid input:focus{border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.grid input:hover{border-color:var(--rule-2); background:var(--paper-2)}
+.grid input:focus{border-color:var(--ink); background:#fff; box-shadow:var(--ring); outline:none}
 .grid tr.der td{background:rgba(14,26,34,.028); font-weight:600; color:var(--ink)}
 .grid tr.der td:first-child{font-weight:600}
 .grid td.tot{font-weight:700; border-left:1px solid var(--rule); padding-left:12px; min-width:96px}
@@ -290,27 +389,27 @@ table.bud td.want b{font-size:14px}
   font-size:12.5px; font-weight:600; cursor:pointer; transition:all .16s var(--ease); color:var(--muted);
 }
 .divchip:hover{border-color:var(--ink); color:var(--ink)}
-.divchip.on{background:var(--ink); border-color:var(--ink); color:#fff}
+.divchip.on{background:var(--ink); border-color:var(--ink); color:#fff; box-shadow:inset 0 2px 0 var(--brand)}
 .divchip.off{opacity:.5; border-style:dashed}
 .divname{border:0;background:transparent;font:inherit;width:118px;border-bottom:1px solid var(--rule);padding:2px 0}
 .divname:focus{outline:none;border-bottom-color:var(--accent)}
 
 /* ============ MISC ============ */
 .bargap{height:6px; background:var(--rule); border-radius:3px; overflow:hidden; min-width:60px; width:100%}
-.bargap i{display:block; height:100%; background:var(--accent); border-radius:3px; transition:width .5s var(--ease)}
+.bargap i{display:block; height:100%; background:var(--brand); box-shadow:inset 0 0 0 1px rgba(22,33,60,.35); border-radius:3px; transition:width .5s var(--ease)}
 .toggle{display:inline-flex; align-items:center; gap:9px; cursor:pointer; font-size:13.5px; font-weight:600}
 .toggle input{appearance:none; width:40px; height:23px; background:var(--rule); border-radius:999px; position:relative; cursor:pointer; transition:background .2s var(--ease); margin:0}
-.toggle input::after{content:""; position:absolute; top:2.5px; left:2.5px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform .2s var(--ease); box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.toggle input:checked{background:var(--accent)}
-.toggle input:checked::after{transform:translateX(17px)}
+.toggle input::after{content:""; position:absolute; top:2.5px; left:2.5px; width:18px; height:18px; background:var(--paper-2); border-radius:50%; transition:transform .2s var(--ease); box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked{background:var(--brand); box-shadow:inset 0 0 0 1px var(--on-brand)}
+.toggle input:checked::after{transform:translateX(17px); background:var(--on-brand)}
 .stmt{font-family:var(--serif); font-size:clamp(21px,2.6vw,27px); line-height:1.36; color:var(--ink); max-width:40ch}
 .stmt em{color:var(--accent); font-style:italic}
-#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px); background:var(--ink); color:#fff; padding:12px 22px; border-radius:9px; font-size:13.5px; font-weight:600; z-index:200; transition:transform .32s var(--ease); box-shadow:0 20px 60px rgba(14,26,34,.3); max-width:520px}
+#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px); background:var(--ink-2); color:#fff; border-bottom:2px solid var(--brand); padding:12px 22px; border-radius:9px; font-size:13.5px; font-weight:600; z-index:200; transition:transform .32s var(--ease); box-shadow:0 20px 60px rgba(22,33,60,.34); max-width:520px}
 #toast.on{transform:translateX(-50%) translateY(0)}
-.selftest{background:var(--ink); color:#DDE6EA; padding:20px 24px; border-radius:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.7; white-space:pre-wrap; margin-top:18px}
+.selftest{background:var(--ink-2); color:#DDE6EA; padding:20px 24px; border-radius:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.7; white-space:pre-wrap; margin-top:18px}
 .selftest .p{color:#7FD6A5} .selftest .f{color:#F08A80}
 
-@media (max-width:1300px){
+@media (max-width:1439px){
   .bar{gap:10px}
   .bar .brand .pre{display:none}
   .savestat{min-width:0}
@@ -331,7 +430,7 @@ table.bud td.want b{font-size:14px}
   nav.rail{width:auto; height:auto; position:static; display:flex; overflow-x:auto; border-right:0; border-bottom:1px solid var(--rule); padding:0}
   .rail .rlabel,.rail .div,.rail a .d{display:none}
   .rail a{border-left:0; border-bottom:2px solid transparent; padding:12px 14px; white-space:nowrap}
-  .rail a.on{border-left:0; border-bottom-color:var(--accent)}
+  .rail a.on{border-left:0; border-bottom-color:var(--brand)}
   .bar{flex-wrap:wrap; height:auto; padding:8px 14px; gap:8px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -355,6 +454,116 @@ table.bud td.want b{font-size:14px}
   .m.hero,.obox.owner{-webkit-print-color-adjust:exact; print-color-adjust:exact}
   h1.big{font-size:24pt}
 }
+
+/* ── Baseline: how-to callout, tooltips, P&L grid, current-vs-proposed ── */
+.howto{display:flex; gap:14px; align-items:flex-start; padding:15px 18px; margin:26px 0 4px;
+  border:1px solid var(--rule); border-left:3px solid var(--brand); background:var(--paper-2);
+  font-size:13.5px; line-height:1.5; max-width:96ch}
+.howto .ic{flex:none; width:22px; height:22px; border-radius:50%; background:var(--brand); color:var(--on-brand);
+  font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px}
+.tip{display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; margin-left:6px;
+  border-radius:50%; border:1px solid var(--rule); background:var(--paper-2); color:var(--muted);
+  font-size:10px; font-weight:700; cursor:help; vertical-align:middle; line-height:1}
+.tip:hover{border-color:var(--accent); color:var(--accent)}
+/* Twelve months always fit. Fixed layout so the month columns share whatever
+   is left after the label and the two summary columns, rather than each one
+   sizing to its content and pushing the last three off the edge. */
+table.grid.pl{table-layout:fixed; width:100%; min-width:940px}
+table.grid.pl col.cml{width:148px}
+table.grid.pl col.cavg{width:82px}
+table.grid.pl col.ctot{width:82px}
+table.grid.pl td, table.grid.pl th{padding:2px 2px; font-size:12px}
+table.grid.pl td:first-child{min-width:0; padding:5px 8px 5px 0; font-size:12px}
+table.grid.pl input{width:100%; padding:5px 5px; font-size:12px}
+table.grid.pl td.tot, table.grid.pl td.avgc{min-width:0; padding-left:7px}
+table.grid.pl td.ml{text-align:left; font-weight:500; white-space:normal; line-height:1.25}
+/* amber = you type it, dark = it works itself out. The same convention the
+   workbook used, and the same one the how-to note above the table promises. */
+table.grid.pl tr.der td{background:var(--ink); color:#fff; font-weight:600; border-bottom-color:rgba(255,255,255,.10)}
+table.grid.pl tr.der td.ml{background:var(--ink); color:#fff}
+table.grid.pl tr.der .tip{border-color:rgba(255,255,255,.28); background:transparent; color:rgba(255,255,255,.72)}
+table.grid.pl tr.der .tip:hover{border-color:#fff; color:#fff}
+table.grid.pl th.avgc, table.grid.pl td.avgc{background:var(--paper-2); font-weight:700; border-left:1px solid var(--rule)}
+table.grid.pl tr.der td.avgc{background:var(--ink-3); color:#fff}
+.secno{display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:22px; padding:0 6px;
+  margin-right:11px; border-radius:6px; background:var(--ink); color:var(--brand);
+  font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.08em; vertical-align:3px}
+input.mhead{width:100%; box-sizing:border-box; text-align:right; font:inherit; font-size:10px;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--muted); background:transparent;
+  border:0; border-bottom:1px dashed transparent; padding:2px 0}
+input.mhead:hover{border-bottom-color:var(--rule)}
+input.mhead:focus{outline:none; color:var(--ink); border-bottom-color:var(--accent)}
+.cvp{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px}
+.mini{border:1px solid var(--rule); background:var(--paper-2); padding:14px 14px 12px; text-align:center}
+.mini .mt{font-family:var(--serif); font-size:16px; margin-bottom:2px}
+.mini .msb{font-size:11.5px; color:var(--muted); margin-bottom:6px; min-height:30px}
+.gappill{display:inline-block; font-size:11.5px; font-weight:600; padding:3px 9px; border:1px solid var(--rule); border-radius:999px}
+.gappill.up{color:var(--good); border-color:var(--good)}
+.gappill.down{color:var(--bad); border-color:var(--bad)}
+.gappill.flat{color:var(--muted)}
+.chleg{display:flex; gap:18px; font-size:12px; color:var(--muted); margin-top:10px}
+.chleg i{display:inline-block; width:11px; height:11px; margin-right:6px; vertical-align:-1px}
+@media (max-width:1100px){ .cvp{grid-template-columns:1fr} }
+
+
+/* ── Scenario Forecaster: department tabs and section cards ─────────── */
+.dtabs{display:flex; align-items:flex-end; gap:4px; flex-wrap:wrap; margin:30px 0 0;
+  border-bottom:2px solid var(--ink); padding:0 2px}
+.dtab{position:relative; display:flex; align-items:center; gap:7px; border:1px solid var(--rule);
+  border-bottom:0; background:var(--paper-3); color:var(--muted); font-size:13.5px; font-weight:600;
+  padding:10px 14px 9px; border-radius:9px 9px 0 0; cursor:pointer; margin-bottom:-2px;
+  transition:background .14s var(--ease), color .14s var(--ease)}
+.dtab:hover{background:var(--paper-2); color:var(--ink)}
+.dtab.on{background:var(--ink); border-color:var(--ink); color:#fff; padding-bottom:11px;
+  box-shadow:inset 0 3px 0 var(--brand)}
+.dtab.on .dt2{color:#A7ADBE}
+.dtab .dt2{display:block; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:var(--muted); margin-top:1px}
+.dtab .dx{font-style:normal; font-size:12px; line-height:1; opacity:.42; padding:3px 2px; border-radius:3px}
+.dtab .dx:hover{opacity:1; background:rgba(255,230,0,.30); color:var(--on-brand)}
+.dtab.on .dx:hover{background:var(--brand); color:var(--on-brand)}
+.dtab.renaming{background:var(--ink); border-color:var(--ink); padding:7px 9px}
+input.dren{font:inherit; font-size:13.5px; font-weight:600; color:var(--on-brand);
+  background:var(--brand); border:0; border-radius:5px; padding:5px 9px; width:170px}
+input.dren:focus{outline:2px solid #fff; outline-offset:1px}
+.dadd{border:1px dashed var(--rule-2); border-bottom:0; background:transparent; color:var(--muted);
+  font-size:17px; font-weight:700; line-height:1; padding:11px 15px 10px; border-radius:9px 9px 0 0;
+  cursor:pointer; margin-bottom:-2px}
+.dadd:hover{border-color:var(--ink); color:var(--ink); background:var(--accent-soft)}
+
+.pcard{background:var(--paper-2); border:1px solid var(--rule); border-radius:14px;
+  margin-top:20px; overflow:hidden;
+  box-shadow:0 1px 2px rgba(22,33,60,.05), 0 12px 32px -20px rgba(22,33,60,.28)}
+.pcard > header{display:flex; align-items:center; gap:13px; flex-wrap:wrap;
+  background:var(--ink-2); border-bottom:3px solid var(--brand); padding:15px 22px 14px}
+.pcard > header .pn{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.1em;
+  background:var(--brand); color:var(--on-brand); border-radius:5px; padding:4px 8px; flex:none}
+.pcard > header h3{font-family:var(--serif); font-size:21px; font-weight:600; color:#fff; margin:0}
+.pcard > header .pm{margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.pcard > header .mc{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:#A7ADBE}
+.pcard > header .btn{background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.26); color:#fff}
+.pcard > header .btn:hover{background:rgba(255,255,255,.20); border-color:#fff}
+.pcard > header .btn.accent{background:var(--brand); border-color:var(--brand); color:var(--on-brand)}
+.pcard > header .btn.accent:hover{background:#F5DE00}
+.pcard > header .btn.ghost{background:transparent; color:#A7ADBE}
+.pcard > header .btn.ghost:hover{color:#fff}
+.pcard .pb{padding:22px}
+.pcard .pb > .cap{margin-top:14px; padding-top:13px; border-top:1px solid var(--rule); max-width:none}
+.pcard .pb > .cap:empty{display:none}
+.pcard .mgrid{gap:1px; background:var(--rule); outline:1px solid var(--rule)}
+.pcard .cvp{margin-top:0}
+.pcard .mini{border:0; outline:1px solid var(--rule)}
+@media (max-width:820px){
+  .pcard .pb{padding:15px}
+  .pcard > header{padding:12px 15px}
+  .pcard > header h3{font-size:18px}
+}
+@media print{
+  .pcard{break-inside:avoid; box-shadow:none}
+  .dtabs{display:none}
+}
+
 </style>
 </head>
 <body>

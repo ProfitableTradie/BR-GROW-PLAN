@@ -1,9 +1,9 @@
 /* ═══ §APP — routing, events, persistence ═══════════════════════ */
 
-const RENDERERS = {vision:renderVision, baseline:renderBaseline, metrics:renderMetrics,
-  budget:renderBudget, strategies:renderStrategies, scenarios:renderScenarios,
-  fiveyear:renderFiveYear, oneyear:renderOneYear, consolidated:renderConsolidated,
-  org:renderOrg, settings:renderSettings};
+const RENDERERS = {vision:renderVision, thrive:renderThrive, horizon:renderHorizon,
+  baseline:renderBaseline, metrics:renderMetrics, budget:renderBudget,
+  strategies:renderStrategies, oneyear:renderOneYear,
+  consolidated:renderConsolidated, org:renderOrg, settings:renderSettings};
 
 let dirty=false, fileHandle=null;
 
@@ -18,7 +18,20 @@ function paintSave(){
   else { el.textContent = fileHandle ? 'Saved' : 'Not linked'; el.className='savestat'; }
 }
 
+/* Replacing a tab's innerHTML destroys whatever input has focus, and the
+   browser fires focusout SYNCHRONOUSLY while that assignment is still in
+   flight. The focusout handler re-renders, so render() used to re-enter
+   itself: the inner pass drew the charts and cleared the pending queue, then
+   the outer pass overwrote the DOM with its own string and found nothing left
+   to draw. The chart vanished, the page got shorter, and the member was
+   thrown up the page mid-keystroke. One flag closes it. */
+let RENDERING = false;
 function render(all){
+  if(RENDERING) return;
+  RENDERING = true;
+  try{ renderNow(all); } finally { RENDERING = false; }
+}
+function renderNow(all){
   CURSYM = {NZD:'$',AUD:'$',GBP:'£',USD:'$'}[S.meta.currency]||'$';
   const ids = all ? Object.keys(RENDERERS) : [UI.tab];
   ids.forEach(k=>{
@@ -28,7 +41,6 @@ function render(all){
   });
   $$('.tab').forEach(t=>t.classList.toggle('on', t.id==='tab-'+UI.tab));
   $$('#rail a').forEach(a=>a.classList.toggle('on', a.dataset.tab===UI.tab));
-  $$('#scenseg button').forEach(b=>b.classList.toggle('on', b.dataset.scen===S.active));
   drawCharts();
   runTweens(document);
 }
@@ -39,6 +51,7 @@ function readValue(el){
   const kind=el.dataset.kind||'num';
   if(kind==='str') return el.value;
   if(kind==='pct') return num(el.value)/100;
+  if(kind==='numn') return el.value.trim()==='' ? null : num(el.value);
   return num(el.value);
 }
 function setSPath(p,val){
@@ -55,7 +68,26 @@ document.addEventListener('input', e=>{
   }
   else if(el.dataset.grid!=null){
     const d=S.divisions.find(x=>x.id===el.dataset.grid);
-    if(d){ d.months[+el.dataset.m][el.dataset.k]=num(el.value); touched=true; }
+    if(d){
+      const m=d.months[+el.dataset.m], k=el.dataset.k;
+      m[k] = (k==='gp' && el.value.trim()==='') ? null : num(el.value);
+      // cost of sales is never typed — keep the stored figure consistent with
+      // what was, so a saved file can never hold a revenue/GP/CoS that disagree
+      if(k==='gp' || k==='rev') m.cos = num(m.rev) - mgp(m);
+      touched=true;
+    }
+  }
+  else if(el.dataset.path==='thrive.energy.energising' || el.dataset.path==='thrive.energy.targetEnergising'){
+    const k = el.dataset.path==='thrive.energy.energising' ? 'energising' : 'targetEnergising';
+    const other = k==='energising' ? 'draining' : 'targetDraining';
+    const v = el.value.trim()==='' ? null : clamp(0,100,num(el.value));
+    S.thrive.energy[k] = v;
+    S.thrive.energy[other] = v==null ? null : 100-v;      // the two always make a week
+    touched=true;
+  }
+  else if(el.dataset.mname!=null){
+    (S.meta.monthNames = S.meta.monthNames || Array.from({length:12},()=>''))[+el.dataset.mname]=el.value;
+    touched=true;
   }
   else if(el.dataset.seas!=null){ S.oneYear.seasonality[+el.dataset.seas]=num(el.value); touched=true; }
   else if(el.dataset.act!=null){
@@ -77,20 +109,107 @@ document.addEventListener('input', e=>{
   markDirty();
   scheduleLiveRender(el);
 });
+/* An editable metric shows a formatted figure at rest and the raw number
+   while you are in it. No re-render on focus — that would rip the field out
+   from under the caret. */
+/* Baseline grid cells have no data-path — they are addressed by
+   division | month | metric. Same formatted-at-rest behaviour either way. */
+function editKey(el){
+  const d=el.dataset;
+  if(d.path!=null) return d.path;
+  if(d.grid!=null) return d.grid+'|'+d.m+'|'+d.k;
+  return null;
+}
+document.addEventListener('focusin', e=>{
+  if(RENDERING) return;
+  const el=e.target, k=el.classList&&(el.classList.contains('minput')||el.classList.contains('grp'))?editKey(el):null;
+  if(k){
+    UI.editing = k;
+    el.value = el.dataset.raw || '';
+    try{ el.select(); }catch(_){}
+  }
+});
+/* Down / Up / Enter walk straight down a column of a table, the way a
+   spreadsheet does, instead of leaving the member to reach for the mouse.
+   Left and right are untouched — they move the caret inside the number. */
+function cellNav(el, dir){
+  const td = el.closest('td'); if(!td) return false;
+  const tr = td.parentElement;
+  const ci = Array.prototype.indexOf.call(tr.children, td);
+  let row = dir>0 ? tr.nextElementSibling : tr.previousElementSibling;
+  while(row){
+    const cell = row.children[ci];
+    const inp = cell && cell.querySelector('input:not([type=hidden]):not([disabled]), textarea');
+    if(inp){ inp.focus({preventScroll:true}); try{ inp.select(); }catch(_){} return true; }
+    row = dir>0 ? row.nextElementSibling : row.previousElementSibling;
+  }
+  return false;
+}
+document.addEventListener('keydown', e=>{
+  const el=e.target;
+  if(el.classList && el.classList.contains('dren')){
+    if(e.key==='Enter'){ e.preventDefault(); el.blur(); }
+    if(e.key==='Escape'){ UI.renaming=null; render(); }
+    return;
+  }
+  if((el.tagName==='INPUT' && el.type!=='checkbox' && el.type!=='radio')
+     && (e.key==='ArrowDown' || e.key==='ArrowUp' || e.key==='Enter')){
+    const dir = e.key==='ArrowUp' ? -1 : 1;
+    if(cellNav(el, dir)) e.preventDefault();
+  }
+});
+document.addEventListener('focusout', e=>{
+  if(RENDERING) return;   // this blur is our own DOM swap, not the member leaving a field
+  if(e.target.classList && e.target.classList.contains('dren')){
+    const d=S.divisions.find(x=>x.id===e.target.dataset.divname);
+    if(d && e.target.value.trim()) d.name=e.target.value.trim();
+    UI.renaming=null; markDirty(); render(true); return;
+  }
+  const el=e.target, k=el.classList&&(el.classList.contains('minput')||el.classList.contains('grp'))?editKey(el):null;
+  if(k && UI.editing===k){
+    UI.editing = null; clearTimeout(liveTimer);
+    // Tab moves on before this fires. Re-rendering destroys the field the
+    // caret was heading for, so carry its identity across the render.
+    const next = e.relatedTarget && e.relatedTarget.dataset ? Object.assign({}, e.relatedTarget.dataset) : null;
+    keepPlace(next, null, null, false);
+  }
+});
+/* "use the calculated figure" sits inside the card, so a click would blur the
+   input and re-render the button away before the click landed. Take it on
+   mousedown and stop the blur. */
+document.addEventListener('mousedown', e=>{
+  const b = e.target.closest && e.target.closest('[data-clear]');
+  if(!b) return;
+  e.preventDefault();
+  setPath(b.dataset.clear, null);
+  UI.editing = null; markDirty(); render();
+});
+
 /* live recalc without stealing focus: re-render everything except the field being typed in */
 let liveTimer=null;
+/* Re-render without moving the page. .focus() scrolls its target into view,
+   which is what threw the member back up the page every time they typed a
+   number — so focus is restored with preventScroll and the scroll position
+   is put back exactly where it was. */
+function keepPlace(id, sel, selEnd, all){
+  const x = window.scrollX, y = window.scrollY;
+  render(all);
+  const back = id ? findSame(id) : null;
+  if(back){
+    back.focus({preventScroll:true});
+    if(sel!=null){ try{ back.setSelectionRange(sel,selEnd); }catch(_){} }
+  }
+  window.scrollTo(x, y);
+}
 function scheduleLiveRender(el){
   clearTimeout(liveTimer);
-  liveTimer=setTimeout(()=>{
-    const key = el.dataset.path||el.dataset.spath||el.dataset.grid||el.dataset.seas||el.dataset.act||el.dataset.rock||el.dataset.orole||el.dataset.divname;
-    const sel = el.selectionStart, selEnd = el.selectionEnd, id=el.dataset;
-    render();
-    const back = findSame(id);
-    if(back){ back.focus(); try{ back.setSelectionRange(sel,selEnd); }catch(_){} }
-  }, 260);
+  const id = Object.assign({}, el.dataset);
+  const sel = el.selectionStart, selEnd = el.selectionEnd;
+  liveTimer=setTimeout(()=>keepPlace(id, sel, selEnd), 260);
 }
 function findSame(d){
-  for(const k of ['path','spath','seas','divname']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
+  if(!d) return null;
+  for(const k of ['path','spath','seas','divname','mname']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
   if(d.grid!=null) return document.querySelector(`[data-grid="${CSS.escape(d.grid)}"][data-m="${d.m}"][data-k="${d.k}"]`);
   for(const k of ['act','rock','orole']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
   return null;
@@ -121,7 +240,7 @@ document.addEventListener('change', e=>{
       if(withData.length) withData.forEach(d=>d.active=true);
       else { const d=S.divisions.find(x=>x.id==='D1'); if(d) d.active=true; }
       toast('Divisions on. '+S.divisions.filter(d=>d.active&&d.id!=='WOB').length+
-            ' switched on — turn others on from the Budget or Baseline tab.', 5000);
+            ' switched on — turn others on from the Scenario Forecaster or the Budget tab.', 5000);
     }
     markDirty(); render(true); return; }
   if(el.dataset.path!=null || el.dataset.spath!=null){ clearTimeout(liveTimer); render(); }
@@ -129,20 +248,24 @@ document.addEventListener('change', e=>{
 
 /* ─── clicks ───────────────────────────────────────────────────── */
 document.addEventListener('click', e=>{
-  const t=e.target.closest('[data-tab],[data-scen],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogscen],[data-addrock],[data-delrock],button');
+  const t=e.target.closest('[data-tab],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogon],[data-addrock],[data-delrock],[data-clear],[data-role],[data-tscale],[data-divren],[data-divoff],button');
+  if(t && t.disabled) return;
   if(!t) return;
   const d=t.dataset;
   if(d.tab){ go(d.tab); return; }
-  if(d.scen){ S.active=d.scen; render(true); return; }
-  if(d.divsel){ UI.div=d.divsel; render(); return; }
+  if(d.divren){ UI.renaming=d.divren; render();
+    setTimeout(()=>{ const i=$('.dren'); if(i){ i.focus(); i.select(); } },30); return; }
+  if(d.divoff!=null){ removeDepartment(d.divoff); return; }
+  if(d.divsel){ UI.div=d.divsel; UI.renaming=null; render(); return; }
   if(d.orgyear!=null){ UI.orgYear=+d.orgyear; render(); return; }
   if(d.delstrat!=null){ S.strategies.splice(+d.delstrat,1); markDirty(); render(); return; }
   if(d.addlever!=null){ const s=S.strategies[+d.addlever]; (s.levers=s.levers||[]).push({driver:'gpPct',value:1}); markDirty(); render(); return; }
   if(d.dellever!=null){ const [i,j]=d.dellever.split('|'); S.strategies[+i].levers.splice(+j,1); markDirty(); render(); return; }
-  if(d.stogscen){ const [i,k]=d.stogscen.split('|'); const s=S.strategies[+i];
-    s.scenarios=s.scenarios||[]; const at=s.scenarios.indexOf(k);
-    if(at>=0) s.scenarios.splice(at,1); else s.scenarios.push(k);
-    markDirty(); render(); return; }
+  if(d.stogon!=null){ const s=S.strategies[+d.stogon];
+    s.on = (s.on===false); markDirty(); render(); return; }
+  if(d.tscale){ applyScale(d.tscale); markDirty(); render(); return; }
+  if(d.clear){ setPath(d.clear, null); markDirty(); render(); return; }
+  if(d.role){ S.vision.biz.role = d.role; markDirty(); render(); return; }
   if(d.seaspreset){
     if(d.seaspreset==='baseline') seasonalityFromBaseline();
     else { S.oneYear.seasonality=rotateToStart(SEASON_PRESETS[d.seaspreset].slice()); markDirty(); render();
@@ -152,9 +275,17 @@ document.addEventListener('click', e=>{
   if(d.delrock!=null){ const [q,j]=d.delrock.split('|'); S.oneYear.rocks[+q].splice(+j,1); markDirty(); render(); return; }
 
   switch(t.id){
+    case 'btnAddDept': addDepartment(); break;
     case 'btnAddStrat': addStrategy(); break;
     case 'btnStratLib': openLibrary(); break;
     case 'btnDemo': loadDemo(); break;
+    case 'btnResetMonths': {
+      const d=currentDivision();
+      if(confirm(`Clear all twelve months of numbers for ${d.name}? Assumptions and desired numbers are kept.`)){
+        d.months=Array.from({length:12},blankMonth); markDirty(); render(true);
+        toast(`${d.name} cleared. Assumptions and desired numbers are untouched.`);
+      }
+      break; }
     case 'btnPaste': openPaste(); break;
     case 'btnSeasNorm': {
       const t=sum(S.oneYear.seasonality.map(num));
@@ -164,6 +295,7 @@ document.addEventListener('click', e=>{
     case 'btnSave': doSave(); break;
     case 'btnSaveAs': doSaveAs(); break;
     case 'btnLoad': $('#fileIn').click(); break;
+    case 'btnShare': exportShareable(); break;
     case 'btnPrint': printPack(); break;
     case 'btnSelfTest': runSelfTest(); break;
     case 'btnExportCsv': exportCsv(); break;
@@ -171,12 +303,99 @@ document.addEventListener('click', e=>{
   }
 });
 
+/* A 1–10 bar click. Key is life|<row>|<c or d>|<value> or cap|<row>|<value>.
+   Clicking the value already set clears it, so a misclick is one click to undo. */
+function applyScale(key){
+  const p=key.split('|');
+  if(p[0]==='life'){
+    const row=+p[1], col=p[2], v=+p[3];
+    const cell=S.thrive.life[row]; if(!cell) return;
+    cell[col] = (num(cell[col])===v && cell[col]!==null && cell[col]!=='') ? null : v;
+  } else if(p[0]==='cap'){
+    const row=+p[1], v=+p[2];
+    S.thrive.cap[row] = (num(S.thrive.cap[row])===v && S.thrive.cap[row]!==null && S.thrive.cap[row]!=='') ? null : v;
+  }
+}
+
+/* ─── departments ──────────────────────────────────────────────────
+   The first "+" on a single-P&L plan does not throw the existing twelve
+   months away — it becomes Department 1 and a second, empty department is
+   added beside it, which is what splitting a business actually means. */
+/* The data half of "+", kept pure so it can be tested.
+   Returns the outcome so the caller knows what to say. */
+function turnOnDepartments(){
+  if(S.divisionsOn) return 'already-on';
+  const depts   = S.divisions.filter(d=>d.id!=='WOB');
+  const withData= depts.filter(d=>d.months.some(entered));
+  const wob     = S.divisions.find(d=>d.id==='WOB');
+  const wobHas  = wob.months.some(entered);
+
+  S.divisionsOn = true;
+
+  // Departments already carry numbers — use them. Copying the single P&L in
+  // on top would double-count every dollar, which is exactly the bug the old
+  // workbook had. The single P&L is set aside, not deleted.
+  if(withData.length){
+    withData.forEach(d=>{ d.active = true; });
+    return wobHas ? 'kept-departments-wob-set-aside' : 'kept-departments';
+  }
+
+  // Nothing in any department: the twelve months become Department 1 and an
+  // empty Department 2 appears beside it. Nothing is lost, nothing is doubled.
+  const first = depts[0];
+  first.active = true;
+  if(wobHas){
+    first.months = JSON.parse(JSON.stringify(wob.months));
+    first.a      = JSON.parse(JSON.stringify(wob.a));
+    first.t      = JSON.parse(JSON.stringify(wob.t));
+    first.name   = 'Department 1';
+    const second = depts.find(d=>!d.active);
+    if(second){ second.active = true; second.name = 'Department 2'; }
+    return 'split';
+  }
+  return 'empty';
+}
+
+function addDepartment(){
+  if(!S.divisionsOn){
+    const how = turnOnDepartments();
+    UI.div = 'CONS';
+    markDirty(); render(true);
+    toast({
+      'split':'Your twelve months are now Department 1, and Department 2 is empty beside it. Split the numbers between them — Consolidated adds them back up.',
+      'kept-departments':'Departments are on. Consolidated adds them up.',
+      'kept-departments-wob-set-aside':'Your departments already had numbers, so those are what the plan uses. The single P&L is set aside — it comes back if you remove every department.',
+      'empty':'Departments are on. Consolidated adds them up.'
+    }[how] || 'Departments are on.', 8000);
+    return;
+  }
+  const next = S.divisions.find(d=>d.id!=='WOB' && !d.active);
+  if(!next){ toast('All seven departments are already on.'); return; }
+  next.active = true; UI.div = next.id; UI.renaming = next.id;
+  markDirty(); render(true);
+  setTimeout(()=>{ const i=$('.dren'); if(i){ i.focus(); i.select(); } },40);
+}
+function removeDepartment(id){
+  const d = S.divisions.find(x=>x.id===id); if(!d) return;
+  const on = S.divisions.filter(x=>x.id!=='WOB' && x.active);
+  if(!confirm(`Take ${d.name} out of the plan? Its twelve months and its assumptions are kept — bring it back with +.`)) return;
+  d.active = false;
+  if(on.length<=1){
+    S.divisionsOn = false; UI.div = 'WOB';
+    toast(`${d.name} removed. Back to one P&L — its numbers are kept and come back with +.`, 6000);
+  } else {
+    UI.div = 'CONS';
+    toast(`${d.name} taken out of the roll-up. Its numbers are kept.`, 5000);
+  }
+  markDirty(); render(true);
+}
+
 /* ─── strategies ───────────────────────────────────────────────── */
 function addStrategy(preset){
   S.strategies.push(Object.assign({
     name:'', domain:'Marketing', outcome:'Both', stage:'Strategy', shift:'', owner:S.meta.owner||'',
     startMonth:1, fullMonth:12, ramp:'linear', confidence:70, cost:0, refined:false,
-    scenarios:[S.active], levers:[]
+    on:true, levers:[]
   }, preset||{}));
   markDirty(); render();
   setTimeout(()=>{ const c=$$('.card[data-si]').pop(); if(c) c.querySelector('input').focus(); },40);
@@ -235,12 +454,12 @@ document.addEventListener('keydown',e=>{
 /* ─── paste from spreadsheet ───────────────────────────────────── */
 function openPaste(){
   overlay(`<h3 style="font-family:var(--serif);font-size:24px;margin:0 0 4px">Paste from a spreadsheet</h3>
-    <div class="tiny" style="margin-bottom:12px">Paste rows in this order, twelve columns each, tabs or commas between them. Blank lines are skipped. Order: revenue, cost of sales, fixed costs, overhead, jobs, quotes, leads, owner hours, on-tools, office.</div>
+    <div class="tiny" style="margin-bottom:12px">Paste rows in this order, twelve columns each, tabs or commas between them. Blank lines are skipped.<br><b>Order: revenue, gross profit, fixed cost, company overhead, invoices / jobs, quotes, leads, owner hours per week, on-tools headcount, office headcount.</b><br>Gross profit, not cost of sales — it is the line on your P&amp;L. Cost of sales is worked out from it.</div>
     <textarea id="pasteBox" class="full" style="min-height:180px;font-family:ui-monospace,monospace;font-size:12px" placeholder="180000&#9;192000&#9;…"></textarea>
     <div class="btnrow"><button class="btn accent" id="pasteGo">Bring it in</button></div>`,
     root=>{ root.querySelector('#pasteGo').onclick=()=>{
       const txt=root.querySelector('#pasteBox').value;
-      const keys=['rev','cos','fixed','ovh','jobs','quotes','leads','ownerHrs','onTools','office'];
+      const keys=['rev','gp','fixed','ovh','jobs','quotes','leads','ownerHrs','onTools','office'];
       const lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
       const dv=currentDivision(); let n=0;
       lines.forEach((line,i)=>{
@@ -249,6 +468,7 @@ function openPaste(){
         for(let m=0;m<12 && m<cells.length;m++){ dv.months[m][keys[i]]=cells[m]; }
         n++;
       });
+      dv.months.forEach(m=>{ m.cos = num(m.rev) - mgp(m); });
       closeOverlay(); markDirty(); render();
       toast(n?`Brought in ${n} row${n===1?'':'s'}.`:'Nothing recognised in that paste.');
     };});
@@ -272,7 +492,7 @@ function loadDemo(){
   const rev=[176000,168000,201000,214000,232000,241000,198000,186000,223000,239000,246000,209000];
   rev.forEach((r,i)=>{
     const m=dv.months[i];
-    m.rev=r; m.cos=Math.round(r*(0.655+((i%3)-1)*0.012));
+    m.rev=r; m.gp=Math.round(r*(1-(0.655+((i%3)-1)*0.012))); m.cos=r-m.gp;
     m.fixed=41000+ (i>5?2500:0); m.ovh=9500;
     m.jobs=Math.round(r/8400); m.quotes=Math.round(r/8400/0.46);
     m.leads=Math.round(r/8400/0.46/0.78);
@@ -282,7 +502,7 @@ function loadDemo(){
   const d1=S.divisions.find(x=>x.id==='D1'), d2=S.divisions.find(x=>x.id==='D2');
   [[d1,0.62],[d2,0.38]].forEach(([dd,sh])=>{
     dv.months.forEach((m,i)=>{
-      Object.keys(m).forEach(k=>{ dd.months[i][k] = (k==='ownerHrs') ? num(m[k])*(sh>0.5?0.6:0.4)
+      Object.keys(m).forEach(k=>{ dd.months[i][k] = (k==='ownerHrs') ? num(m[k])
         : Math.round(num(m[k])*sh*100)/100; });
     });
   });
@@ -300,7 +520,22 @@ function loadDemo(){
   S.meta.company=S.meta.company||'Example Plumbing Ltd'; S.meta.owner=S.meta.owner||'Sam';
   S.vision.statement=S.vision.statement||'In five years I own a business turning over four million with a leadership team running it, I work three days a week, I take six weeks off with the family, and it is worth enough to sell or hand to the kids.';
   S.vision.biz={revenue:5200000, profit:1000000, value:3000000, team:24, role:'CEO · Leader · Investor'};
-  S.vision.life={hours:35, holidays:6, weekends:0, evenings:5, income:280000, whatFor:'Six weeks in the islands every year, and the building bought outright.'};
+  S.vision.life={hours:35, holidays:6, weekends:0, evenings:5, income:280000,
+    adventures:12, investments:750000,
+    whatFor:'Six weeks in the islands every year, and the building bought outright.'};
+  S.thrive.life = [[4,9],[2,8],[4,8],[5,8],[5,9],[6,9],[5,8],[4,8],[3,9]]
+    .map(([c,d])=>({c,d}));
+  S.thrive.cap = [6,5,5,4,7,4,6,7,3];
+  S.thrive.energy = {energising:35, draining:65, targetEnergising:70, targetDraining:30};
+  S.thrive.aim = {
+    financial:'Get the business paying me $18k a month without me quoting a single job.',
+    time:'Hand estimating to a full-time estimator and get ten hours a week back by Q3.',
+    identity:'Stop being the best tradesman in the business and start being the person who builds the team.'};
+  S.thrive.fin = [
+    {level:'Current',     income:11500, shifts:''},
+    {level:'Comfortable', income:15000, shifts:'Four days on the tools, hire a leading hand'},
+    {level:'Thriving',    income:22000, shifts:'Off the tools entirely, estimator and ops manager in place'},
+    {level:'Optimal',     income:32000, shifts:'Rental income and a second branch; business runs without me'}];
   S.ownerRoles=[{role:'On tools',on:false,handover:0},{role:'Team Leader',on:false,handover:0},
                 {role:'Operations Manager',on:true,handover:0},{role:'Estimator',on:true,handover:2},
                 {role:'Office / Admin',on:false,handover:0}];
@@ -312,7 +547,7 @@ function loadDemo(){
 function addStrategyQuiet(preset,i){
   S.strategies.push(Object.assign({name:'',domain:'Marketing',outcome:'Both',stage:i<2?'Refining':'Execution',
     shift:'',owner:'',startMonth:1+i*3,fullMonth:12+i*3,ramp:'s',confidence:70,cost:0,refined:i<2,
-    scenarios:['A','B']}, JSON.parse(JSON.stringify(preset))));
+    on:true}, JSON.parse(JSON.stringify(preset))));
 }
 
 /* ─── save / load ──────────────────────────────────────────────── */
@@ -363,6 +598,25 @@ function mergeState(loaded){
   out.divisions.forEach(d=>{
     if(!d.t) d.t={netProfit:0,fixedCosts:0,gpPct:0.35,avgJobValue:0,quoteWin:0.5,leadQuote:0.8};
   });
+  // files written before v2.2 carried three scenarios (Plan A/B/C) and an active one.
+  // The plan the member was looking at becomes THE plan; strategies assigned to it stay
+  // in the plan and the rest are parked, so nothing is deleted and nothing is invented.
+  if(loaded && loaded.scenarios && !loaded.plan){
+    const key = loaded.active && loaded.scenarios[loaded.active] ? loaded.active
+              : Object.keys(loaded.scenarios)[0];
+    const old = loaded.scenarios[key] || {};
+    out.plan = {label:'The Plan',
+      multiple: (old.multiple!=null ? old.multiple : 3.0),
+      macro: Array.isArray(old.macro) && old.macro.length===5
+             ? JSON.parse(JSON.stringify(old.macro)) : Array.from({length:5},blankMacro)};
+    (out.strategies||[]).forEach(st=>{
+      if(st.on==null) st.on = Array.isArray(st.scenarios) ? st.scenarios.includes(key) : true;
+      delete st.scenarios;
+    });
+  }
+  delete out.scenarios; delete out.active;
+  (out.strategies||[]).forEach(st=>{ if(st.on==null) st.on=true; delete st.scenarios; });
+
   // files written before the per-department budget carried one global target block
   if(loaded && loaded.targets && (!loaded.divisions || !loaded.divisions[0] || !loaded.divisions[0].t)){
     const w=out.divisions.find(d=>d.id==='WOB');
@@ -392,10 +646,36 @@ function printPack(){
   setTimeout(()=>window.print(), 120);
 }
 
+/* ─── send someone a filled-in copy ─────────────────────────────
+   The app and the member's numbers are normally two files. That is fine
+   for the member and useless for anyone they send it to, who would open
+   a blank calculator. This bakes the current plan into a copy of the app
+   so the recipient opens ONE attachment and sees the numbers. */
+function exportShareable(){
+  const clone = document.documentElement.cloneNode(true);
+  clone.querySelectorAll('.tab').forEach(t=>{ t.innerHTML=''; t.className='tab'; });
+  const first = clone.querySelector('#tab-vision'); if(first) first.className='tab on';
+  const t=clone.querySelector('#toast'); if(t){ t.textContent=''; t.className=''; }
+  const o=clone.querySelector('#ovl'); if(o) o.remove();
+  clone.querySelectorAll('script[data-embedded]').forEach(n=>n.remove());
+  const ss=clone.querySelector('#savestat'); if(ss){ ss.textContent=''; ss.className='savestat'; }
+
+  const sc=document.createElement('script');
+  sc.setAttribute('data-embedded','1');
+  /* escape < so a statement containing a closing script tag cannot break out */
+  sc.textContent='window.__BRGP__='+JSON.stringify(S).replace(/</g,'\\u003c')+';';
+  (clone.querySelector('head')||clone).appendChild(sc);
+
+  const stamp = new Date().toISOString().slice(0,10);
+  const co = (S.meta.company||'boardroom').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  download(`${co}-growth-plan-${stamp}.html`, '<!DOCTYPE html>\n'+clone.outerHTML, 'text/html');
+  toast('Downloaded a copy with your numbers baked in. Attach that file — whoever opens it sees the plan filled in, not an empty calculator.', 8000);
+}
+
 /* ─── CSV export ───────────────────────────────────────────────── */
 function exportCsv(){
-  const pr=project(S.active), Y=pr.years;
-  const rows=[['Boardroom Growth Plan', S.meta.company||'', 'Plan '+S.active, S.scenarios[S.active].label]];
+  const pr=project(), Y=pr.years;
+  const rows=[['Boardroom Growth Plan', S.meta.company||'', 'The plan', n1(pr.plan.multiple)+'x EBITDA']];
   rows.push([]);
   const line=(l,pick,f)=>rows.push([l].concat(Y.map(y=>{ const v=pick(y); return (v==null||!Number.isFinite(v))?'':(f?f(v):Math.round(v*100)/100); })));
   rows.push(['Metric'].concat(Y.map(y=>y.label)));
@@ -476,26 +756,26 @@ function runSelfTest(){
   T('5 · pricing hours come from quotes', cap.pricingHours, 56);
   T('5 · estimators', cap.estimators, 1);
 
-  // 6 — scenario with no strategies moves only by macro
+  // 6 — a plan with no strategies moves only by macro
   S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
   fill(d,12,()=>({rev:100000,cos:65000,fixed:25000,jobs:12,quotes:24,leads:30,ownerHrs:60,onTools:4,office:1}));
-  S.scenarios.A.macro=S.scenarios.A.macro.map(()=>({market:0.10,price:0,wage:0,ovh:0}));
-  let pr=project('A');
+  S.plan.macro=S.plan.macro.map(()=>({market:0.10,price:0,wage:0,ovh:0}));
+  let pr=project();
   T('6 · no strategies → year 1 = baseline × market growth', pr.years[1].rev, 1200000*1.10, 500);
   T('6 · year 2 compounds', pr.years[2].rev, 1200000*1.21, 900);
 
   // 7 — two strategies on the same driver add up
   S.strategies=[
-    {name:'a',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:2}]},
-    {name:'b',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:3}]}
+    {name:'a',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:2}]},
+    {name:'b',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:3}]}
   ];
-  pr=project('A');
+  pr=project();
   T('7 · overlapping levers sum in percentage points', pr.years[1].gpPct, 0.35+0.05, 1e-6);
   S.strategies[1].confidence=50;
-  pr=project('A');
+  pr=project();
   T('7 · confidence weights the lever', pr.years[1].gpPct, 0.35+0.02+0.015, 1e-6);
-  S.strategies=[{name:'c',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:7,fullMonth:7,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:6}]}];
-  pr=project('A');
+  S.strategies=[{name:'c',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:7,fullMonth:7,ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:6}]}];
+  pr=project();
   T('7 · a lever starting in month 7 affects only half of year 1', pr.years[1].gpPct, 0.38, 0.0005);
 
   // 8 — divisions: only ACTIVE divisions roll up; assumptions are weighted, never summed
@@ -547,6 +827,34 @@ function runSelfTest(){
   const BG2=budget();
   T('8b · switching a department off removes it from the budget', BG2.total.revenue, 125000, 0.5);
 
+  // 8c — the Thrive Index, and the two defects carried over from the workbook
+  S=defaultState();
+  S.thrive.life=[[4,9],[2,8],[4,8],[5,8],[5,9],[6,9],[5,8],[4,8],[3,9]].map(([c,d])=>({c,d}));
+  S.thrive.cap=[6,5,5,4,7,4,6,7,3];
+  S.thrive.energy={energising:35,draining:65,targetEnergising:70,targetDraining:30};
+  let TX=thriveScores();
+  T('8c · TIS is the sum of current over 90', TX.tis, 38/90*100, 1e-9);
+  T('8c · TIS lands in the right band', TX.level, 'Stable');
+  T('8c · desired TIS scored the same way', TX.tisD, 76/90*100, 1e-9);
+  T('8c · desired band', TX.levelD, 'Thriving');
+  T('8c · points to the next level', TX.toNext, 60-38/90*100, 1e-9);
+  T('8c · biggest gap is found', TX.biggest[0].gap, 6);
+  T('8c · all nine capability rows are counted', TX.capCounted, 9);
+  T('8c · capability total includes the ninth row', TX.capTotal, 47);
+  T('8c · the workbook dropped the ninth row and summed the header', TX.capTotal!==44, true);
+  T('8c · capability band', TX.capBand, 'Capable manager');
+  T('8c · energy is read from the value, not the header', TX.energising, 35);
+  T('8c · energy gap against the 70% benchmark', TX.energyGap, -35);
+  S.thrive.life[0].c=null;
+  TX=thriveScores();
+  T('8c · a cleared score drops out of the count', TX.counted, 8);
+  T('8c · TIS re-scores on what is left', TX.tis, 34/90*100, 1e-9);
+  S=defaultState();
+  TX=thriveScores();
+  T('8c · a blank scorecard scores nothing, not zero', TX.tis, null);
+  T('8c · and has no band', TX.level, null);
+  T('8c · blank capability too', TX.capTotal, null);
+
   // freedom score in both directions, and the degenerate guard
   S=defaultState();
   S.wellness.base={hours:70,onBiz:10,weekends:4,evenings:1,holidays:1,weeksWithout:0,income:100000,outside:0,exercise:0,sleep:6};
@@ -562,13 +870,161 @@ function runSelfTest(){
   S.targets={netProfit:-1,fixedCosts:0,gpPct:0,avgJobValue:0,quoteWin:0,leadQuote:0};
   let bad=0;
   try{
-    const p2=project('A');
+    const p2=project();
     JSON.stringify(p2.years, (k,v)=>{ if(typeof v==='number' && !Number.isFinite(v)) bad++; return v; });
     const f2=funnel(S.targets);
     Object.values(f2).forEach(v=>{ if(typeof v==='number' && !Number.isFinite(v)) bad++; });
   }catch(err){ bad=-1; out.push('<span class="f">FAIL</span>  10 · fuzz threw: '+err.message); }
   T('10 · fuzzed inputs produce no NaN or Infinity', bad, 0);
 
+  // 10b — baseline entry is GROSS PROFIT; cost of sales is derived
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,()=>({rev:100000, gp:35000, fixed:20000, ovh:5000, jobs:10, quotes:20, leads:25, ownerHrs:60, onTools:4, office:1}));
+  let nz=normalise(d);
+  T('10b · gross profit is read from what was entered', nz.gp, 420000);
+  T('10b · cost of sales is derived, never typed', nz.cos, 780000);
+  T('10b · margin is total GP over total revenue', nz.gpPct, 0.35, 1e-9);
+  T('10b · net profit nets off fixed costs and overhead', nz.netProfit, 420000-300000);
+
+  // an older file that stored cost of sales still reads correctly
+  d=S.divisions.find(x=>x.id==='WOB');
+  d.months.forEach(m=>{ m.gp=null; m.cos=65000; });
+  nz=normalise(d);
+  T('10b · a pre-v2.3 file falls back to cost of sales', nz.gp, (100000-65000)*12);
+  T('10b · and its margin still lands', nz.gpPct, 0.35, 1e-9);
+
+  // a blank gross profit on a month with revenue is not silently a full margin
+  d.months.forEach(m=>{ m.gp=0; m.cos=0; });
+  nz=normalise(d);
+  T('10b · gross profit typed as zero is honoured as zero', nz.gp, 0);
+
+  // months entered, not months on screen — a 3-month average is a 3-month average
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,3,()=>({rev:90000, gp:36000, fixed:20000, jobs:9, quotes:18, leads:22}));
+  nz=normalise(d);
+  T('10b · monthly revenue averages over months ENTERED', nz.revenueM, 90000);
+  T('10b · not over twelve', nz.revenueM===270000/12 ? 0 : 1, 1);
+  T('10b · margin on a partial year', nz.gpPct, 0.40, 1e-9);
+
+  // month headings
+  S=defaultState(); S.meta.startMonth=0; S.meta.startYear=2026;
+  T('10b · a heading is derived when it is left blank', monthName(0)==='Jan 26' ? 1 : 0, 1);
+  S.meta.monthNames[0]='Opening';
+  T('10b · and taken from the member when they type one', monthName(0)==='Opening' ? 1 : 0, 1);
+  S.meta.monthNames[0]='   ';
+  T('10b · whitespace is not a heading', monthName(0)==='Jan 26' ? 1 : 0, 1);
+
+  // 10c — turning departments on must never lose money and never double it
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,()=>({rev:100000, gp:35000, fixed:25000, jobs:10, quotes:20, leads:25, ownerHrs:60, onTools:4}));
+  let before = business().revenueM;
+  T('10c · single P&L monthly revenue', before, 100000);
+  T('10c · the split reports what it did', turnOnDepartments()==='split' ? 1 : 0, 1);
+  T('10c · consolidated revenue is unchanged by the split', business().revenueM, before);
+  T('10c · two departments exist afterwards', activeDivisions().length, 2);
+  T('10c · the twelve months landed in the first', normalise(activeDivisions()[0]).revenueM, 100000);
+  T('10c · the second is empty, not a copy', normalise(activeDivisions()[1]).revenueM==null?0:normalise(activeDivisions()[1]).revenueM, 0);
+  T('10c · an empty department does not halve the owner week', business().ownerHours, 60);
+
+  // departments that already carry numbers are used as they are
+  S=defaultState();
+  const wob=S.divisions.find(x=>x.id==='WOB'), dA=S.divisions[1], dB=S.divisions[2];
+  fill(wob,12,()=>({rev:100000, gp:35000, fixed:25000, jobs:10, quotes:20, leads:25, ownerHrs:60, onTools:4}));
+  fill(dA,12,()=>({rev:60000, gp:21000, fixed:15000, jobs:6, quotes:12, leads:15, ownerHrs:60, onTools:2}));
+  fill(dB,12,()=>({rev:40000, gp:14000, fixed:10000, jobs:4, quotes:8, leads:10, ownerHrs:60, onTools:2}));
+  T('10c · existing departments are kept, the single P&L set aside',
+    turnOnDepartments()==='kept-departments-wob-set-aside' ? 1 : 0, 1);
+  T('10c · and the single P&L is NOT copied on top', business().revenueM, 100000);
+  T('10c · which is the departments, not the departments plus the P&L', business().revenueM===200000?0:1, 1);
+
+  // consolidated months add money and volume but never owner hours
+  const cm = consolidatedMonths();
+  T('10c · consolidated month revenue adds', num(cm[0].rev), 100000);
+  T('10c · consolidated month gross profit adds', num(cm[0].gp), 35000);
+  T('10c · consolidated month headcount adds', num(cm[0].onTools), 4);
+  T('10c · consolidated month owner hours do NOT add', num(cm[0].ownerHrs), 60);
+  T('10c · the consolidated grid agrees with the roll-up on owner hours',
+    sum(cm.filter(entered).map(m=>num(m.ownerHrs)))/cm.filter(entered).length, business().ownerHours, 1e-9);
+
+  // 10d — the week always adds to 100, and the pair cannot drift apart
+  S=defaultState();
+  S.thrive.energy.energising=30;
+  let X=thriveScores();
+  T('10d · draining is the balance of the week', X.draining, 70);
+  T('10d · the two make one week', X.energising+X.draining, 100);
+  S.thrive.energy.energising=0;  X=thriveScores();
+  T('10d · zero energising is honoured, not treated as blank', X.draining, 100);
+  S.thrive.energy.energising=140; X=thriveScores();
+  T('10d · over 100 clamps', X.energising, 100);
+  T('10d · and its balance is zero, never negative', X.draining, 0);
+  S.thrive.energy.energising=null; X=thriveScores();
+  T('10d · nothing entered stays nothing, not zero', X.draining==null?1:0, 1);
+  S.thrive.energy.energising=45; S.thrive.energy.targetEnergising=70; X=thriveScores();
+  T('10d · the target pair balances too', X.targetDraining, 30);
+  T('10d · the gap is measured against the target', X.energyGap, -25);
+  S.thrive.energy={energising:30, draining:20, targetEnergising:70, targetDraining:10};
+  X=thriveScores();
+  T('10d · a stored draining that disagrees is ignored, not shown', X.draining, 70);
+  T('10d · same for the stored target', X.targetDraining, 30);
+
+  // 10e — a re-render must never leave a chart container empty. This is what
+  // the re-entrancy bug looked like from the outside: the page silently got
+  // shorter mid-keystroke and threw the member up the page.
+  S=JSON.parse(snap);
+  const emptyCharts = () => $$('.chartbox > div[id]').filter(d=>!d.innerHTML.trim()).length;
+  UI.tab='thrive'; render(true);
+  T('10e · every chart is drawn after a full render', emptyCharts(), 0);
+  render();
+  T('10e · and after a partial one', emptyCharts(), 0);
+  UI.tab='horizon'; render(); render(); render();
+  T('10e · and after three in a row', emptyCharts(), 0);
+  // the guard itself: a nested call is refused, not queued
+  let nested = 'not-called';
+  RENDERING = true;
+  try{ render(true); nested = 'ran'; }catch(err){ nested = 'threw'; }
+  RENDERING = false;
+  T('10e · render refuses to re-enter itself', nested==='ran' ? 1 : 0, 1);
+  T('10e · and the guard resets', RENDERING ? 1 : 0, 0);
+  UI.tab='settings';
+
+  // 11 — one plan: parking a strategy takes it out of the forecast entirely
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,()=>({rev:100000,cos:65000,fixed:25000,jobs:12,quotes:24,leads:30,ownerHrs:60,onTools:4,office:1}));
+  S.plan.macro=S.plan.macro.map(()=>({market:0,price:0,wage:0,ovh:0}));
+  S.strategies=[{name:'p',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,
+                 ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:4}]}];
+  T('11 · a strategy in the plan moves the forecast', project().years[1].gpPct, 0.39, 1e-6);
+  S.strategies[0].on=false;
+  T('11 · a parked strategy moves nothing', project().years[1].gpPct, 0.35, 1e-6);
+  T('11 · parked strategies are excluded from the stack', planStrategies().length, 0);
+  S.strategies[0].on=true;
+  T('11 · unparking puts it straight back', planStrategies().length, 1);
+
+  // 12 — a v2.1 file (Plan A/B/C) still opens, and opens as one plan
+  const legacy = {
+    plan:undefined, active:'B',
+    scenarios:{A:{name:'A',label:'Base',multiple:3.0,macro:Array.from({length:5},()=>({market:0.05,price:0.03,wage:0.03,ovh:0.03}))},
+               B:{name:'B',label:'Stretch',multiple:3.7,macro:Array.from({length:5},()=>({market:0.09,price:0.03,wage:0.03,ovh:0.03}))},
+               C:{name:'C',label:'Conservative',multiple:2.5,macro:Array.from({length:5},()=>({market:0.01,price:0.03,wage:0.03,ovh:0.03}))}},
+    strategies:[{name:'in B',scenarios:['B'],levers:[{driver:'gpPct',value:2}],confidence:100},
+                {name:'in A only',scenarios:['A'],levers:[{driver:'gpPct',value:9}],confidence:100},
+                {name:'in all',scenarios:['A','B','C'],levers:[{driver:'gpPct',value:1}],confidence:100}]
+  };
+  delete legacy.plan;
+  const mig = mergeState(JSON.parse(JSON.stringify(legacy)));
+  T('12 · the plan the member was on becomes the plan', mig.plan.multiple, 3.7);
+  T('12 · its macro comes with it', mig.plan.macro[0].market, 0.09, 1e-9);
+  T('12 · the old scenario block is gone', mig.scenarios===undefined ? 1 : 0, 1);
+  T('12 · the active-plan pointer is gone', mig.active===undefined ? 1 : 0, 1);
+  T('12 · strategies that were in that plan stay in the plan', mig.strategies.filter(x=>x.on!==false).length, 2);
+  T('12 · strategies that were not are parked, not deleted', mig.strategies.length, 3);
+  T('12 · no strategy still carries a scenario list', mig.strategies.filter(x=>x.scenarios!==undefined).length, 0);
+
+  // the Setup card publishes SELFTEST_COUNT. If a case is added and that
+  // constant is not moved with it, the card would quietly lie — so check it.
+  if(pass+fail !== SELFTEST_COUNT){
+    fail++; out.push(`<span class="f">FAIL</span>  0 · SELFTEST_COUNT says ${SELFTEST_COUNT}, ${pass+fail} checks actually ran — update it in 03-core.js`);
+  }
   S=JSON.parse(snap);
   render(true);
   const el=$('#selftestout');
@@ -577,6 +1033,11 @@ function runSelfTest(){
 }
 
 /* ─── init ─────────────────────────────────────────────────────── */
+/* a copy that was emailed carries its numbers with it */
+if(window.__BRGP__){
+  try{ S = mergeState(window.__BRGP__); }
+  catch(err){ console.error('embedded plan could not be read', err); }
+}
 render(true);
 paintSave();
 if(/[?&]selftest=1/.test(location.search)) { go('settings'); setTimeout(runSelfTest, 200); }

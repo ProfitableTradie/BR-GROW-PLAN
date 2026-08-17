@@ -6,9 +6,19 @@
 <title>Boardroom Growth Plan — Profitable Tradie</title>
 <style>
 :root{
-  --ink:#0E1A22; --ink-2:#1C2C38; --paper:#F7F5F1; --paper-2:#FFFFFF;
-  --rule:#DCD6CC; --muted:#5E6B74; --accent:#C2703A; --accent-soft:#F0E2D6;
-  --steel:#3D5A6C; --good:#2E7D5B; --warn:#B8862F; --bad:#A4433B;
+  /* Palette lifted from Boardroom Growth Plan v2.0 — ink navy and brand gold.
+     Two gold tokens, deliberately:
+       --brand      #FFE600  a FILL. Only ever sits under --on-brand ink text.
+       --accent     #8A6508  a MARK. Gold dark enough to be read as text or
+                             drawn as a hairline on paper (7.0:1 on --paper).
+     Never put white on --brand and never set --brand as text on paper. */
+  --ink:#16213C; --ink-2:#0B0C0F; --ink-3:#243354;
+  --paper:#ECEDF1; --paper-2:#FFFFFF; --paper-3:#F3F4F7;
+  --rule:#E2E3E9; --rule-2:#C9CBD4; --muted:#565D71; --muted-2:#7C8299;
+  --brand:#FFE600; --on-brand:#16213C; --accent:#8A6508;
+  --accent-soft:#FBF7DE; --accent-edge:#ECE3B8;
+  --steel:#46587A; --good:#146341; --warn:#7A5205; --bad:#96271F;
+  --ring:0 0 0 3px rgba(255,230,0,.42);
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
   --ease:cubic-bezier(.32,.72,0,1);
@@ -17,7 +27,10 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
-  margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+  margin:0; color:var(--ink); font-family:var(--sans);
+  background-color:var(--paper);
+  background-image:radial-gradient(rgba(22,33,60,.028) 1px, transparent 1px);
+  background-size:26px 26px;
   font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
   font-variant-numeric:tabular-nums;
 }
@@ -28,29 +41,29 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ============ TOP BAR ============ */
 .bar{
   position:sticky; top:0; z-index:80; display:flex; align-items:center; gap:14px;
-  padding:0 20px; min-height:52px; background:var(--ink); color:#EDE8E1;
-  border-bottom:1px solid #000; flex-wrap:wrap; row-gap:7px;
+  padding:0 20px; min-height:52px; background:var(--ink-2); color:#EDE9DC;
+  border-bottom:3px solid var(--brand); flex-wrap:wrap; row-gap:7px;
 }
-.bar .brand{font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:#9FB0BB; white-space:nowrap}
+.bar .brand{font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:#A7ADBE; white-space:nowrap}
 .bar .brand b{color:#fff}
-.bar .brand .ver{color:var(--accent); letter-spacing:.08em; margin-left:4px}
+.bar .brand .ver{color:var(--brand); letter-spacing:.08em; margin-left:4px}
 .bar .spacer{margin-left:auto}
 .seg{display:flex; background:rgba(255,255,255,.07); border-radius:7px; padding:2px; gap:2px}
 .seg button{
-  border:0; background:transparent; color:#9FB0BB; font-size:12px; font-weight:600;
+  border:0; background:transparent; color:#A7ADBE; font-size:12px; font-weight:600;
   padding:5px 13px; border-radius:5px; cursor:pointer; transition:all .18s var(--ease); white-space:nowrap;
 }
 .seg button:hover{color:#EDE8E1}
-.seg button.on{background:var(--accent); color:#fff}
+.seg button.on{background:var(--brand); color:var(--on-brand)}
 .tbtn{
   border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); color:#EDE8E1;
   font-size:12.5px; font-weight:600; padding:6px 13px; border-radius:6px; cursor:pointer;
   transition:background .18s var(--ease); white-space:nowrap;
 }
 .tbtn:hover{background:rgba(255,255,255,.15)}
-.tbtn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
-.tbtn.primary:hover{background:#D07C41}
-.savestat{font-size:11px; font-weight:600; color:#8FA3AF; min-width:104px; text-align:right}
+.tbtn.primary{background:var(--brand); border-color:var(--brand); color:var(--on-brand); font-weight:700}
+.tbtn.primary:hover{background:#F5DE00}
+.savestat{font-size:11px; font-weight:600; color:#8FA3AF; min-width:92px; text-align:right}
 .savestat.dirty{color:#F0B87A}
 .savestat.ok{color:#7FD6A5}
 
@@ -65,8 +78,8 @@ nav.rail{
   display:flex; gap:12px; align-items:baseline; padding:10px 24px; text-decoration:none;
   color:var(--ink); border-left:2px solid transparent; cursor:pointer; transition:background .16s var(--ease);
 }
-.rail a:hover{background:rgba(194,112,58,.06)}
-.rail a.on{border-left-color:var(--accent); background:rgba(194,112,58,.09)}
+.rail a:hover{background:rgba(255,230,0,.10)}
+.rail a.on{border-left-color:var(--brand); background:rgba(255,230,0,.15)}
 .rail a .n{font-family:var(--serif); font-size:15px; color:var(--accent); flex:none; width:22px}
 .rail a .t{font-size:13.5px; font-weight:600; letter-spacing:.01em}
 .rail a .d{display:block; font-size:11.5px; color:var(--muted); font-weight:400; margin-top:1px; line-height:1.35}
@@ -90,17 +103,65 @@ h2.sec{font-family:var(--serif); font-size:25px; font-weight:600; letter-spacing
 .tiny{font-size:12px; color:var(--muted); line-height:1.45}
 .cap{font-size:12.5px; color:var(--muted); margin-top:10px; max-width:70ch}
 
+/* ── Numbers are typed, not nudged. No spinner arrows anywhere. ── */
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+
 /* ============ METRICS ============ */
 .mgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px; background:transparent}
 .m{background:var(--paper-2); padding:20px 20px 22px; outline:1px solid var(--rule)}
 .m .ml{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:8px; line-height:1.3}
 .m .mv{font-family:var(--serif); font-size:34px; line-height:1; letter-spacing:-.02em}
 .m .ms{font-size:12.5px; color:var(--muted); margin-top:7px}
-.m.hero{background:var(--ink); color:#fff}
+.m.hero{background:var(--ink); color:#fff; box-shadow:inset 0 3px 0 var(--brand)}
 .m.hero .ml{color:#8FA3AF}
 .m.hero .mv{color:#fff; font-size:42px}
-.m.hero .ms{color:#9FB0BB}
+.m.hero .ms{color:#A7ADBE}
 .m.accent .mv{color:var(--accent)}
+/* editable metric — keeps the serif figure, adds a typing affordance */
+.mrow{display:flex; align-items:baseline; gap:7px}
+.m .minput{
+  font-family:var(--serif); font-size:34px; line-height:1.05; letter-spacing:-.02em;
+  width:100%; min-width:0; border:0; border-bottom:1.5px dashed var(--rule);
+  background:transparent; padding:0 0 5px; color:inherit; border-radius:0;
+}
+.m .minput::placeholder{color:inherit; opacity:.45}
+.m .minput:hover{border-bottom-color:var(--accent)}
+.m .minput:focus{outline:none; border-bottom-style:solid; border-bottom-color:var(--accent)}
+.m .msuf{font-family:var(--serif); font-size:21px; color:var(--muted); flex:none}
+.m.hero .minput{color:#fff; font-size:42px; border-bottom-color:rgba(255,255,255,.28)}
+.m.hero .msuf{color:#8FA3AF}
+.m.accent .minput{color:var(--accent)}
+.mreset{font-size:11.5px; color:var(--accent); cursor:pointer; background:none;
+  border:0; padding:0; text-decoration:underline; font-weight:600}
+.mreset:hover{color:var(--ink)}
+
+/* role chips — Owner-Operator is on the board, struck out, unselectable */
+.roles{display:flex; gap:9px; align-items:center; flex-wrap:wrap; margin-top:8px}
+.rolechip{
+  border:1px solid var(--rule); background:var(--paper-2); border-radius:999px;
+  padding:8px 17px; font-size:13px; font-weight:600; cursor:pointer;
+  transition:all .16s var(--ease); color:var(--ink);
+}
+.rolechip:hover{border-color:var(--ink)}
+.rolechip.on{background:var(--ink); border-color:var(--ink); color:#fff; box-shadow:inset 0 2px 0 var(--brand)}
+.rolechip.gone{
+  text-decoration:line-through; text-decoration-thickness:1.5px;
+  text-decoration-color:var(--bad); color:var(--muted); background:transparent;
+  border-style:dashed; cursor:not-allowed;
+}
+.rolechip.gone:hover{border-color:var(--rule)}
+.rolearrow{color:var(--accent); font-size:19px; font-weight:700; padding:0 2px}
+
+/* the NLP prompt panel above the statement */
+.prompts{background:var(--ink); color:#EDE9DC; border-radius:11px; padding:24px 28px 26px; margin-bottom:18px}
+.prompts h4{font-family:var(--serif); font-size:21px; color:#fff; margin:0 0 4px; font-weight:600}
+.prompts .pl{font-size:12.5px; color:#A7ADBE; margin-bottom:16px; line-height:1.5}
+.prompts ol{margin:0; padding-left:22px}
+.prompts li{font-family:var(--serif); font-size:17px; line-height:1.5; margin-bottom:11px; color:#EDE9DC}
+.prompts li:last-child{margin-bottom:0}
+.prompts li b{color:var(--brand); font-family:var(--sans); font-size:14px; font-weight:700}
 .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
 
 /* ============ TABLES ============ */
@@ -119,7 +180,7 @@ table.t tr.grp td{
 }
 table.t tr.tot td{font-weight:700; border-bottom:2px solid var(--ink); color:var(--ink)}
 table.t tr.sub td:first-child{padding-left:16px; color:var(--muted)}
-table.t tbody tr:hover td{background:rgba(194,112,58,.045)}
+table.t tbody tr:hover td{background:#F3F6FC}
 table.t tr.grp:hover td, table.t tr.spacer:hover td{background:transparent}
 .scrollx{overflow-x:auto; margin:0 -40px; padding:0 40px}
 
@@ -135,9 +196,25 @@ table.t tr.grp:hover td, table.t tr.spacer:hover td{background:transparent}
   transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
 }
 .f select{text-align:left; width:150px}
-.f input:focus, .f select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.f input:focus, .f select:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 .f input:hover, .f select:hover{border-color:#C3BBAE}
 .f input.wide{width:100%}
+/* money field — the currency symbol sits inside the box, so it reads as
+   part of the figure rather than as a label */
+.f .fmoney{
+  display:flex; align-items:center; flex:none; width:132px;
+  border:1px solid var(--rule); border-radius:6px; background:var(--paper-2);
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.f .fmoney:hover{border-color:#C3BBAE}
+.f .fmoney:focus-within{border-color:var(--ink); box-shadow:var(--ring)}
+.f .fmoney > span{padding:0 2px 0 10px; color:var(--muted); font-size:14px; flex:none; line-height:1}
+.f .fmoney > input{
+  width:100%; min-width:0; flex:1; border:0; background:transparent;
+  padding:7px 10px 7px 3px; text-align:right;
+}
+.f .fmoney > input:focus{outline:none; box-shadow:none; border:0}
+.f .fmoney > input:hover{border:0}
 .f .out{width:132px; flex:none; text-align:right; font-weight:700; font-size:14.5px; padding:7px 0}
 .f.derived{background:linear-gradient(90deg,transparent,rgba(14,26,34,.028))}
 input[type=text].full, textarea.full{
@@ -145,7 +222,7 @@ input[type=text].full, textarea.full{
   background:var(--paper-2); font-size:15px; text-align:left;
 }
 textarea.full{min-height:82px; resize:vertical; line-height:1.55; font-family:var(--serif); font-size:17px}
-input[type=text].full:focus, textarea.full:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+input[type=text].full:focus, textarea.full:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); margin:18px 0 7px}
 
 /* ============ PILLS / NOTES ============ */
@@ -154,8 +231,8 @@ label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:
 .pill.warn{background:rgba(184,134,47,.15); color:#8A6318}
 .pill.bad{background:rgba(164,67,59,.13); color:var(--bad)}
 .pill.neutral{background:rgba(94,107,116,.12); color:var(--muted)}
-.pill.accent{background:var(--accent-soft); color:#8A4A1E}
-.note{margin:22px 0 0; padding:17px 21px; border-left:3px solid var(--accent); background:var(--accent-soft); font-family:var(--serif); font-size:17px; line-height:1.5; color:#4A3527}
+.pill.accent{background:var(--accent-soft); color:var(--accent); border:1px solid var(--accent-edge)}
+.note{margin:22px 0 0; padding:17px 21px; border-left:3px solid var(--brand); background:var(--accent-soft); font-family:var(--serif); font-size:17px; line-height:1.5; color:var(--ink)}
 .alert{display:flex; gap:12px; align-items:flex-start; padding:13px 17px; border:1px solid var(--rule); border-left:3px solid var(--warn); background:var(--paper-2); font-size:13.5px; margin-bottom:8px; line-height:1.45}
 .alert.bad{border-left-color:var(--bad)}
 .alert.good{border-left-color:var(--good)}
@@ -166,8 +243,8 @@ label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:
 /* ============ BUTTONS ============ */
 .btn{border:1px solid var(--rule); background:var(--paper-2); font-size:13px; font-weight:600; padding:8px 15px; border-radius:7px; cursor:pointer; transition:all .16s var(--ease)}
 .btn:hover{border-color:var(--ink); background:#fff}
-.btn.accent{background:var(--accent); border-color:var(--accent); color:#fff}
-.btn.accent:hover{background:#D07C41; border-color:#D07C41}
+.btn.accent{background:var(--brand); border-color:var(--on-brand); color:var(--on-brand); font-weight:700}
+.btn.accent:hover{background:#F5DE00; border-color:var(--on-brand)}
 .btn.ghost{background:transparent; border-style:dashed; color:var(--steel)}
 .btn.sm{font-size:11.5px; padding:5px 11px}
 .btn.danger:hover{border-color:var(--bad); color:var(--bad)}
@@ -196,7 +273,7 @@ label.lbl{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:
   background:var(--paper-2); font-size:13px; text-align:left; min-width:0;
 }
 .cf input[type=number]{text-align:right}
-.cf input:focus, .cf select:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.cf input:focus, .cf select:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 
 /* ============ TWO COLUMN ============ */
 .two{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--rule); border:1px solid var(--rule)}
@@ -220,30 +297,52 @@ svg.chart .dl{font-size:11px; font-weight:700; font-family:var(--sans)}
   background:var(--paper-2); border:1px solid var(--rule); border-radius:10px; padding:13px 16px;
   min-width:168px; text-align:center; position:relative;
 }
-.obox.owner{border-color:var(--accent); border-width:2px; background:var(--accent-soft)}
+.obox.owner{border-color:var(--on-brand); border-width:2px; background:var(--accent-soft); box-shadow:inset 0 3px 0 var(--brand)}
 .obox.vacant{border-style:dashed; background:transparent}
 .obox .or{font-size:13px; font-weight:700; line-height:1.25}
 .obox .on{font-size:11.5px; color:var(--muted); margin-top:2px}
 .obox .oc{font-size:11.5px; color:var(--steel); margin-top:5px; font-weight:600}
-.obox .tag{position:absolute; top:-9px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; background:var(--accent); color:#fff; padding:2px 8px; border-radius:999px; white-space:nowrap}
+.obox .tag{position:absolute; top:-9px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; background:var(--brand); color:var(--on-brand); border:1px solid var(--on-brand); padding:2px 8px; border-radius:999px; white-space:nowrap}
 .orgstem{width:1px; height:22px; background:var(--rule)}
 
+/* ============ THRIVE INDEX ============ */
+.scale{display:flex; gap:3px}
+.scale button{
+  width:27px; height:27px; padding:0; border:1px solid var(--rule);
+  background:var(--paper-2); border-radius:5px; font-size:11px; font-weight:600;
+  color:var(--muted); cursor:pointer; transition:all .12s var(--ease); flex:none;
+}
+.scale button:hover{border-color:var(--ink); color:var(--ink)}
+.scale.cur button.on{background:var(--ink); border-color:var(--ink); color:#fff}
+.scale.des button.on{background:var(--brand); border-color:var(--on-brand); color:var(--on-brand)}
+.scale.cap button.on{background:var(--steel); border-color:var(--steel); color:#fff}
+table.thrive td{padding:7px 12px; vertical-align:middle}
+table.thrive td:first-child{min-width:210px; font-size:13px}
+table.thrive td.sc{width:1%; white-space:nowrap}
+table.thrive .gapcell{font-weight:700; width:70px}
+.tishead{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:transparent; margin-bottom:4px}
+.lvlbar{display:flex; gap:3px; margin-top:12px}
+.lvlbar div{flex:1; text-align:center; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; padding:7px 4px; background:var(--paper-2); color:var(--muted); outline:1px solid var(--rule)}
+.lvlbar div.on{background:var(--brand); color:var(--on-brand); outline-color:var(--on-brand)}
+.lvlbar div.want{background:var(--accent-soft); color:var(--accent); outline-color:var(--accent-edge)}
+
 /* ============ BUDGET TABLE ============ */
-table.bud td.ideal{color:var(--muted); font-size:12.5px; background:rgba(61,90,108,.05)}
-table.bud td.want{background:rgba(194,112,58,.07)}
+table.bud td.ideal{color:var(--muted); font-size:12.5px; background:var(--paper-3)}
+table.bud td.want{background:var(--accent-soft)}
 /* The original workbook's convention: type into the amber boxes, the dark
    boxes calculate. Keeps "which cells do I fill in" unmistakable. */
-table.t td.inp,  table.bud td.want.inp {background:rgba(194,112,58,.13)}
+table.t td.inp,  table.bud td.want.inp {background:var(--accent-soft)}
 table.t td.calc, table.bud td.want.calc{background:var(--ink); color:#fff}
 table.t td.calc b, table.t td.calc span{color:#fff; font-weight:700}
 tr:hover td.calc{background:#16242E !important}
-tr:hover td.inp{background:rgba(194,112,58,.16) !important}
+tr:hover td.inp{background:#FCF6C9 !important}
 .legend{display:flex; gap:22px; align-items:center; flex-wrap:wrap; font-size:12.5px;
   color:var(--muted); margin:22px 0 0; padding:11px 16px; background:var(--paper-2);
   border:1px solid var(--rule); border-radius:8px}
 .legend i{display:inline-block; width:15px; height:15px; border-radius:3px;
   vertical-align:-3px; margin-right:7px}
-.legend .swin{background:rgba(194,112,58,.20); border:1px solid rgba(194,112,58,.5)}
+.legend .swin{background:var(--accent-soft); border:1px solid var(--accent)}
 .legend .swout{background:var(--ink)}
 .legend b{color:var(--ink); font-weight:700}
 table.asm td:first-child{min-width:300px}
@@ -254,15 +353,15 @@ table.bud td.want input{
   width:118px; text-align:right; padding:6px 9px; border:1px solid var(--rule);
   border-radius:6px; background:var(--paper-2); font-size:13.5px; font-variant-numeric:tabular-nums;
 }
-table.bud td.want input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+table.bud td.want input:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 table.bud td.want b{font-size:14px}
 .seasrow{display:flex; align-items:center; gap:12px}
 .seasin{display:flex; align-items:center; gap:5px; justify-content:flex-end}
 .seasin input{width:78px; text-align:right; border:1px solid var(--rule); border-radius:6px; padding:6px 9px; font-variant-numeric:tabular-nums}
-.seasin input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.seasin input:focus{border-color:var(--ink); box-shadow:var(--ring); outline:none}
 .seasin span{color:var(--muted); font-size:13px}
 .seasbar{flex:1; height:22px; background:rgba(220,214,204,.5); border-radius:4px; position:relative; overflow:hidden; min-width:90px}
-.seasbar i{position:absolute; left:0; top:0; bottom:0; background:var(--accent); opacity:.85}
+.seasbar i{position:absolute; left:0; top:0; bottom:0; background:var(--brand); box-shadow:inset 0 0 0 1px rgba(22,33,60,.3)}
 .seasbar u{position:absolute; top:0; bottom:0; width:1px; background:var(--ink); opacity:.45}
 .explain{
   background:var(--paper-2); border:1px solid var(--rule); border-left:3px solid var(--steel);
@@ -279,8 +378,8 @@ table.bud td.want b{font-size:14px}
   background:transparent; text-align:right; font-size:12.5px; font-variant-numeric:tabular-nums;
   transition:border-color .14s var(--ease), background .14s var(--ease);
 }
-.grid input:hover{border-color:var(--rule); background:var(--paper-2)}
-.grid input:focus{border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(194,112,58,.13); outline:none}
+.grid input:hover{border-color:var(--rule-2); background:var(--paper-2)}
+.grid input:focus{border-color:var(--ink); background:#fff; box-shadow:var(--ring); outline:none}
 .grid tr.der td{background:rgba(14,26,34,.028); font-weight:600; color:var(--ink)}
 .grid tr.der td:first-child{font-weight:600}
 .grid td.tot{font-weight:700; border-left:1px solid var(--rule); padding-left:12px; min-width:96px}
@@ -290,27 +389,27 @@ table.bud td.want b{font-size:14px}
   font-size:12.5px; font-weight:600; cursor:pointer; transition:all .16s var(--ease); color:var(--muted);
 }
 .divchip:hover{border-color:var(--ink); color:var(--ink)}
-.divchip.on{background:var(--ink); border-color:var(--ink); color:#fff}
+.divchip.on{background:var(--ink); border-color:var(--ink); color:#fff; box-shadow:inset 0 2px 0 var(--brand)}
 .divchip.off{opacity:.5; border-style:dashed}
 .divname{border:0;background:transparent;font:inherit;width:118px;border-bottom:1px solid var(--rule);padding:2px 0}
 .divname:focus{outline:none;border-bottom-color:var(--accent)}
 
 /* ============ MISC ============ */
 .bargap{height:6px; background:var(--rule); border-radius:3px; overflow:hidden; min-width:60px; width:100%}
-.bargap i{display:block; height:100%; background:var(--accent); border-radius:3px; transition:width .5s var(--ease)}
+.bargap i{display:block; height:100%; background:var(--brand); box-shadow:inset 0 0 0 1px rgba(22,33,60,.35); border-radius:3px; transition:width .5s var(--ease)}
 .toggle{display:inline-flex; align-items:center; gap:9px; cursor:pointer; font-size:13.5px; font-weight:600}
 .toggle input{appearance:none; width:40px; height:23px; background:var(--rule); border-radius:999px; position:relative; cursor:pointer; transition:background .2s var(--ease); margin:0}
-.toggle input::after{content:""; position:absolute; top:2.5px; left:2.5px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform .2s var(--ease); box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.toggle input:checked{background:var(--accent)}
-.toggle input:checked::after{transform:translateX(17px)}
+.toggle input::after{content:""; position:absolute; top:2.5px; left:2.5px; width:18px; height:18px; background:var(--paper-2); border-radius:50%; transition:transform .2s var(--ease); box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked{background:var(--brand); box-shadow:inset 0 0 0 1px var(--on-brand)}
+.toggle input:checked::after{transform:translateX(17px); background:var(--on-brand)}
 .stmt{font-family:var(--serif); font-size:clamp(21px,2.6vw,27px); line-height:1.36; color:var(--ink); max-width:40ch}
 .stmt em{color:var(--accent); font-style:italic}
-#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px); background:var(--ink); color:#fff; padding:12px 22px; border-radius:9px; font-size:13.5px; font-weight:600; z-index:200; transition:transform .32s var(--ease); box-shadow:0 20px 60px rgba(14,26,34,.3); max-width:520px}
+#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(90px); background:var(--ink-2); color:#fff; border-bottom:2px solid var(--brand); padding:12px 22px; border-radius:9px; font-size:13.5px; font-weight:600; z-index:200; transition:transform .32s var(--ease); box-shadow:0 20px 60px rgba(22,33,60,.34); max-width:520px}
 #toast.on{transform:translateX(-50%) translateY(0)}
-.selftest{background:var(--ink); color:#DDE6EA; padding:20px 24px; border-radius:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.7; white-space:pre-wrap; margin-top:18px}
+.selftest{background:var(--ink-2); color:#DDE6EA; padding:20px 24px; border-radius:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.7; white-space:pre-wrap; margin-top:18px}
 .selftest .p{color:#7FD6A5} .selftest .f{color:#F08A80}
 
-@media (max-width:1300px){
+@media (max-width:1439px){
   .bar{gap:10px}
   .bar .brand .pre{display:none}
   .savestat{min-width:0}
@@ -331,7 +430,7 @@ table.bud td.want b{font-size:14px}
   nav.rail{width:auto; height:auto; position:static; display:flex; overflow-x:auto; border-right:0; border-bottom:1px solid var(--rule); padding:0}
   .rail .rlabel,.rail .div,.rail a .d{display:none}
   .rail a{border-left:0; border-bottom:2px solid transparent; padding:12px 14px; white-space:nowrap}
-  .rail a.on{border-left:0; border-bottom-color:var(--accent)}
+  .rail a.on{border-left:0; border-bottom-color:var(--brand)}
   .bar{flex-wrap:wrap; height:auto; padding:8px 14px; gap:8px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -355,22 +454,128 @@ table.bud td.want b{font-size:14px}
   .m.hero,.obox.owner{-webkit-print-color-adjust:exact; print-color-adjust:exact}
   h1.big{font-size:24pt}
 }
+
+/* ── Baseline: how-to callout, tooltips, P&L grid, current-vs-proposed ── */
+.howto{display:flex; gap:14px; align-items:flex-start; padding:15px 18px; margin:26px 0 4px;
+  border:1px solid var(--rule); border-left:3px solid var(--brand); background:var(--paper-2);
+  font-size:13.5px; line-height:1.5; max-width:96ch}
+.howto .ic{flex:none; width:22px; height:22px; border-radius:50%; background:var(--brand); color:var(--on-brand);
+  font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px}
+.tip{display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; margin-left:6px;
+  border-radius:50%; border:1px solid var(--rule); background:var(--paper-2); color:var(--muted);
+  font-size:10px; font-weight:700; cursor:help; vertical-align:middle; line-height:1}
+.tip:hover{border-color:var(--accent); color:var(--accent)}
+/* Twelve months always fit. Fixed layout so the month columns share whatever
+   is left after the label and the two summary columns, rather than each one
+   sizing to its content and pushing the last three off the edge. */
+table.grid.pl{table-layout:fixed; width:100%; min-width:940px}
+table.grid.pl col.cml{width:148px}
+table.grid.pl col.cavg{width:82px}
+table.grid.pl col.ctot{width:82px}
+table.grid.pl td, table.grid.pl th{padding:2px 2px; font-size:12px}
+table.grid.pl td:first-child{min-width:0; padding:5px 8px 5px 0; font-size:12px}
+table.grid.pl input{width:100%; padding:5px 5px; font-size:12px}
+table.grid.pl td.tot, table.grid.pl td.avgc{min-width:0; padding-left:7px}
+table.grid.pl td.ml{text-align:left; font-weight:500; white-space:normal; line-height:1.25}
+/* amber = you type it, dark = it works itself out. The same convention the
+   workbook used, and the same one the how-to note above the table promises. */
+table.grid.pl tr.der td{background:var(--ink); color:#fff; font-weight:600; border-bottom-color:rgba(255,255,255,.10)}
+table.grid.pl tr.der td.ml{background:var(--ink); color:#fff}
+table.grid.pl tr.der .tip{border-color:rgba(255,255,255,.28); background:transparent; color:rgba(255,255,255,.72)}
+table.grid.pl tr.der .tip:hover{border-color:#fff; color:#fff}
+table.grid.pl th.avgc, table.grid.pl td.avgc{background:var(--paper-2); font-weight:700; border-left:1px solid var(--rule)}
+table.grid.pl tr.der td.avgc{background:var(--ink-3); color:#fff}
+.secno{display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:22px; padding:0 6px;
+  margin-right:11px; border-radius:6px; background:var(--ink); color:var(--brand);
+  font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.08em; vertical-align:3px}
+input.mhead{width:100%; box-sizing:border-box; text-align:right; font:inherit; font-size:10px;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--muted); background:transparent;
+  border:0; border-bottom:1px dashed transparent; padding:2px 0}
+input.mhead:hover{border-bottom-color:var(--rule)}
+input.mhead:focus{outline:none; color:var(--ink); border-bottom-color:var(--accent)}
+.cvp{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px}
+.mini{border:1px solid var(--rule); background:var(--paper-2); padding:14px 14px 12px; text-align:center}
+.mini .mt{font-family:var(--serif); font-size:16px; margin-bottom:2px}
+.mini .msb{font-size:11.5px; color:var(--muted); margin-bottom:6px; min-height:30px}
+.gappill{display:inline-block; font-size:11.5px; font-weight:600; padding:3px 9px; border:1px solid var(--rule); border-radius:999px}
+.gappill.up{color:var(--good); border-color:var(--good)}
+.gappill.down{color:var(--bad); border-color:var(--bad)}
+.gappill.flat{color:var(--muted)}
+.chleg{display:flex; gap:18px; font-size:12px; color:var(--muted); margin-top:10px}
+.chleg i{display:inline-block; width:11px; height:11px; margin-right:6px; vertical-align:-1px}
+@media (max-width:1100px){ .cvp{grid-template-columns:1fr} }
+
+
+/* ── Scenario Forecaster: department tabs and section cards ─────────── */
+.dtabs{display:flex; align-items:flex-end; gap:4px; flex-wrap:wrap; margin:30px 0 0;
+  border-bottom:2px solid var(--ink); padding:0 2px}
+.dtab{position:relative; display:flex; align-items:center; gap:7px; border:1px solid var(--rule);
+  border-bottom:0; background:var(--paper-3); color:var(--muted); font-size:13.5px; font-weight:600;
+  padding:10px 14px 9px; border-radius:9px 9px 0 0; cursor:pointer; margin-bottom:-2px;
+  transition:background .14s var(--ease), color .14s var(--ease)}
+.dtab:hover{background:var(--paper-2); color:var(--ink)}
+.dtab.on{background:var(--ink); border-color:var(--ink); color:#fff; padding-bottom:11px;
+  box-shadow:inset 0 3px 0 var(--brand)}
+.dtab.on .dt2{color:#A7ADBE}
+.dtab .dt2{display:block; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:var(--muted); margin-top:1px}
+.dtab .dx{font-style:normal; font-size:12px; line-height:1; opacity:.42; padding:3px 2px; border-radius:3px}
+.dtab .dx:hover{opacity:1; background:rgba(255,230,0,.30); color:var(--on-brand)}
+.dtab.on .dx:hover{background:var(--brand); color:var(--on-brand)}
+.dtab.renaming{background:var(--ink); border-color:var(--ink); padding:7px 9px}
+input.dren{font:inherit; font-size:13.5px; font-weight:600; color:var(--on-brand);
+  background:var(--brand); border:0; border-radius:5px; padding:5px 9px; width:170px}
+input.dren:focus{outline:2px solid #fff; outline-offset:1px}
+.dadd{border:1px dashed var(--rule-2); border-bottom:0; background:transparent; color:var(--muted);
+  font-size:17px; font-weight:700; line-height:1; padding:11px 15px 10px; border-radius:9px 9px 0 0;
+  cursor:pointer; margin-bottom:-2px}
+.dadd:hover{border-color:var(--ink); color:var(--ink); background:var(--accent-soft)}
+
+.pcard{background:var(--paper-2); border:1px solid var(--rule); border-radius:14px;
+  margin-top:20px; overflow:hidden;
+  box-shadow:0 1px 2px rgba(22,33,60,.05), 0 12px 32px -20px rgba(22,33,60,.28)}
+.pcard > header{display:flex; align-items:center; gap:13px; flex-wrap:wrap;
+  background:var(--ink-2); border-bottom:3px solid var(--brand); padding:15px 22px 14px}
+.pcard > header .pn{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.1em;
+  background:var(--brand); color:var(--on-brand); border-radius:5px; padding:4px 8px; flex:none}
+.pcard > header h3{font-family:var(--serif); font-size:21px; font-weight:600; color:#fff; margin:0}
+.pcard > header .pm{margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.pcard > header .mc{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:#A7ADBE}
+.pcard > header .btn{background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.26); color:#fff}
+.pcard > header .btn:hover{background:rgba(255,255,255,.20); border-color:#fff}
+.pcard > header .btn.accent{background:var(--brand); border-color:var(--brand); color:var(--on-brand)}
+.pcard > header .btn.accent:hover{background:#F5DE00}
+.pcard > header .btn.ghost{background:transparent; color:#A7ADBE}
+.pcard > header .btn.ghost:hover{color:#fff}
+.pcard .pb{padding:22px}
+.pcard .pb > .cap{margin-top:14px; padding-top:13px; border-top:1px solid var(--rule); max-width:none}
+.pcard .pb > .cap:empty{display:none}
+.pcard .mgrid{gap:1px; background:var(--rule); outline:1px solid var(--rule)}
+.pcard .cvp{margin-top:0}
+.pcard .mini{border:0; outline:1px solid var(--rule)}
+@media (max-width:820px){
+  .pcard .pb{padding:15px}
+  .pcard > header{padding:12px 15px}
+  .pcard > header h3{font-size:18px}
+}
+@media print{
+  .pcard{break-inside:avoid; box-shadow:none}
+  .dtabs{display:none}
+}
+
 </style>
 </head>
 <body>
 <div class="bar">
-  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.1</span></div>
-  <div class="seg" id="scenseg" title="Active scenario — drives every forecast tab">
-    <button data-scen="A" class="on">Plan A<span class="lbl2"> · Base</span></button>
-    <button data-scen="B">Plan B<span class="lbl2"> · Stretch</span></button>
-    <button data-scen="C">Plan C<span class="lbl2"> · Conservative</span></button>
-  </div>
+  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.4</span></div>
   <div class="spacer"></div>
   <span class="savestat" id="savestat">Not linked</span>
   <button class="tbtn primary" id="btnSave">Save</button>
   <button class="tbtn" id="btnSaveAs">Save as…</button>
   <button class="tbtn" id="btnLoad">Open…</button>
-  <button class="tbtn" id="btnPrint">Print pack</button>
+  <button class="tbtn" id="btnShare">Email copy</button>
+  <button class="tbtn" id="btnPrint">Print</button>
   <input type="file" id="fileIn" accept=".json,application/json" hidden>
 </div>
 
@@ -378,15 +583,19 @@ table.bud td.want b{font-size:14px}
 <nav class="rail" id="rail">
   <div class="rlabel">The Plan</div>
   <a data-tab="vision" class="on"><span class="n">01</span><span class="t">Vision<span class="d">Five years, business and life</span></span></a>
-  <a data-tab="baseline"><span class="n">02</span><span class="t">Baseline<span class="d">Twelve months of actuals</span></span></a>
-  <a data-tab="metrics"><span class="n">03</span><span class="t">Key Metrics<span class="d">Current, target, gap</span></span></a>
-  <a data-tab="budget"><span class="n">04</span><span class="t">Budget &amp; Workforce<span class="d">Desired vs actuals, by department</span></span></a>
-  <a data-tab="strategies"><span class="n">05</span><span class="t">Strategies<span class="d">The levers that move it</span></span></a>
-  <a data-tab="scenarios"><span class="n">06</span><span class="t">Scenarios<span class="d">Plan A, B and C</span></span></a>
+  <a data-tab="thrive"><span class="n">02</span><span class="t">Thrive Index<span class="d">The life the business funds</span></span></a>
+  <a data-tab="horizon"><span class="n">03</span><span class="t">Horizon<span class="d">What the plan lands on</span></span></a>
   <div class="div"></div>
-  <div class="rlabel">The Forecast</div>
-  <a data-tab="fiveyear"><span class="n">07</span><span class="t">Five-Year Rolling<span class="d">The horizon</span></span></a>
+  <div class="rlabel">Where you are</div>
+  <a data-tab="baseline"><span class="n">04</span><span class="t">Scenario Forecaster<span class="d">Actuals, desired, workforce</span></span></a>
+  <a data-tab="metrics"><span class="n">05</span><span class="t">Key Metrics<span class="d">Current, target, gap</span></span></a>
+  <a data-tab="budget"><span class="n">06</span><span class="t">Budget &amp; Workforce<span class="d">Desired vs actuals, by department</span></span></a>
+  <div class="div"></div>
+  <div class="rlabel">How you get there</div>
+  <a data-tab="strategies"><span class="n">07</span><span class="t">Strategies<span class="d">The levers that move it</span></span></a>
   <a data-tab="oneyear"><span class="n">08</span><span class="t">One Year<span class="d">Broken to months</span></span></a>
+  <div class="div"></div>
+  <div class="rlabel">The room</div>
   <a data-tab="consolidated"><span class="n">09</span><span class="t">Consolidated<span class="d">The boardroom one-pager</span></span></a>
   <a data-tab="org"><span class="n">10</span><span class="t">Org Chart<span class="d">Today to Year 5</span></span></a>
   <div class="div"></div>
@@ -397,12 +606,12 @@ table.bud td.want b{font-size:14px}
 <main>
   <div class="wrap">
     <section class="tab on" id="tab-vision"></section>
+    <section class="tab" id="tab-thrive"></section>
+    <section class="tab" id="tab-horizon"></section>
     <section class="tab" id="tab-baseline"></section>
     <section class="tab" id="tab-metrics"></section>
     <section class="tab" id="tab-budget"></section>
     <section class="tab" id="tab-strategies"></section>
-    <section class="tab" id="tab-scenarios"></section>
-    <section class="tab" id="tab-fiveyear"></section>
     <section class="tab" id="tab-oneyear"></section>
     <section class="tab" id="tab-consolidated"></section>
     <section class="tab" id="tab-org"></section>
@@ -471,7 +680,7 @@ const FMT = {money, money0k, pct, n0, n1, hrs, pp};
 /* ═══ STATE ══════════════════════════════════════════════════════ */
 
 function blankMonth(){
-  return {rev:0,cos:0,fixed:0,ovh:0,jobs:0,quotes:0,leads:0,ownerHrs:0,onTools:0,office:0};
+  return {rev:0,gp:null,cos:0,fixed:0,ovh:0,jobs:0,quotes:0,leads:0,ownerHrs:0,onTools:0,office:0};
 }
 function blankDivision(id,name,active){
   return {id, name, active:!!active, months:Array.from({length:12},blankMonth),
@@ -480,8 +689,9 @@ function blankDivision(id,name,active){
     t:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8}};
 }
 function blankMacro(){ return {market:0.05, price:0.03, wage:0.03, ovh:0.03}; }
-function blankScenario(name,label,mult){
-  return {name, label, multiple:mult, macro:Array.from({length:5},blankMacro)};
+const SELFTEST_COUNT = 122; /* every check in runSelfTest(), last verified run */
+function blankPlan(){
+  return {label:'The Plan', multiple:3.0, macro:Array.from({length:5},blankMacro)};
 }
 
 const DRIVERS = {
@@ -499,14 +709,56 @@ const STAGES  = ['Strategy','Planning','Execution','Community','Accountability',
 const OUTCOMES= ['Freedom','Asset','Both'];
 const OWNER_ROLES = ['On tools','Team Leader','Operations Manager','Estimator','Office / Admin'];
 
+/* ═══ THE THRIVE INDEX ════════════════════════════════════════════
+   From Thrive_Index_Professional.xlsx. Nine life categories scored
+   1–10 now and 1–10 wanted, nine owner-capability dimensions, the
+   energising/draining split, the three shifts and the income each
+   lifestyle level needs. See CALC-SPEC for the two off-by-one
+   defects in the workbook that are corrected here. */
+const THRIVE_LIFE = [
+  ['Financial freedom','Financial'],
+  ['Time freedom / balance','Time'],
+  ['Physical health & energy','Health'],
+  ['Mental wellbeing','Mind'],
+  ['Relationships — family, partner, friends','Relationships'],
+  ['Career fulfilment / purpose','Purpose'],
+  ['Environment / lifestyle design — where you live, work, play','Environment'],
+  ['Growth / learning / progress','Growth'],
+  ['Enjoyment / fun / experiences','Fun']
+];
+const THRIVE_CAP = [
+  'Strategic decision-making',
+  'Financial literacy & risk judgement',
+  'Leadership & people development',
+  'Systems thinking — can create scalable processes',
+  'Commercial growth capability — sales & BD',
+  'Governance & compliance awareness',
+  'Emotional resilience & stress tolerance',
+  'Ownership mindset — accountability, long-term vision',
+  'Ability to step back from day-to-day operations'
+];
+const THRIVE_LEVELS = ['Current','Comfortable','Thriving','Optimal'];
+const THRIVE_SHIFTS = [
+  ['financial','Financial shift','e.g. +$2k a week of passive income'],
+  ['time','Time shift','e.g. free 10 hours a week through delegation'],
+  ['identity','Identity shift','e.g. move from operator to leader']
+];
+
 function defaultState(){
   return {
     v: 1,
-    meta:{company:'', owner:'', startMonth:0, startYear:new Date().getFullYear(), currency:'NZD'},
+    meta:{company:'', owner:'', startMonth:0, startYear:new Date().getFullYear(), currency:'NZD',
+          /* blank = the name derived from the start month. Type over any of them. */
+          monthNames:Array.from({length:12},()=>'')},
     vision:{
       statement:'',
-      biz:{revenue:0, profit:0, value:0, team:0, role:'CEO'},
-      life:{hours:35, holidays:6, weekends:0, evenings:5, income:0, whatFor:''}
+      biz:{revenue:null, profit:null, value:null, team:null, role:'CEO · Leader · Investor'},
+      life:{hours:35, holidays:6, weekends:0, evenings:5, income:null,
+            adventures:null, investments:null, whatFor:''},
+      /* null on any of these means "use the figure the model derives".
+         Type a number and it overrides; clear it and the model takes over again. */
+      freedom:{today:null, y5:null, hoursToday:null, hoursY5:null},
+      asset:{valueToday:null, valueY5:null, valueCreated:null}
     },
     divisionsOn:false,
     divisions:[
@@ -528,16 +780,18 @@ function defaultState(){
       base:{hours:0, onBiz:0, weekends:0, evenings:0, holidays:0, weeksWithout:0, income:0, outside:0, exercise:0, sleep:0},
       targ:{hours:35, onBiz:60, weekends:0, evenings:5, holidays:6, weeksWithout:4, income:0, outside:0, exercise:4, sleep:7.5}
     },
+    thrive:{
+      life: THRIVE_LIFE.map(()=>({c:null,d:null})),
+      cap:  THRIVE_CAP.map(()=>null),
+      energy:{energising:null, draining:null, targetEnergising:70, targetDraining:30},
+      aim:{financial:'', time:'', identity:''},
+      fin: THRIVE_LEVELS.map(l=>({level:l, income:null, shifts:''}))
+    },
     ownerRoles:[{role:'On tools',on:false,handover:0},{role:'Team Leader',on:false,handover:0},
                 {role:'Operations Manager',on:true,handover:0},{role:'Estimator',on:true,handover:0},
                 {role:'Office / Admin',on:false,handover:0}],
     strategies:[],
-    scenarios:{
-      A:blankScenario('A','Base',3.0),
-      B:blankScenario('B','Stretch',3.5),
-      C:blankScenario('C','Conservative',2.5)
-    },
-    active:'A',
+    plan:blankPlan(),
     oneYear:{ seasonality:Array.from({length:12},()=>1), actuals:Array.from({length:12},()=>({rev:null,gp:null,jobs:null,leads:null,np:null})), rocks:[[],[],[],[]] }
   };
 }
@@ -546,13 +800,20 @@ let S = defaultState();
 /* ═══ §1 BASELINE NORMALISATION ══════════════════════════════════
    Period ratios, never averages of ratios. (Defect #10) */
 
-const entered = m => (num(m.rev)>0 || num(m.jobs)>0 || num(m.leads)>0 || num(m.quotes)>0);
+const entered = m => (num(m.rev)>0 || num(m.gp)>0 || num(m.jobs)>0 || num(m.leads)>0 || num(m.quotes)>0);
+
+/* The member enters GROSS PROFIT, because that is the line printed on a
+   Xero / MYOB / QuickBooks P&L. Cost of sales is derived from it.
+   Plans saved before v2.3 stored cost of sales instead — those months have
+   no gp, so fall back to revenue − cost of sales and nothing is lost. */
+const mgp  = m => (m.gp===null||m.gp===undefined||m.gp==='') ? (num(m.rev)-num(m.cos)) : num(m.gp);
+const mcos = m => num(m.rev) - mgp(m);
 
 function normalise(dv){
   const ms = dv.months.filter(entered);
   const n  = ms.length;
   const t = {
-    rev:sum(ms.map(m=>num(m.rev))), cos:sum(ms.map(m=>num(m.cos))),
+    rev:sum(ms.map(m=>num(m.rev))), cos:sum(ms.map(mcos)),
     fixed:sum(ms.map(m=>num(m.fixed))), ovh:sum(ms.map(m=>num(m.ovh))),
     jobs:sum(ms.map(m=>num(m.jobs))), quotes:sum(ms.map(m=>num(m.quotes))),
     leads:sum(ms.map(m=>num(m.leads)))
@@ -579,7 +840,7 @@ function normalise(dv){
     a: dv.a
   };
   // monthly spread on GP% so volatility is visible
-  const gps = ms.map(m=> div(num(m.rev)-num(m.cos), num(m.rev))).filter(v=>v!=null).sort((x,y)=>x-y);
+  const gps = ms.map(m=> div(mgp(m), num(m.rev))).filter(v=>v!=null).sort((x,y)=>x-y);
   r.gpSpread = gps.length ? {lo:gps[0], mid:gps[Math.floor(gps.length/2)], hi:gps[gps.length-1]} : null;
   return r;
 }
@@ -615,7 +876,12 @@ function business(){
     gpPct:div(gp,rev), jobs, quotes, leads,
     avgJobValue:div(rev,jobs), quoteWin:div(jobs,quotes), leadQuote:div(quotes,leads),
     onTools:t('onTools'), office:t('office'),
-    ownerHours: norms.length ? sum(norms.map(x=>num(x.ownerHours)))/norms.length : null,
+    /* Owner hours belong to the OWNER, not to a department. Average across
+       the departments that actually reported them — an empty department must
+       not halve the owner's week, because that week feeds the Freedom Score,
+       the thesis chart and the guardrails. */
+    ownerHours: (()=>{ const h=norms.map(x=>x.ownerHours).filter(v=>v!=null&&Number.isFinite(v));
+                       return h.length ? sum(h)/h.length : null; })(),
     revenueM:div(rev,n), cosM:div(cos,n), gpM:div(gp,n), fixedM:div(fx,n),
     netProfitM:div(gp-fx,n), jobsM:div(jobs,n), quotesM:div(quotes,n), leadsM:div(leads,n),
     a: weightedAssumptions(norms)
@@ -708,7 +974,8 @@ function ramp(s, month){
   const t = (month-a)/Math.max(1,(b-a));
   return s.ramp==='s' ? 0.5 - 0.5*Math.cos(Math.PI*t) : t;
 }
-const strategiesFor = key => S.strategies.filter(s => (s.scenarios||['A']).includes(key));
+/* One plan. A strategy is either in it or parked. */
+const planStrategies = () => S.strategies.filter(s => s.on !== false);
 
 /* ═══ §5 FORWARD PROJECTION — 60 months, drivers first ═══════════
    Revenue is never projected directly. Drivers are projected and
@@ -721,8 +988,8 @@ function seasonIndex(i){
   return (w[i]/tot)*12;
 }
 
-function projectMonthly(key){
-  const b = business(), a = b.a, sc = S.scenarios[key];
+function projectMonthly(){
+  const b = business(), a = b.a, sc = S.plan;
   const CT = consolidatedTargets();
   const base = {
     leads:  b.leadsM || 0,
@@ -734,7 +1001,7 @@ function projectMonthly(key){
     revPerHead: num(a.revPerHead)||25000,
     ownerHours: b.ownerHours!=null ? b.ownerHours : num(S.wellness.base.hours)
   };
-  const strats = strategiesFor(key);
+  const strats = planStrategies();
   const rows = [];
   for(let m=1; m<=60; m++){
     const y = Math.ceil(m/12);
@@ -791,9 +1058,9 @@ function projectMonthly(key){
 }
 
 /* ═══ §6 ANNUAL AGGREGATION, CASH, VALUE, FREEDOM ════════════════ */
-function project(key){
-  const p = projectMonthly(key);
-  const b = p.b, sc = S.scenarios[key], f = S.fin;
+function project(){
+  const p = projectMonthly();
+  const b = p.b, sc = S.plan, f = S.fin;
   const years = [];
   // Year 0 = the baseline, annualised.
   const y0 = {
@@ -839,7 +1106,7 @@ function project(key){
     years.push(o);
   }
   let cum=0; years.forEach(y=>{ if(y.y>0){ cum+=y.cash; y.cumCash=cum; } else y.cumCash=0; });
-  return {key, years, rows:p.rows, b, scenario:sc};
+  return {years, rows:p.rows, b, plan:sc};
 }
 
 function ebitdaOf(netProfitAnnual){
@@ -883,6 +1150,89 @@ function freedomAt(y, projectedHours){
   return {score: wUsed>0 ? score/wUsed : null, parts};
 }
 
+/* ═══ §6b THE VISION FIGURES ═════════════════════════════════════
+   Every headline on the Vision tab is derived from the model but can be
+   typed over. One place decides which wins, so the Vision tab and the
+   Horizon tab can never disagree with each other. */
+function visionFigures(pr){
+  const V = S.vision, y0 = pr.years[0], y5 = pr.years[5];
+  const ovr = (v,d) => (v===null||v===undefined||v==='') ? d : num(v);
+  const wellnessSet = Object.keys(S.wellness.base).some(k=>num(S.wellness.base[k])>0);
+  const s0 = v => (!wellnessSet || v==null || !Number.isFinite(v)) ? 0 : v;
+
+  const fToday = ovr(V.freedom.today, s0(y0.freedom.score));
+  const fY5    = ovr(V.freedom.y5,    s0(y5.freedom.score));
+  const hToday = ovr(V.freedom.hoursToday, y0.ownerHours);
+  const hY5    = ovr(V.freedom.hoursY5,    y5.ownerHours);
+  const vToday = ovr(V.asset.valueToday, y0.value.equity);
+  const vY5    = ovr(V.asset.valueY5,    y5.value.equity);
+  const createdDerived = (vY5!=null && vToday!=null) ? vY5-vToday : null;
+  const created = ovr(V.asset.valueCreated, createdDerived);
+  const dh = (hToday!=null && hY5!=null) ? hToday-hY5 : null;
+  const perHour = (created!=null && dh) ? created/(dh*48) : null;
+
+  return {ovr, wellnessSet, s0, y0, y5,
+          fToday, fY5, hToday, hY5, vToday, vY5, createdDerived, created, dh, perHour,
+          scoreToday:s0(y0.freedom.score), scoreY5:s0(y5.freedom.score)};
+}
+
+/* ═══ §6c THRIVE INDEX SCORING ═══════════════════════════════════
+   TIS = sum of the nine "current" scores ÷ 90, as a percentage, exactly
+   as the workbook computed it. Two things the workbook got wrong are
+   fixed here:
+     · Calculations!G3 read Owner_Capability!B1 — the column HEADER —
+       so every capability score was shifted a row, the text header was
+       summed as a value, and the ninth dimension was never read at all.
+     · Calculations!K2 read Time_Energy!B1, the header, for the same
+       reason.
+   And a blank sheet scored 0.0% / "Surviving" because SUM() of empty
+   cells returns 0, never "", so the IF guard could not fire. Nothing
+   is scored here until something is entered. */
+const tvals = a => a.filter(v=>v!==null&&v!==undefined&&v!=='').map(num);
+
+function thriveScores(){
+  const T = S.thrive, MAX = THRIVE_LIFE.length*10;   // 90
+  const cur = tvals(T.life.map(x=>x.c));
+  const des = tvals(T.life.map(x=>x.d));
+  const tis  = cur.length ? sum(cur)/MAX*100 : null;
+  const tisD = des.length ? sum(des)/MAX*100 : null;
+  const level = v => v==null ? null
+    : v<40?'Surviving' : v<60?'Stable' : v<80?'Comfortable' : v<90?'Thriving' : 'Optimal';
+  const toNext = v => v==null ? null
+    : v<40?40-v : v<60?60-v : v<80?80-v : v<90?90-v : 0;
+
+  const capV = tvals(T.cap);
+  const capTotal = capV.length ? sum(capV) : null;
+  const capBand = capTotal==null ? null
+    : capTotal<40?'Emerging operator' : capTotal<60?'Capable manager'
+    : capTotal<80?'Growth leader' : 'Director-ready';
+
+  const gaps = THRIVE_LIFE.map((L,i)=>{
+    const c=T.life[i].c, d=T.life[i].d;
+    const has = c!==null&&c!==''&&d!==null&&d!=='';
+    return {i, label:L[0], short:L[1], c:(c===''||c==null)?null:num(c),
+            d:(d===''||d==null)?null:num(d), gap: has ? num(d)-num(c) : null};
+  });
+  const en = T.energy.energising;
+  const energising = (en===''||en==null)?null:clamp(0,100,num(en));
+  /* The two halves of a week make one week. Draining is never typed — it is
+     whatever energising leaves behind, so the pair can never fail to add up. */
+  const draining   = energising==null ? null : 100-energising;
+  const targetEnergising = (T.energy.targetEnergising===''||T.energy.targetEnergising==null)
+                           ? null : clamp(0,100,num(T.energy.targetEnergising));
+  const targetDraining   = targetEnergising==null ? null : 100-targetEnergising;
+
+  return {
+    tis, tisD, level:level(tis), levelD:level(tisD), toNext:toNext(tis),
+    lift: (tis!=null&&tisD!=null) ? tisD-tis : null,
+    counted:cur.length, of:THRIVE_LIFE.length,
+    capTotal, capBand, capCounted:capV.length, capMax:THRIVE_CAP.length*10,
+    gaps, biggest:[...gaps].filter(g=>g.gap!=null&&g.gap>0).sort((a,b)=>b.gap-a.gap),
+    energising, draining, targetEnergising, targetDraining,
+    energyGap: (energising==null||targetEnergising==null) ? null : energising-targetEnergising
+  };
+}
+
 /* ═══ §7 GUARDRAILS & CONTRADICTIONS ═════════════════════════════ */
 function guardrails(pr){
   const out=[], f=S.fin;
@@ -909,8 +1259,8 @@ function guardrails(pr){
     const ph = y3.cap.pricingHours;
     out.push({lvl:'bad', t:'The plan and the life contradict each other',
       m: est && ph
-        ? `Plan ${pr.key} has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you're still the estimator and ${n0(ph)} pricing hours a month have nowhere else to go. Either hire, or the hours don't fall.`
-        : `Plan ${pr.key} has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you still hold ${held.map(r=>r.role).join(', ')} with no handover planned. Either hand it over, or the hours don't fall.`});
+        ? `The plan has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you're still the estimator and ${n0(ph)} pricing hours a month have nowhere else to go. Either hire, or the hours don't fall.`
+        : `The plan has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you still hold ${held.map(r=>r.role).join(', ')} with no handover planned. Either hand it over, or the hours don't fall.`});
   }
   return out;
 }
@@ -945,8 +1295,22 @@ function orgAt(pr, y){
 }
 /* ═══ §CHARTS — hand-built SVG, no library ══════════════════════ */
 
-const CH = {ink:'#0E1A22', accent:'#C2703A', steel:'#3D5A6C', muted:'#5E6B74',
-            rule:'#DCD6CC', good:'#2E7D5B', bad:'#A4433B', soft:'#F0E2D6'};
+/* Chart palette, matched to the v2.0 tokens.
+   `accent` is the brand gold and is only ever used as a FILL — every gold
+   fill is drawn with an ink hairline so it holds its shape on white paper.
+   `accentLine` is the deep gold used for strokes, which pure #FFE600 is far
+   too light to do legibly. */
+const CH = {ink:'#16213C', accent:'#FFE600', accentLine:'#8A6508', accentEdge:'#16213C',
+            steel:'#46587A', muted:'#7C8299', rule:'#C9CBD4',
+            good:'#146341', bad:'#96271F', soft:'#FBF7DE'};
+
+/* #FFE600 is a fill, not a stroke. A 2px gold line on white paper sits at
+   about 1.2:1 — invisible. Every stroke and every text label therefore goes
+   through strokeOf(), which swaps the brand gold for the deep gold. Fills
+   keep the brand gold and get an ink hairline instead. Doing it here means a
+   call site cannot forget. */
+const strokeOf = c => c===CH.accent ? CH.accentLine : c;
+const edgeOf   = c => c===CH.accent ? ` stroke="${CH.accentEdge}" stroke-width="1"` : '';
 
 function niceMax(v){
   if(v<=0) return 1;
@@ -989,10 +1353,10 @@ function lineChart(W, sp){
   sp.series.forEach(s=>{
     const pts=s.values.map((v,i)=>v==null?null:[X(i),Y(v)]).filter(Boolean);
     if(!pts.length) return;
-    g+=`<path d="${pathOf(pts)}" fill="none" stroke="${s.color}" stroke-width="${s.w||2.25}" stroke-linejoin="round" stroke-linecap="round"${s.dash?` stroke-dasharray="${s.dash}"`:''}/>`;
-    pts.forEach(p=>{ g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#fff" stroke="${s.color}" stroke-width="2"/>`; });
+    g+=`<path d="${pathOf(pts)}" fill="none" stroke="${strokeOf(s.color)}" stroke-width="${s.w||2.25}" stroke-linejoin="round" stroke-linecap="round"${s.dash?` stroke-dasharray="${s.dash}"`:''}/>`;
+    pts.forEach(p=>{ g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#fff" stroke="${strokeOf(s.color)}" stroke-width="2"/>`; });
     const last=pts[pts.length-1];
-    g+=`<text class="dl" x="${(last[0]+9).toFixed(1)}" y="${(last[1]+4).toFixed(1)}" fill="${s.color}">${esc(s.name)}</text>`;
+    g+=`<text class="dl" x="${(last[0]+9).toFixed(1)}" y="${(last[1]+4).toFixed(1)}" fill="${strokeOf(s.color)}">${esc(s.name)}</text>`;
   });
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
 }
@@ -1022,9 +1386,9 @@ function barChart(W, sp){
       if(v==null||!Number.isFinite(v)) return;
       const cx=padL+slot*i+slot/2, x=cx-(k*bw)/2+j*bw;
       const y=Math.min(Y(v),zero), h=Math.abs(Y(v)-zero);
-      g+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-3).toFixed(1)}" height="${Math.max(1,h).toFixed(1)}" fill="${s.color}" rx="2"><title>${esc(s.name)} ${esc(sp.x[i])}: ${esc(sp.fmt(v))}</title></rect>`;
+      g+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-3).toFixed(1)}" height="${Math.max(1,h).toFixed(1)}" fill="${s.color}"${edgeOf(s.color)} rx="2"><title>${esc(s.name)} ${esc(sp.x[i])}: ${esc(sp.fmt(v))}</title></rect>`;
     });
-    if(s.name) g+=`<text class="dl" x="${padL}" y="${(padT-2+j*14).toFixed(1)}" fill="${s.color}">${esc(s.name)}</text>`;
+    if(s.name) g+=`<text class="dl" x="${padL}" y="${(padT-2+j*14).toFixed(1)}" fill="${strokeOf(s.color)}">${esc(s.name)}</text>`;
   });
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
 }
@@ -1048,13 +1412,13 @@ function stackChart(W, sp){
     sp.series.forEach(s=>{
       const v=num(s.values[i]); if(v<=0) return;
       const y0=Y(acc), y1=Y(acc+v);
-      g+=`<rect x="${(padL+slot*i+slot/2-bw/2).toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1,y0-y1).toFixed(1)}" fill="${s.color}"><title>${esc(s.name)}: ${esc(sp.fmt(v))}</title></rect>`;
+      g+=`<rect x="${(padL+slot*i+slot/2-bw/2).toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1,y0-y1).toFixed(1)}" fill="${s.color}"${edgeOf(s.color)}><title>${esc(s.name)}: ${esc(sp.fmt(v))}</title></rect>`;
       acc+=v;
     });
     g+=`<text class="dl" x="${(padL+slot*i+slot/2).toFixed(1)}" y="${(Y(totals[i])-7).toFixed(1)}" text-anchor="middle" fill="${CH.ink}">${esc(sp.fmt(totals[i]))}</text>`;
   });
   sp.series.forEach((s,j)=>{
-    g+=`<rect x="${(padL+j*104).toFixed(1)}" y="2" width="9" height="9" fill="${s.color}" rx="2"/>`;
+    g+=`<rect x="${(padL+j*104).toFixed(1)}" y="2" width="9" height="9" fill="${s.color}"${edgeOf(s.color)} rx="2"/>`;
     g+=`<text class="ax" x="${(padL+13+j*104).toFixed(1)}" y="10">${esc(s.name)}</text>`;
   });
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
@@ -1080,13 +1444,13 @@ function dualChart(W, sp){
   sp.x.forEach((l,i)=>{ g+=`<text class="ax" x="${X(i).toFixed(1)}" y="${H-padB+18}" text-anchor="middle">${esc(l)}</text>`; });
   const area=R.values.map((v,i)=>[X(i),YR(num(v))]);
   g+=`<path d="${pathOf(area)} L ${X(n-1).toFixed(1)} ${(padT+ih).toFixed(1)} L ${X(0).toFixed(1)} ${(padT+ih).toFixed(1)} Z" fill="${CH.soft}" opacity=".75"/>`;
-  g+=`<path d="${pathOf(area)}" fill="none" stroke="${CH.accent}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  g+=`<path d="${pathOf(area)}" fill="none" stroke="${CH.accentLine}" stroke-width="2.5" stroke-linejoin="round"/>`;
   const lp=L.values.map((v,i)=>[X(i),YL(num(v))]);
   g+=`<path d="${pathOf(lp)}" fill="none" stroke="${CH.steel}" stroke-width="2.5" stroke-linejoin="round"/>`;
   lp.forEach(p=>g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="#fff" stroke="${CH.steel}" stroke-width="2"/>`);
-  area.forEach(p=>g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="#fff" stroke="${CH.accent}" stroke-width="2"/>`);
+  area.forEach(p=>g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="#fff" stroke="${CH.accentLine}" stroke-width="2"/>`);
   g+=`<text class="dl" x="${padL}" y="${(padT-4).toFixed(1)}" fill="${CH.steel}">${esc(L.name)}</text>`;
-  g+=`<text class="dl" x="${(padL+iw).toFixed(1)}" y="${(padT-4).toFixed(1)}" text-anchor="end" fill="${CH.accent}">${esc(R.name)}</text>`;
+  g+=`<text class="dl" x="${(padL+iw).toFixed(1)}" y="${(padT-4).toFixed(1)}" text-anchor="end" fill="${CH.accentLine}">${esc(R.name)}</text>`;
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'chart')}">${g}</svg>`;
 }
 
@@ -1100,15 +1464,99 @@ function gauge(W, score, label){
   let g=`<path d="${arc(a0,a1,r)}" fill="none" stroke="${CH.rule}" stroke-width="13" stroke-linecap="round"/>`;
   if(s!=null){
     const ae = a0 - (a0-a1)*(s/100);
-    g+=`<path d="${arc(a0,ae,r)}" fill="none" stroke="${CH.accent}" stroke-width="13" stroke-linecap="round"/>`;
+    g+=`<path d="${arc(a0,ae,r)}" fill="none" stroke="${CH.accentLine}" stroke-width="13" stroke-linecap="round"/>`;
   }
   g+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" style="font-family:var(--serif);font-size:52px;fill:${CH.ink}">${s==null?'—':Math.round(s)}</text>`;
   g+=`<text x="${cx}" y="${cy+12}" text-anchor="middle" class="ax" style="letter-spacing:.16em;text-transform:uppercase;font-weight:700">${esc(label||'Freedom score')}</text>`;
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Freedom score ${s==null?'not set':Math.round(s)} out of 100">${g}</svg>`;
 }
 
+/* Radar of the nine life categories: where you are against where you want
+   to be. The shape of the gap is the point — a spider that is pinched on
+   one axis says more than a table of numbers. */
+function radarChart(W, sp){
+  const H = sp.h||430;
+  const cx = W/2, cy = H/2 + 4;
+  const r  = Math.min(W/2, H/2) - 74;
+  const n  = sp.labels.length, MAX = sp.max||10;
+  const ang = i => -Math.PI/2 + i*2*Math.PI/n;
+  const pt  = (i,v) => [cx + Math.cos(ang(i))*r*(v/MAX), cy + Math.sin(ang(i))*r*(v/MAX)];
+  let g='';
+  for(let k=1;k<=4;k++){
+    const rr=r*k/4;
+    const pts=Array.from({length:n},(_,i)=>[cx+Math.cos(ang(i))*rr, cy+Math.sin(ang(i))*rr]);
+    g+=`<polygon points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${CH.rule}" stroke-width="1"/>`;
+  }
+  for(let i=0;i<n;i++){
+    const p=[cx+Math.cos(ang(i))*r, cy+Math.sin(ang(i))*r];
+    g+=`<line x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="${CH.rule}" stroke-width="1"/>`;
+  }
+  sp.series.forEach(se=>{
+    const vals=se.values.map(v=>(v==null||!Number.isFinite(v))?0:clamp(0,MAX,v));
+    if(!vals.some(v=>v>0)) return;
+    const pts=vals.map((v,i)=>pt(i,v));
+    g+=`<polygon points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="${se.fill||'none'}" stroke="${strokeOf(se.color)}" stroke-width="2.2" stroke-linejoin="round"/>`;
+    pts.forEach((p,i)=>{ if(vals[i]>0) g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#fff" stroke="${se.color}" stroke-width="2"/>`; });
+  });
+  sp.labels.forEach((l,i)=>{
+    const a=ang(i), p=[cx+Math.cos(a)*(r+22), cy+Math.sin(a)*(r+22)];
+    const anchor = Math.abs(Math.cos(a))<0.25 ? 'middle' : (Math.cos(a)>0?'start':'end');
+    g+=`<text class="ax" x="${p[0].toFixed(1)}" y="${(p[1]+4).toFixed(1)}" text-anchor="${anchor}" style="font-weight:700">${esc(l)}</text>`;
+  });
+  sp.series.forEach((se,j)=>{
+    g+=`<rect x="${(14+j*126)}" y="4" width="10" height="10" fill="${se.color}"${edgeOf(se.color)} rx="2"/>`;
+    g+=`<text class="ax" x="${(29+j*126)}" y="13">${esc(se.name)}</text>`;
+  });
+  g+=`<text class="ax" x="${cx}" y="${(cy+r+52).toFixed(1)}" text-anchor="middle">Each axis runs 1 to 10</text>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(sp.aria||'life categories, now against wanted')}">${g}</svg>`;
+}
+
+/* A 1–10 rating bar. Clicking is far quicker than typing, and clicking the
+   value you already chose clears it. */
+function scale10(key, value, kind){
+  const v = (value===''||value==null) ? null : num(value);
+  return `<div class="scale ${kind||''}" role="group">${
+    Array.from({length:10},(_,i)=>i+1).map(nn=>
+      `<button type="button" data-tscale="${esc(key)}|${nn}" class="${v!=null&&nn<=v?'on':''}" aria-label="${nn} out of 10"${v===nn?' aria-pressed="true"':''}>${nn}</button>`
+    ).join('')}</div>`;
+}
+
 /* deferred chart rendering — measure the container, then draw at real pixels */
 let PENDING = {};
+
+/* ─── Current vs Proposed mini bars ───────────────────────────────
+   Two bars, current against proposed, with the gap called out.
+   Either side may be null — a target that has not been set yet draws
+   nothing rather than drawing a zero. */
+function miniBars(title, sub, cur, prop, fmt){
+  const F = fmt==='pct' ? (v=>pct(v)) : money0k;
+  const has = v => v!=null && Number.isFinite(v);
+  const top = niceMax(Math.max(has(cur)?cur:0, has(prop)?prop:0, 0)) || 1;
+  const W=250, H=132, PAD=26, BW=56, GAP=44;
+  const x0 = (W-(BW*2+GAP))/2;
+  const bar = (v,x,color,label,edge)=>{
+    if(!has(v)) return `<text x="${x+BW/2}" y="${H-PAD-6}" text-anchor="middle" font-size="11" fill="${CH.muted}">not set</text>
+      <text x="${x+BW/2}" y="${H-8}" text-anchor="middle" font-size="10.5" fill="${CH.muted}">${esc(label)}</text>`;
+    const h = Math.max(1, (Math.max(0,v)/top)*(H-PAD-26));
+    return `<rect x="${x}" y="${H-PAD-h}" width="${BW}" height="${h}" fill="${color}" rx="2"${edge?` stroke="${CH.accentEdge}" stroke-width="1"`:''}></rect>
+      <text x="${x+BW/2}" y="${H-PAD-h-7}" text-anchor="middle" font-size="11.5" font-weight="600" fill="${CH.ink}">${esc(F(v))}</text>
+      <text x="${x+BW/2}" y="${H-8}" text-anchor="middle" font-size="10.5" fill="${CH.muted}">${esc(label)}</text>`;
+  };
+  let gapHtml='';
+  if(has(cur) && has(prop)){
+    const g = prop-cur;
+    const cls = Math.abs(g)<(fmt==='pct'?0.0005:0.5) ? 'flat' : (g>0?'down':'up');
+    gapHtml = `<span class="gappill ${cls}">Gap: ${esc(signed(g,F))}</span>`;
+  }
+  return `<div class="mini">
+    <div class="mt">${esc(title)}</div><div class="msb">${esc(sub)}</div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="${esc(title)}">
+      <line x1="8" y1="${H-PAD}" x2="${W-8}" y2="${H-PAD}" stroke="${CH.rule}"></line>
+      ${bar(cur, x0, CH.muted, 'Current')}
+      ${bar(prop, x0+BW+GAP, CH.accent, 'Proposed', true)}
+    </svg>
+    ${gapHtml}</div>`;
+}
 function chartBox(title, id, spec, capText){
   PENDING[id]=spec;
   return `<div class="chartbox"><h4>${esc(title)}</h4><div id="${id}"></div>${capText?`<div class="cap">${esc(capText)}</div>`:''}</div>`;
@@ -1125,6 +1573,7 @@ function drawCharts(){
       else if(sp.type==='stack') html=stackChart(W,sp);
       else if(sp.type==='dual')  html=dualChart(W,sp);
       else if(sp.type==='gauge') html=gauge(W,sp.score,sp.label);
+      else if(sp.type==='radar') html=radarChart(W,sp);
     }catch(e){ html=`<div class="empty">Chart unavailable</div>`; }
     el.innerHTML=html;
   });
@@ -1157,12 +1606,48 @@ function metric(label, value, fmt, sub, cls, key){
     <div class="mv">${key?tv(key,value,fmt):(FMT[fmt]||n0)(value)}</div>
     ${sub?`<div class="ms">${sub}</div>`:''}</div>`;
 }
+/* An editable metric: keeps the big serif figure but you type into it.
+   Empty means "use the number the model derived" — the derived figure shows
+   as the placeholder, so it is always obvious what the model thinks. */
+function metricIn(label, path, derived, fmt, sub, cls, suffix){
+  const F = FMT[fmt]||n0;
+  const raw = getPath(path);
+  const over = !(raw===null||raw===undefined||raw==='');
+  const editing = UI.editing===path;
+  const rawStr = v => (v==null||!Number.isFinite(v)) ? '' : String(Math.round(v*100)/100);
+  const rawVal = over ? rawStr(num(raw)) : rawStr(derived);
+  const value  = editing ? rawVal : (over ? F(num(raw)) : (derived==null?'':F(derived)));
+  return `<div class="m ${cls||''}">
+    <div class="ml">${esc(label)}</div>
+    <div class="mrow">
+      <input class="minput" type="text" inputmode="decimal" autocomplete="off"
+        data-path="${esc(path)}" data-kind="numn" data-raw="${esc(rawVal)}" value="${esc(value)}"
+        placeholder="${esc(derived==null?'—':F(derived))}" aria-label="${esc(label)}">
+      ${suffix?`<span class="msuf">${esc(suffix)}</span>`:''}
+    </div>
+    <div class="ms">${sub||''}${over&&derived!=null?
+      ` · <button class="mreset" data-clear="${esc(path)}">use the calculated ${esc(F(derived))}</button>`:''}</div>
+  </div>`;
+}
+
+/* Thousand separators so a seven-figure number is readable at a glance.
+   Grouped at rest, raw digits while the field has focus — commas that
+   reflow under the caret while you type are worse than none. */
+function grouped(v){
+  if(v==null||v===''||!Number.isFinite(num(v))) return '';
+  return num(v).toLocaleString('en-NZ',{maximumFractionDigits:2});
+}
 function field(label, path, opts){
   const o=opts||{};
   const v=getPath(path);
-  const shown = o.kind==='pct' ? (v==null?'':(v*100)) : v;
+  // 0.28*100 is 28.000000000000004 in binary floating point — never show that.
+  let shown = o.kind==='pct' ? (v==null?'':Math.round(v*1e6)/1e4) : v;
+  if(o.money) shown = (UI.editing===path) ? (v==null?'':v) : grouped(v);
   return `<div class="f"><div class="flab"><div class="fl">${esc(label)}</div>${o.help?`<div class="fh">${esc(o.help)}</div>`:''}</div>
-    <input type="number" step="${o.step||'any'}" data-path="${esc(path)}" data-kind="${o.kind||'num'}" value="${shown===''||shown==null?'':shown}" aria-label="${esc(label)}"></div>`;
+    ${o.money
+      ? `<div class="fmoney"><span>${esc(CURSYM)}</span><input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" data-raw="${esc(v==null?'':String(v))}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}"></div>`
+      : `<input type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}">`}
+  </div>`;
 }
 function outrow(label, valueHtml, help, cls){
   return `<div class="f derived ${cls||''}"><div class="flab"><div class="fl">${esc(label)}</div>${help?`<div class="fh">${esc(help)}</div>`:''}</div>
@@ -1186,180 +1671,505 @@ function gapPill(delta, goodWhenPositive){
   return `<span class="pill ${good?'good':'bad'}">${good?'ahead':'gap'}</span>`;
 }
 /* ═══ §TABS ══════════════════════════════════════════════════════ */
-const UI = {tab:'vision', div:'WOB', orgYear:0};
+const UI = {tab:'vision', div:'WOB', orgYear:0, editing:null, renaming:null};
 
 function head(eyebrow, title, lead){
   return `<div class="pagehead"><div class="eyebrow">${esc(eyebrow)}</div>
     <h1 class="big">${esc(title)}</h1>${lead?`<p class="lead">${lead}</p>`:''}</div>`;
 }
-function sech(title, hint){
-  return `<div class="sechead"><h2 class="sec">${esc(title)}</h2>${hint?`<div class="hint">${hint}</div>`:''}</div>`;
+function sech(title, hint, no){
+  return `<div class="sechead"><h2 class="sec">${no?`<span class="secno">${esc(no)}</span>`:''}${esc(title)}</h2>${hint?`<div class="hint">${hint}</div>`:''}</div>`;
 }
 
 /* ─── 01 VISION ─────────────────────────────────────────────────── */
+
+/* Present tense, associated, sensory. The member is asked to stand in the
+   five-year day and describe it, not to forecast towards it. */
+const VISION_PROMPTS = [
+  ['Step into it','It is <b>DATE</b>. You walk through the door on a Monday morning. What do you see happening without you?'],
+  ['The handover','Who is running the part of the day you run today? Say their name out loud, or the name of the role you will hire.'],
+  ['The Wednesday test','It is a Wednesday afternoon and you are not at work. Where are you, and who is with you?'],
+  ['Overheard','Your team are talking about you and you are not in the room. What are they saying?'],
+  ['The number','The valuation lands in your inbox. What does it say — and what is the first thing you feel when you read it?'],
+  ['What you stopped','What are you no longer doing that you still do every single week today?'],
+  ['The one you never let yourself plan','What have you done in these five years that you would never have let yourself plan for?']
+];
+const ROLE_OPTIONS = ['CEO','Leader','Investor','CEO · Leader · Investor'];
+
 function renderVision(){
-  const pr = project(S.active), y5 = pr.years[5], y0 = pr.years[0];
-  const f5 = y5.freedom, f0 = y0.freedom;
-  const dv = (y5.value.equity!=null && y0.value.equity!=null) ? y5.value.equity-y0.value.equity : null;
-  const dh = (y5.ownerHours!=null && y0.ownerHours!=null) ? y0.ownerHours-y5.ownerHours : null;
-  const perHour = (dv!=null && dh) ? dv/(dh*48) : null;
+  const pr = project(), y5 = pr.years[5], y0 = pr.years[0];
+  const VF = visionFigures(pr);
+  const {createdDerived, created, dh, perHour, scoreToday, scoreY5} = VF;
+  const scoreOr0 = v => v;
+  const D = fiveYearDate();
 
   return head('01 · The Intent','Vision',
     `Boardroom takes an owner who works <em>in</em> their business and turns them into a CEO who owns an <em>asset</em>. Two outcomes come out of that, and they are the only two we are chasing: <strong>freedom — time and money</strong>, and <strong>an asset that is sellable or a legacy</strong>. Everything in this plan has to serve one of them.`)
 
-  + sech('The statement','In your words. It prints on every export.')
-  + `<textarea class="full" data-path="vision.statement" data-kind="str" placeholder="In five years, on ${esc(fiveYearDate())}, my business will… and my life will…">${esc(S.vision.statement)}</textarea>`
+  + sech('The statement', esc(D))
+  + `<div class="prompts">
+      <h4>Answer these out loud before you write anything</h4>
+      <div class="pl">Answer them in the present tense, as if you are standing in that day already. Not "I want to" — "I am". The words you use here are the ones you will hear yourself repeat in the room.</div>
+      <ol>${VISION_PROMPTS.map(([t,q])=>`<li><b>${esc(t)}.</b> ${q.replace('<b>DATE</b>','<b>'+esc(D)+'</b>')}</li>`).join('')}</ol>
+    </div>
+    <textarea class="full" data-path="vision.statement" data-kind="str" style="min-height:150px" placeholder="It is ${esc(D)}. My business is… I am… My week looks like…">${esc(S.vision.statement)}</textarea>
+    <div class="cap">This prints on the Consolidated one-pager and on every export. Write it once, read it every cycle.</div>`
 
-  + sech('Five years from today', esc(fiveYearDate()))
+  + sech('Five years from today', esc(D))
   + `<div class="two">
       <div>
         <div class="sub">The Business</div><h3>What it becomes</h3>
-        ${field('Revenue','vision.biz.revenue',{help:'Annual, excluding GST'})}
-        ${field('Net profit','vision.biz.profit',{help:'Annual, after your salary'})}
-        ${field('Business value','vision.biz.value',{help:'What it is worth to a buyer'})}
-        ${field('Team size','vision.biz.team',{help:'Total people, including you'})}
-        ${selectField('Your role','vision.biz.role',['Owner-Operator','CEO','CEO · Leader','CEO · Leader · Investor','Investor — out of the business'])}
+        ${field('Revenue','vision.biz.revenue',{kind:'numn',money:true,help:'Annual, excluding GST'})}
+        ${field('Net profit','vision.biz.profit',{kind:'numn',money:true,help:'Annual, after your salary'})}
+        ${field('Business value','vision.biz.value',{kind:'numn',money:true,help:'What it is worth to a buyer'})}
+        ${field('Team size','vision.biz.team',{kind:'numn',help:'Total people, including you'})}
+        <label class="lbl">Your role</label>
+        <div class="roles">
+          <button class="rolechip gone" disabled title="Not an option in five years">Owner-Operator</button>
+          <span class="rolearrow">→</span>
+          ${ROLE_OPTIONS.map(r=>`<button class="rolechip ${S.vision.biz.role===r?'on':''}" data-role="${esc(r)}">${esc(r)}</button>`).join('')}
+        </div>
+        <div class="tiny" style="margin-top:9px">Owner-Operator is on the board and crossed out on purpose. It is where you are, not somewhere you can choose to still be.</div>
       </div>
       <div>
         <div class="sub">The Life</div><h3>What it funds</h3>
-        ${field('Hours worked per week','vision.life.hours')}
-        ${field('Weeks of holiday a year','vision.life.holidays')}
-        ${field('Weekends worked a month','vision.life.weekends')}
-        ${field('Evenings home for dinner','vision.life.evenings',{help:'Out of seven'})}
-        ${field('Personal income drawn','vision.life.income',{help:'Salary plus drawings, annual'})}
+        ${field('Hours worked per week','vision.life.hours',{kind:'numn'})}
+        ${field('Weeks of holiday a year','vision.life.holidays',{kind:'numn'})}
+        ${field('Weekends worked a month','vision.life.weekends',{kind:'numn'})}
+        ${field('Evenings home for dinner','vision.life.evenings',{kind:'numn',help:'Out of seven'})}
+        ${field('Adventures completed','vision.life.adventures',{kind:'numn',help:'The trips, the events, the things that get ticked off — how many over the five years'})}
+        ${field('Investments outside the business','vision.life.investments',{kind:'numn',money:true,help:'Property, shares, other businesses — what the money has built by then'})}
+        ${field('Personal income drawn','vision.life.income',{kind:'numn',money:true,help:'Salary plus drawings, annual'})}
         <label class="lbl">What the money is for</label>
         <input type="text" class="full" data-path="vision.life.whatFor" data-kind="str" value="${esc(S.vision.life.whatFor)}" placeholder="The boat. The kids' school. Buying the building.">
       </div>
     </div>`
 
   + sech('Outcome one — Freedom', 'Time and money you can actually use')
-  + `<div class="mgrid">
-      ${metric('Freedom score today', f0.score, 'n0', 'Progress toward your own year-5 targets — today is the start line', '', 'fs0')}
-      ${metric('Freedom score, year 5', f5.score, 'n0', 'Plan '+S.active, 'hero', 'fs5')}
-      ${metric('Owner hours now', y0.ownerHours, 'hrs', 'Per week', '', 'oh0')}
-      ${metric('Owner hours, year 5', y5.ownerHours, 'hrs', dh!=null?`${n1(dh)} hours a week bought back`:'', 'accent', 'oh5')}
-    </div>`
+  + `<div class="explain">
+      <b>Time <u>to</u> the business.</b> The hours it takes from you each week — on the tools, on the phone, quoting at the kitchen table at nine at night. Count all of it, not the hours you are supposed to work.<br>
+      <b>Time <u>outside</u> the business.</b> The hours that are actually yours. Not the hours you are at home answering the phone.<br>
+      <b>Now score it.</b> Out of 100, how free are you today? <b>0</b> means the business owns every hour. <b>100</b> means you choose every hour. Score it honestly, not the way you would answer it in front of the room.
+    </div>
+    <div class="mgrid">
+      ${metricIn('Freedom score today','vision.freedom.today', scoreToday,'n0','Out of 100 — be honest','','/ 100')}
+      ${metricIn('Freedom score, year 5','vision.freedom.y5', scoreY5,'n0','Where you are heading','hero','/ 100')}
+      ${metricIn('Hours a week in the business, today','vision.freedom.hoursToday', y0.ownerHours,'n1','Everything the business takes','','hrs')}
+      ${metricIn('Hours a week in the business, year 5','vision.freedom.hoursY5', y5.ownerHours,'n1', dh!=null?`${n1(dh)} hours a week bought back`:'','accent','hrs')}
+    </div>
+    <div class="cap">Leave a box empty and it uses the figure the model works out from your baseline and your strategies. Type into it and your number wins.</div>`
 
   + sech('Outcome two — An asset', 'A value that exists without you')
   + `<div class="mgrid">
-      ${metric('Business value today', y0.value.equity, 'money0k', `${n1(pr.scenario.multiple)}× normalised EBITDA`, '', 'v0')}
-      ${metric('Business value, year 5', y5.value.equity, 'money0k', 'Plan '+S.active, 'hero', 'v5')}
-      ${metric('Value created', dv, 'money0k', 'Over five years', 'accent', 'vd')}
-      ${metric('Value per hour bought back', perHour, 'money', 'Per annual hour of your time released', '', 'vph')}
+      ${metricIn('Business value today','vision.asset.valueToday', y0.value.equity,'money0k',`Derived from your numbers at ${n1(pr.plan.multiple)}× EBITDA`,'')}
+      ${metricIn('Business value, year 5','vision.asset.valueY5', y5.value.equity,'money0k','What the plan produces','hero')}
+      ${metricIn('Value created','vision.asset.valueCreated', createdDerived,'money0k','Over five years','accent')}
+      ${metric('Value per hour bought back', perHour,'money','Value created ÷ the annual hours you release','','vph')}
     </div>
     <div class="cap">The multiple is an assumption you set, not a valuation. A real valuation needs an adviser.</div>`
 
   + `<div class="note">Every strategy in this plan has to serve one of these two outcomes. If it does not grow the asset or buy back freedom, it does not belong in the programme.</div>`;
 }
+/* The Thrive Index, read back on the Horizon page. Scored on Vision;
+   here it sits beside the money so the two are never separated. */
+function thriveReflection(){
+  const X=thriveScores(), T=S.thrive;
+  const lvls=['Surviving','Stable','Comfortable','Thriving','Optimal'];
+  if(!X.counted && !X.capCounted && X.energising==null)
+    return sech('Your Thrive Index','Not scored yet')
+      + `<div class="empty">Nothing scored yet. Go to <b>Vision → The Thrive Index</b> and click the bars — it takes about two minutes, and it is the half of the plan that explains why the other half matters.</div>`;
+
+  return sech('Your Thrive Index', X.level?`${esc(X.level)} today${X.levelD?` · heading for ${esc(X.levelD)}`:''}`:'Scored on the Vision page')
+  + `<div class="mgrid">
+      ${metric('Thrive Index today', X.tis,'n1', X.level||'','', 'tr_now')}
+      ${metric('Thrive Index wanted', X.tisD,'n1', X.levelD||'','hero', 'tr_want')}
+      ${metric('Capability', X.capTotal,'n0', X.capBand?`${esc(X.capBand)} · out of ${X.capMax}`:'Not scored','', 'tr_cap')}
+      ${metric('Week that energises you', X.energising,'n0', X.energising!=null?`Target ${n0(X.targetEnergising)}% · ${n0(X.draining)}% drains you`:'Not scored','accent','tr_en')}
+    </div>
+    <div class="lvlbar">${lvls.map(l=>`<div class="${X.level===l?'on':(X.levelD===l?'want':'')}">${esc(l)}</div>`).join('')}</div>`
+
+  + `<div class="chgrid" style="margin-top:20px">
+      ${chartBox('Where you are against where you want to be','ch-radar2',{type:'radar',h:430,
+        labels:THRIVE_LIFE.map(l=>l[1]), max:10,
+        series:[{name:'Wanted',color:CH.accent,fill:'rgba(255,230,0,.30)',values:X.gaps.map(g=>g.d)},
+                {name:'Today', color:CH.ink,   fill:'rgba(14,26,34,.08)', values:X.gaps.map(g=>g.c)}]},
+        'The same nine categories you scored on the Vision page.')}
+      ${X.biggest.length ? `<div class="chartbox"><h4>The gaps, biggest first</h4>
+        <table class="t" style="font-size:13px"><tbody>
+        ${X.biggest.map(g=>`<tr><td>${esc(g.label)}</td><td style="width:60px">${n0(g.c)} → ${n0(g.d)}</td>
+          <td style="width:120px"><div class="bargap"><i style="width:${clamp(0,100,(g.gap/9)*100)}%"></i></div></td>
+          <td class="down" style="width:44px;font-weight:700">+${n0(g.gap)}</td></tr>`).join('')}
+        </tbody></table>
+        <div class="cap">Nine is the widest a gap can be. Anything at four or more is a year of work, not a tweak.</div></div>`
+        : `<div class="chartbox"><h4>The gaps</h4><div class="empty">No gaps recorded — score the "where you want to be" column on the Vision page.</div></div>`}
+    </div>`
+
+  + `<div class="note">Freedom is one of the two outcomes, and the Thrive Index is how it gets measured. The business numbers below are what pay for it${T.fin && T.fin[2] && T.fin[2].income ? ` — "Thriving" costs you ${money(num(T.fin[2].income))} a month, so that is what the plan has to produce` : ''}.</div>`;
+}
+
+/* ─── THE THRIVE INDEX ───────────────────────────────────────────
+   Scored on Vision to cement the why, summarised again on Horizon. */
+function renderThrive(){
+  const T=S.thrive, X=thriveScores();
+  const lvls=['Surviving','Stable','Comfortable','Thriving','Optimal'];
+  return head('02 · The why','Thrive Index',
+    `The rest of this plan is the business. This page is the life it is supposed to be funding — and it is the honest answer to <em>why bother</em>. Score it before you go near the numbers, and again every time you come back to the room.`)
+
+  + sech('Where your life is right now', X.counted?`${X.counted} of ${X.of} categories scored`:'Score where you actually are')
+  + `<div class="explain">
+      <b>Nine categories, two scores each.</b> Where you are today, and where you want to be. That is the whole exercise, and it takes about two minutes.<br>
+      <b>How to fill it in.</b> Click the bars. Left bar is <b>where you are today</b>, right bar is <b>where you want to be</b>. One to ten, gut instinct, ten seconds a row. Click the same number again to clear it.<br>
+      <b>Score it honestly.</b> Not the answer you would give in the room. The gap between the two bars is the whole point — a row with no gap needs no work, and a row with a gap of six is where your five years actually go.
+    </div>`
+
+  + `<div class="mgrid" style="margin-top:18px">
+      ${metric('Thrive Index today', X.tis,'n1', X.level?`${X.level} · out of 100`:'Score the nine rows below','', 'ti_now')}
+      ${metric('Thrive Index wanted', X.tisD,'n1', X.levelD?`${X.levelD}`:'', 'hero', 'ti_want')}
+      ${metric('The lift', X.lift,'n1', X.lift!=null?'Points between today and wanted':'', 'accent','ti_lift')}
+      ${metric('To the next level', X.toNext,'n1', X.level&&X.toNext!=null?(X.toNext>0?`points to leave ${X.level}`:'Already at the top band'):'','', 'ti_next')}
+    </div>
+    <div class="lvlbar">${lvls.map(l=>`<div class="${X.level===l?'on':(X.levelD===l?'want':'')}">${esc(l)}</div>`).join('')}</div>
+    <div class="cap">Solid copper is where you are now. The pale band is where you are heading. Bands follow the Thrive Index: under 40 Surviving, under 60 Stable, under 80 Comfortable, under 90 Thriving, then Optimal.</div>`
+
+  + `<div class="scrollx" style="margin-top:26px"><table class="t thrive">
+      <thead><tr><th>Life category</th><th style="text-align:center">Where you are today</th>
+        <th style="text-align:center">Where you want to be</th><th>Gap</th></tr></thead><tbody>
+      ${THRIVE_LIFE.map(([label],i)=>{
+        const g=X.gaps[i];
+        return `<tr><td>${esc(label)}</td>
+          <td class="sc">${scale10('life|'+i+'|c', T.life[i].c, 'cur')}</td>
+          <td class="sc">${scale10('life|'+i+'|d', T.life[i].d, 'des')}</td>
+          <td class="gapcell ${g.gap==null?'':(g.gap>0?'down':'up')}">${g.gap==null?'—':(g.gap>0?'+'+n0(g.gap):n0(g.gap))}</td></tr>`;
+      }).join('')}
+      <tr class="tot"><td>Totals</td>
+        <td style="text-align:center">${X.counted?n0(sum(tvals(T.life.map(x=>x.c)))):'—'} / 90</td>
+        <td style="text-align:center">${tvals(T.life.map(x=>x.d)).length?n0(sum(tvals(T.life.map(x=>x.d)))):'—'} / 90</td>
+        <td class="gapcell">${(X.counted&&tvals(T.life.map(x=>x.d)).length)
+          ? '+'+n0(sum(tvals(T.life.map(x=>x.d)))-sum(tvals(T.life.map(x=>x.c)))) : '—'}</td></tr>
+    </tbody></table></div>`
+
+  + chartBox('The shape of your life right now','ch-radar',{type:'radar',h:440,
+      labels:THRIVE_LIFE.map(l=>l[1]), max:10,
+      series:[{name:'Where you want to be',color:CH.accent,fill:'rgba(255,230,0,.30)',values:X.gaps.map(g=>g.d)},
+              {name:'Where you are today',color:CH.ink,fill:'rgba(14,26,34,.08)',values:X.gaps.map(g=>g.c)}]},
+      'The pinched axes are the ones costing you. A balanced shape at a low score is a life that is evenly flat; a spiky shape says one part is carrying everything.')
+
+  + (X.biggest.length ? `<div class="note">Your three biggest gaps: <b>${X.biggest.slice(0,3).map(g=>esc(g.short)+' (+'+n0(g.gap)+')').join('</b>, <b>')}</b>. If the five-year plan below does not move those three, it is the wrong plan.</div>` : '')
+
+  + sech('Owner and director capability', X.capCounted?`${X.capCounted} of ${THRIVE_CAP.length} scored · ${esc(X.capBand||'')}`:'Rate yourself one to ten')
+  + `<div class="scrollx"><table class="t thrive">
+      <thead><tr><th>Capability</th><th style="text-align:center">Score</th><th>Out of 10</th></tr></thead><tbody>
+      ${THRIVE_CAP.map((c,i)=>`<tr><td>${esc(c)}</td>
+        <td class="sc">${scale10('cap|'+i, T.cap[i], 'cap')}</td>
+        <td class="gapcell">${(T.cap[i]===''||T.cap[i]==null)?'—':n0(num(T.cap[i]))}</td></tr>`).join('')}
+      <tr class="tot"><td>Total capability</td><td style="text-align:center">${X.capTotal==null?'—':n0(X.capTotal)} / ${X.capMax}</td>
+        <td>${X.capBand?`<span class="pill accent">${esc(X.capBand)}</span>`:'—'}</td></tr>
+    </tbody></table></div>
+    <div class="cap">Bands: under 40 emerging operator, under 60 capable manager, under 80 growth leader, 80 and over director-ready. The last row — stepping back from day-to-day operations — is the one that decides whether the business is an asset or a job.</div>`
+
+  + sech('Time and energy','Where the week actually goes')
+  + `<div class="fgrid"><div>
+      ${field('% of your week that energises you','thrive.energy.energising',{kind:'numn',help:'The work you would still do if you did not have to. Type this one — the rest of the week follows.'})}
+      ${outrow('% of your week that drains you',
+         X.draining==null?'<span class="muted">—</span>':`<b>${n0(X.draining)}%</b>`,
+         'The balance of the week. Calculated, so the two always make 100%.')}
+    </div><div>
+      ${field('Target — energising','thrive.energy.targetEnergising',{kind:'numn',help:'The Thrive Index benchmark is 70%'})}
+      ${outrow('Target — draining',
+         X.targetDraining==null?'<span class="muted">—</span>':`<b>${n0(X.targetDraining)}%</b>`,
+         'The benchmark is 30%.')}
+    </div></div>`
+  + (X.energising!=null ? `<div class="alert ${X.energyGap>=0?'good':''}"><div><b>${X.energyGap>=0?'At or above the benchmark':'Below the benchmark'}</b>${
+      X.energyGap>=0
+        ? `${n0(X.energising)}% of your week energises you, against a target of ${n0(num(T.energy.targetEnergising))}%. Protect it — this is what the plan is trying to buy more of.`
+        : `${n0(X.energising)}% of your week energises you, against a target of ${n0(num(T.energy.targetEnergising))}%. That is ${n0(Math.abs(X.energyGap))} points short. Every ten points you move it is worth roughly five points on the Thrive Index.`
+      }</div></div>` : '')
+
+  + sech('Aim higher','The three shifts that close the gap')
+  + `<div class="cards">${THRIVE_SHIFTS.map(([k,label,eg])=>`<div class="card">
+      <h3 class="ch">${esc(label)}</h3>
+      <div class="tiny" style="margin-bottom:10px">${esc(eg)}</div>
+      <textarea class="full" style="min-height:74px;font-family:var(--sans);font-size:14px" data-path="thrive.aim.${k}" data-kind="str" placeholder="Your plan">${esc(T.aim[k]||'')}</textarea>
+    </div>`).join('')}</div>`
+
+  + sech('What each lifestyle level costs','The bridge from the life to the numbers')
+  + `<div class="scrollx"><table class="t"><thead><tr><th>Lifestyle level</th><th>Monthly income needed</th><th style="text-align:left">Key shifts required</th></tr></thead><tbody>
+      ${T.fin.map((r,i)=>`<tr><td>${esc(r.level)}${i===0?'<div class="tiny">What you take home today</div>':''}</td>
+        <td class="want inp" style="width:170px"><div class="fmoney"><span>${esc(CURSYM)}</span>
+          <input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="thrive.fin.${i}.income" data-kind="numn" data-raw="${esc(r.income==null?'':String(r.income))}" value="${UI.editing==='thrive.fin.'+i+'.income'?(r.income==null?'':r.income):grouped(r.income)}" aria-label="${esc(r.level)} monthly income"></div></td>
+        <td style="text-align:left"><input type="text" class="full" style="font-size:13.5px" data-path="thrive.fin.${i}.shifts" data-kind="str" value="${esc(r.shifts||'')}" placeholder="${esc(i===1?'e.g. reduce workdays; hire help':i===2?'e.g. relocate; invest; outsource':i===3?'e.g. multiple income streams; legacy projects':'')}"></td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="cap">This is the line between the Thrive Index and the Budget tab. Whatever "Thriving" costs you a month is what the business has to pay you — put that figure into your desired net profit and personal income, and the rest of the plan works backwards from it.</div>`;
+}
+
 function fiveYearDate(){
   const d=new Date(); d.setFullYear(d.getFullYear()+5);
   return d.toLocaleDateString('en-NZ',{day:'numeric',month:'long',year:'numeric'});
 }
 
 /* ─── 02 BASELINE ───────────────────────────────────────────────── */
+/* The P&L Data rows, in the order the Boardroom Growth Planner runs them.
+   avg / tot say what each summary column means for that row:
+     mean  — the average of the months entered
+     sum   — the total across the months entered
+     ratio — derived from the period totals, never an average of monthly ratios
+     last  — the closing position (the latest month entered)
+     none  — not a meaningful figure for this row, shown as —          */
 const GRID_ROWS = [
-  {k:'rev',      l:'Revenue (excl GST)',        f:money},
-  {k:'cos',      l:'Cost of sales',             f:money},
-  {d:'gp',       l:'Gross profit',              f:money},
-  {d:'gpPct',    l:'Gross profit %',            f:v=>pct(v)},
-  {k:'fixed',    l:'Fixed costs',               f:money},
-  {k:'ovh',      l:'Company overhead',          f:money},
-  {d:'np',       l:'Net profit',                f:money},
-  {k:'jobs',     l:'Jobs / invoices completed', f:n0},
-  {d:'ajv',      l:'Average job value',         f:money},
-  {k:'quotes',   l:'Quotes issued',             f:n0},
-  {k:'leads',    l:'Leads received',            f:n0},
-  {k:'ownerHrs', l:'Owner hours per week',      f:n1, avg:true},
-  {k:'onTools',  l:'On-tools headcount',        f:n1, last:true},
-  {k:'office',   l:'Office headcount',          f:n1, last:true}
+  {k:'rev',      l:'Revenue',                 tip:'revenue',    f:money, avg:'mean',  tot:'sum'},
+  {k:'gp',       l:'Gross profit',            tip:'gp',         f:money, avg:'mean',  tot:'sum'},
+  {d:'gpPct',    l:'Gross profit %',          tip:'gpPct',      f:v=>pct(v), avg:'ratio', tot:'none'},
+  {k:'fixed',    l:'Fixed cost',              tip:'fixed',      f:money, avg:'mean',  tot:'sum'},
+  {k:'ovh',      l:'Company overhead',        tip:'ovh',        f:money, avg:'mean',  tot:'sum', divOnly:true},
+  {d:'fcPct',    l:'Fixed cost %',            tip:'fcPct',      f:v=>pct(v), avg:'ratio', tot:'none'},
+  {d:'np',       l:'Net profit',              tip:'np',         f:money, avg:'mean',  tot:'sum'},
+  {k:'jobs',     l:'Invoices / jobs',         tip:'jobs',       f:n0,    avg:'mean',  tot:'sum'},
+  {d:'ajv',      l:'Average job value',       tip:'ajv',        f:money, avg:'ratio', tot:'none'},
+  {k:'quotes',   l:'Quotes issued',           tip:'quotes',     f:n0,    avg:'mean',  tot:'sum'},
+  {k:'leads',    l:'Leads received',          tip:'leads',      f:n0,    avg:'mean',  tot:'sum'},
+  {k:'ownerHrs', l:'Owner hours per week',    tip:'ownerHrs',   f:n1,    avg:'mean',  tot:'none'},
+  {k:'onTools',  l:'On-tools headcount',      tip:'onTools',    f:n1,    avg:'mean',  tot:'last'},
+  {k:'office',   l:'Office headcount',        tip:'office',     f:n1,    avg:'mean',  tot:'last'}
 ];
-function monthName(i){
+
+/* The "?" beside each metric. Written for a tradie, not an accountant. */
+const METRIC_TIPS = {
+  revenue: 'Total invoiced this month before any costs, excluding GST. The top line.',
+  gp: 'Revenue minus direct job costs — materials, subcontractors and on-tools labour. What is left to pay the fixed costs and you. It is a line on your P&L; copy it straight across.',
+  gpPct: 'Gross profit \u00f7 revenue. The most leveraged number in a trade business — one point of margin on $1m of revenue is $10,000 in your pocket. The period figure is total gross profit \u00f7 total revenue, never the average of the monthly percentages.',
+  fixed: 'Costs that do not move with job volume — rent, office wages, software, vehicles, your salary.',
+  ovh: 'Company-wide costs carried above the departments. Only shown when divisions are on.',
+  fcPct: 'Fixed cost as a share of revenue. This is where lifestyle creep shows up. Profitable Tradie benchmark: under 25%.',
+  np: 'Gross profit minus fixed cost. Derived, never typed — if your accountant has a different figure, put it in Reconciliation at the bottom of this page and the variance is shown rather than hidden.',
+  jobs: 'Separate jobs invoiced this month. Job count is what drives team capacity.',
+  ajv: 'Revenue \u00f7 invoices. A higher job value means less admin for every dollar earned.',
+  quotes: 'Quotes issued this month. Without this the tool cannot work out your conversion rate or how much pricing time the business needs.',
+  leads: 'Enquiries received this month. Leave it blank and the top of the funnel is estimated from jobs instead of counted.',
+  ownerHrs: 'Hours you personally worked in an average week that month. This is one half of the whole point of the plan.',
+  onTools: 'People on the tools at the end of the month. Drives the hiring plan.',
+  office: 'Office and admin people at the end of the month.'
+};
+const tipMark = k => METRIC_TIPS[k] ? `<span class="tip" title="${esc(METRIC_TIPS[k])}" aria-label="${esc(METRIC_TIPS[k])}">?</span>` : '';
+
+function monthNameAuto(i){
   const m=(num(S.meta.startMonth)+i)%12;
   const y=num(S.meta.startYear)+Math.floor((num(S.meta.startMonth)+i)/12);
   return MONTHS[m]+' '+String(y).slice(2);
 }
+/* The member can type over any column heading on the Baseline tab.
+   Blank means "use the name worked out from the start month in Setup". */
+function monthName(i){
+  const ov=(S.meta.monthNames||[])[i];
+  return (ov!=null && String(ov).trim()!=='') ? String(ov).trim() : monthNameAuto(i);
+}
 function currentDivision(){
   return S.divisions.find(d=>d.id===UI.div) || S.divisions[0];
 }
+/* Consolidated months: money and volume add across the active departments,
+   headcount adds, and owner hours DO NOT — the owner works the same week
+   however the business is sliced. */
+function consolidatedMonths(){
+  const ds = activeDivisions();
+  return Array.from({length:12}, (_,i)=>{
+    const ms = ds.map(d=>d.months[i]);
+    const any = ms.some(entered);
+    const add = k => sum(ms.map(m=>num(m[k])));
+    return {
+      rev:add('rev'), gp:sum(ms.map(mgp)), cos:sum(ms.map(mcos)),
+      fixed:add('fixed'), ovh:add('ovh'), jobs:add('jobs'),
+      quotes:add('quotes'), leads:add('leads'),
+      /* same rule as business(): the average of the departments that
+         reported, never the sum and never dragged down by an empty one */
+      ownerHrs: (()=>{ const h=ms.filter(entered).map(m=>num(m.ownerHrs)).filter(v=>v>0);
+                       return h.length ? sum(h)/h.length : 0; })(),
+      onTools:add('onTools'), office:add('office')
+    };
+  });
+}
+
+function deptTabs(){
+  const on = S.divisions.filter(d=>d.id!=='WOB' && d.active);
+  const t = [];
+  if(S.divisionsOn){
+    t.push(`<button class="dtab ${UI.div==='CONS'?'on':''}" data-divsel="CONS">Consolidated<span class="dt2">${on.length} department${on.length===1?'':'s'}</span></button>`);
+    on.forEach(d=>{
+      if(UI.renaming===d.id){
+        t.push(`<span class="dtab on renaming"><input class="dren" data-divname="${esc(d.id)}" value="${esc(d.name)}" aria-label="Department name" autofocus></span>`);
+      } else {
+        t.push(`<button class="dtab ${d.id===UI.div?'on':''}" data-divsel="${esc(d.id)}">${esc(d.name)}
+          <i class="dx" data-divren="${esc(d.id)}" title="Rename ${esc(d.name)}">✎</i>
+          <i class="dx" data-divoff="${esc(d.id)}" title="Remove ${esc(d.name)}">×</i></button>`);
+      }
+    });
+  } else {
+    t.push(`<button class="dtab on" data-divsel="WOB">Whole of business<span class="dt2">One P&amp;L</span></button>`);
+  }
+  t.push(`<button class="dadd" id="btnAddDept" title="Add a department">+</button>`);
+  return `<div class="dtabs">${t.join('')}</div>`;
+}
+
+function pcard(no, title, meta, body, foot){
+  return `<section class="pcard">
+    <header><span class="pn">${esc(no)}</span><h3>${title}</h3>${meta?`<div class="pm">${meta}</div>`:''}</header>
+    <div class="pb">${body}${foot?`<div class="cap">${foot}</div>`:''}</div>
+  </section>`;
+}
+
 function renderBaseline(){
   if(!S.divisionsOn) UI.div='WOB';
-  else if(UI.div==='WOB'){ const a=S.divisions.find(d=>d.active&&d.id!=='WOB'); UI.div=a?a.id:'D1'; }
-  const dv = currentDivision();
-  const nz = normalise(dv), b = business();
+  else if(UI.div==='WOB') UI.div='CONS';
+  else if(UI.div!=='CONS' && !(S.divisions.find(d=>d.id===UI.div)||{}).active) UI.div='CONS';
 
-  let grid = `<table class="t grid"><thead><tr><th>Month</th>`;
-  for(let i=0;i<12;i++) grid+=`<th>${esc(monthName(i))}</th>`;
-  grid+=`<th class="tot">Period</th></tr></thead><tbody>`;
-  GRID_ROWS.forEach(r=>{
-    if(r.d){
-      grid+=`<tr class="der"><td>${esc(r.l)}</td>`;
-      for(let i=0;i<12;i++){
-        const m=dv.months[i]; let v=null;
-        if(r.d==='gp')    v=(num(m.rev)||num(m.cos))?num(m.rev)-num(m.cos):null;
-        if(r.d==='gpPct') v=div(num(m.rev)-num(m.cos), num(m.rev));
-        if(r.d==='np')    v=(num(m.rev)||num(m.cos)||num(m.fixed))?num(m.rev)-num(m.cos)-num(m.fixed)-num(m.ovh):null;
-        if(r.d==='ajv')   v=div(num(m.rev), num(m.jobs));
-        grid+=`<td>${r.f(v)}</td>`;
-      }
-      let tv2=null;
-      if(r.d==='gp') tv2=nz.gp; if(r.d==='gpPct') tv2=nz.gpPct;
-      if(r.d==='np') tv2=nz.netProfit; if(r.d==='ajv') tv2=nz.avgJobValue;
-      grid+=`<td class="tot">${r.f(tv2)}</td></tr>`;
-    } else {
-      grid+=`<tr><td>${esc(r.l)}</td>`;
-      for(let i=0;i<12;i++){
-        grid+=`<td><input type="number" step="any" data-grid="${esc(dv.id)}" data-m="${i}" data-k="${r.k}" value="${num(dv.months[i][r.k])||''}" aria-label="${esc(r.l+' '+monthName(i))}"></td>`;
-      }
-      const col=dv.months.filter(entered).map(m=>num(m[r.k]));
-      let t = r.avg ? (col.length?sum(col)/col.length:null) : r.last ? (col.length?col[col.length-1]:null) : sum(col);
-      if(!col.length) t=null;
-      grid+=`<td class="tot">${r.f(t)}</td></tr>`;
+  const cons = UI.div==='CONS';
+  const dv   = cons ? {id:'CONS', name:'Consolidated', months:consolidatedMonths(),
+                       a:business().a, t:consolidatedTargets()}
+                    : currentDivision();
+  const nz   = cons ? (()=>{ const b=business();
+                 return {n:Math.max(0,...activeDivisions().map(d=>normalise(d).n)),
+                   revenue:b.revenue, gp:b.gp, cos:b.cos, fixedTotal:b.fixedTotal,
+                   gpPct:b.gpPct, netProfit:b.netProfit, revenueM:b.revenueM, gpM:b.gpM,
+                   fixedM:b.fixedM, netProfitM:b.netProfitM, jobsM:b.jobsM, quotesM:b.quotesM,
+                   leadsM:b.leadsM, avgJobValue:b.avgJobValue, quoteWin:b.quoteWin,
+                   leadQuote:b.leadQuote, onTools:b.onTools, leadsImplied:b.leadsImplied,
+                   gpSpread:null}; })()
+                    : normalise(dv);
+  const f    = cons ? consolidatedTargets() : funnel(dv.t);
+  const cap  = capacity(f.revenue, f.quotes, dv.a, {onTools:nz.onTools});
+  const capN = capacity(nz.revenueM, nz.quotesM, dv.a, {onTools:nz.onTools});
+  const ms = dv.months.filter(entered), n = ms.length;
+  const rows = GRID_ROWS.filter(r=> !r.divOnly || S.divisionsOn);
+
+  const cell = (r,i) => {
+    const m=dv.months[i], any=entered(m);
+    if(r.d==='gpPct') return div(mgp(m), num(m.rev));
+    if(r.d==='fcPct') return div(num(m.fixed)+num(m.ovh), num(m.rev));
+    if(r.d==='np')    return any ? mgp(m)-num(m.fixed)-num(m.ovh) : null;
+    if(r.d==='ajv')   return div(num(m.rev), num(m.jobs));
+    return null;
+  };
+  const summary = (r,kind) => {
+    const mode = kind==='avg' ? r.avg : r.tot;
+    if(!mode || mode==='none' || !n) return null;
+    if(mode==='ratio'){
+      if(r.d==='gpPct') return nz.gpPct;
+      if(r.d==='fcPct') return div(nz.fixedTotal, nz.revenue);
+      if(r.d==='ajv')   return nz.avgJobValue;
+      return null;
     }
+    const col = r.d ? ms.map(m=>cell(r, dv.months.indexOf(m))).filter(v=>v!=null)
+                    : ms.map(m=>num(m[r.k]));
+    if(!col.length) return null;
+    if(mode==='mean') return sum(col)/col.length;
+    if(mode==='sum')  return sum(col);
+    if(mode==='last') return col[col.length-1];
+    return null;
+  };
+
+  let grid = `<table class="t grid pl"><colgroup><col class="cml">`
+    + '<col>'.repeat(12) + `<col class="cavg"><col class="ctot"></colgroup><thead><tr><th>Metric</th>`;
+  for(let i=0;i<12;i++){
+    grid += cons
+      ? `<th>${esc(monthName(i))}</th>`
+      : `<th><input class="mhead" type="text" data-mname="${i}" value="${esc((S.meta.monthNames||[])[i]||'')}"
+          placeholder="${esc(monthNameAuto(i))}" aria-label="Name of month ${i+1}"></th>`;
+  }
+  grid+=`<th class="avgc">Average</th><th class="tot">Period</th></tr></thead><tbody>`;
+  rows.forEach(r=>{
+    const lab = `<td class="ml">${esc(r.l)}${tipMark(r.tip)}</td>`;
+    if(r.d || cons){
+      grid+=`<tr class="${r.d?'der':''}">${lab}`;
+      for(let i=0;i<12;i++) grid+=`<td>${r.f(r.d ? cell(r,i) : (num(dv.months[i][r.k])||null))}</td>`;
+    } else {
+      grid+=`<tr>${lab}`;
+      for(let i=0;i<12;i++){
+        const raw = num(dv.months[i][r.k])||'';
+        grid+=`<td class="inp"><input type="text" inputmode="decimal" autocomplete="off" class="grp" data-grid="${esc(dv.id)}" data-m="${i}" data-k="${r.k}"
+          data-raw="${esc(raw)}" value="${esc(UI.editing===dv.id+'|'+i+'|'+r.k ? raw : grouped(raw===''?null:raw))}"
+          aria-label="${esc(r.l+' '+monthName(i))}"></td>`;
+      }
+    }
+    grid+=`<td class="avgc">${r.f(summary(r,'avg'))}</td><td class="tot">${r.f(summary(r,'tot'))}</td></tr>`;
   });
   grid+=`</tbody></table>`;
 
   const missing=[];
-  if(!nz.n) missing.push('no months entered yet');
-  if(!nz.revenue) missing.push('revenue');
-  if(!nz.jobs) missing.push('jobs');
-  if(!nz.quotes) missing.push('quotes — conversion and pricing capacity need this');
-  if(!nz.leads) missing.push('leads — the top of the funnel is estimated without this');
-  if(!nz.onTools) missing.push('on-tools headcount — hiring plan needs this');
+  if(!cons){
+    if(!n) missing.push('no months entered yet');
+    if(!nz.revenue) missing.push('revenue');
+    if(!nz.gp)     missing.push('gross profit');
+    if(!nz.jobs && !nz.jobsM) missing.push('invoices / jobs');
+    if(!nz.quotes && !nz.quotesM) missing.push('quotes — conversion and pricing capacity need this');
+    if(!nz.leads && !nz.leadsM)  missing.push('leads — the top of the funnel is estimated without this');
+    if(!nz.onTools) missing.push('on-tools headcount — the hiring plan needs this');
+  }
 
-  return head('02 · Where you are','Baseline',
-    `Twelve months of what actually happened. Every forecast in this plan is built on these numbers, so it is worth getting them right. Partial data is fine — the tool uses the months you enter and tells you how many that is.`)
+  const set = v => (v!=null && Number.isFinite(v) && v!==0) ? v : null;
+  const cvp = [
+    {t:'Monthly revenue',  sub:'Average month against what the profit you want requires.',
+     cur:nz.revenueM, prop:set(f.revenue), fmt:'money'},
+    {t:'Gross profit %',   sub:'Period margin against the margin you are aiming at.',
+     cur:nz.gpPct,    prop:set(f.gpPct),   fmt:'pct'},
+    {t:'Monthly net profit', sub:'Average month against the profit you asked for.',
+     cur:nz.netProfitM, prop:set(f.netProfit), fmt:'money'}
+  ];
 
-  + (S.divisionsOn ? `<div class="divchips">
-      ${S.divisions.filter(d=>d.id!=='WOB').map(d=>`<button class="divchip ${d.id===UI.div?'on':(d.active?'':'off')}" data-divsel="${d.id}">${esc(d.name)}${d.active?'':' · off'}</button>`).join('')}
-    </div>
-    <div class="btnrow">
-      <label class="toggle"><input type="checkbox" data-divactive="${esc(dv.id)}" ${dv.active?'checked':''}> ${esc(dv.name)} is active</label>
-      <input class="divname" data-divname="${esc(dv.id)}" value="${esc(dv.name)}" aria-label="Division name">
-      <span class="tiny">Rename it to match how you actually run the business.</span>
-    </div>` : '')
+  const B = S.divisionsOn ? budget() : null;
 
-  + sech(S.divisionsOn?dv.name+' — twelve months':'Twelve months of actuals',
-      `${nz.n} of 12 months entered · <button class="btn sm" id="btnPaste">Paste from spreadsheet</button> <button class="btn sm" id="btnDemo">Load example</button>`)
-  + `<div class="scrollx">${grid}</div>`
-  + `<div class="cap">Period figures are totals, not averages of monthly ratios — gross margin is total gross profit ÷ total revenue over the ${nz.n||0} months entered. Headcount is taken from the latest month entered; owner hours are the average.</div>`
+  return head('04 · Where you are','Scenario Forecaster',
+    `The whole quarterly sheet on one page: twelve months of what actually happened, the numbers you want instead, the team that gets you there, and the gap between the two. Every forecast in this plan is built on what you enter here. Partial data is fine — the tool uses the months you enter and tells you how many that is.`)
 
-  + sech('What that says about the business', S.divisionsOn?`Whole of business — ${b.divisions} active division${b.divisions===1?'':'s'}`:'')
-  + `<div class="mgrid">
-      ${metric('Revenue',b.revenueM,'money','Per month','', 'b_rev')}
-      ${metric('Gross margin',b.gpPct,'pct', b.gpSpread?'':'Total GP ÷ total revenue','', 'b_gp')}
-      ${metric('Net profit',b.netProfitM,'money','Per month, derived', b.netProfitM<0?'':'', 'b_np')}
-      ${metric('Average job value',b.avgJobValue,'money','Revenue ÷ jobs','', 'b_ajv')}
-      ${metric('Quote → win',b.quoteWin,'pct','Jobs ÷ quotes','', 'b_qw')}
-      ${metric('Leads a month',b.leadsM,'n0', b.leadsImplied?'Implied — you are not counting leads':'Counted','', 'b_ld')}
-    </div>`
-  + (missing.length ? `<div class="alert" style="margin-top:18px"><div><b>Still needed</b>${esc(missing.join(' · '))}</div></div>`:'')
-  + (nz.gpSpread ? `<div class="cap">Monthly gross margin ranged ${pct(nz.gpSpread.lo)} to ${pct(nz.gpSpread.hi)}, median ${pct(nz.gpSpread.mid)}. A wide spread usually means pricing or job costing is inconsistent, not that the margin is wrong.</div>`:'')
+  + deptTabs()
 
-  + sech('Reconciliation','Optional — if your accountant gave you a figure')
-  + `<div class="fgrid">${field('Net profit as reported','fin.reportedNetProfit',{help:'Annual, from your financials'})}
-     ${outrow('Variance to the derived figure', (()=>{ const r=num(S.fin.reportedNetProfit); if(!r) return '—';
-        const d2=r-(b.netProfitM||0)*12; return `<span class="${Math.abs(d2)<1?'flat':(d2>0?'up':'down')}">${signed(d2,money)}</span>`; })(),
-        'The derived figure is never overwritten.')}</div>`;
+  + pcard('01', cons?'Consolidated P&amp;L':'P&amp;L data',
+      `<span class="mc">${n} of 12 months entered</span>`
+      + (cons ? '' : `<button class="btn sm accent" id="btnPaste">Paste</button>
+          <button class="btn sm" id="btnDemo">Example</button>
+          <button class="btn sm ghost" id="btnResetMonths">Clear</button>`),
+      `<div class="scrollx">${grid}</div>`
+      + (missing.length ? `<div class="alert" style="margin-top:16px"><div><b>Still needed</b>${esc(missing.join(' · '))}</div></div>`:''),
+      cons
+        ? `Every money and volume line is the sum of the departments, month by month. Percentages and average job value are re-derived from those totals, never averaged. Owner hours are the average of the departments that reported them — never the sum, and never dragged down by an empty department. You work the same week however the business is sliced.`
+        : `Type into the amber boxes; the dark ones work themselves out. <b>Average</b> is across the ${n||0} month${n===1?'':'s'} entered, not across twelve. <b>Period</b> is the total for those months; headcount shows the closing position instead. Cost of sales is revenue minus gross profit — you never type it twice. Rename any month by typing over its heading.`)
+
+  + pcard('02', 'Desired numbers', cons?'<span class="mc">Read-only — set these on each department</span>':'<span class="mc">What this department has to hit</span>',
+      budgetTable(cons?null:dv.id, f, nz, !cons),
+      cons ? `The consolidated budget is what the departments add up to. Money and volume add; gross margin, average job value and the conversion rates are re-derived from the totals rather than averaged.`
+           : `<b>Margin ideals</b> is each line as a share of the revenue this plan requires — the shape of the business you are aiming at. Everything below the first block falls out of the numbers above it.`)
+
+  + pcard('03', 'Workforce planning', `<span class="mc">To deliver ${money(f.revenue)} a month</span>`,
+      assumptionsTable(dv, cap, capN),
+      cons ? `Assumptions here are revenue-weighted across the departments, never added — five departments each with a span of six is not a span of thirty.`
+           : `The seven above the rule are yours; the seven below are what they produce. People round <em>up</em>: 8.6 needed is 9 hired, and the shortfall shows as utilisation rather than as two-thirds of a tradesman.`)
+
+  + pcard('04', 'What that says about the business', cons?'<span class="mc">Whole of business</span>':`<span class="mc">${esc(dv.name)} on its own</span>`,
+      `<div class="mgrid">
+        ${metric('Revenue',nz.revenueM,'money','Per month','', 'b_rev')}
+        ${metric('Gross margin',nz.gpPct,'pct','Total GP ÷ total revenue','', 'b_gp')}
+        ${metric('Net profit',nz.netProfitM,'money','Per month, derived','', 'b_np')}
+        ${metric('Average job value',nz.avgJobValue,'money','Revenue ÷ invoices','', 'b_ajv')}
+        ${metric('Quote → win',nz.quoteWin,'pct','Jobs ÷ quotes','', 'b_qw')}
+        ${metric('Leads a month',nz.leadsM,'n0', nz.leadsImplied?'Implied':'Counted','', 'b_ld')}
+      </div>`,
+      nz.gpSpread ? `Monthly gross margin ranged ${pct(nz.gpSpread.lo)} to ${pct(nz.gpSpread.hi)}, median ${pct(nz.gpSpread.mid)}. A wide spread usually means pricing or job costing is inconsistent, not that the margin is wrong.` : '')
+
+  + pcard('05', 'Current vs proposed', '<span class="mc">Against the desired numbers above</span>',
+      `<div class="cvp">${cvp.map(x=>miniBars(x.t,x.sub,x.cur,x.prop,x.fmt)).join('')}</div>
+       <div class="chleg" style="justify-content:center;margin-top:6px">
+        <span><i style="background:${CH.muted}"></i>Current average</span>
+        <span><i style="background:${CH.accent}; box-shadow:inset 0 0 0 1px ${CH.accentEdge}"></i>Proposed target</span></div>`,
+      'A bar with nothing beside it means that target has not been set yet.')
+
+  + (cons && B ? pcard('06','Department breakdown','<span class="mc">Money and headcount add · assumptions never do</span>',
+      `<div class="scrollx"><table class="t"><thead><tr><th>Department</th><th>Desired sales</th><th>Desired profit</th>
+        <th>Gross margin</th><th>Jobs</th><th>Leads</th><th>On tools</th><th>Hires</th><th>Share</th></tr></thead><tbody>
+      ${B.per.map(x=>`<tr><td>${esc(x.div.name)}</td><td>${money0k(x.f.revenue)}</td><td>${money0k(x.f.netProfit)}</td>
+        <td>${pct(x.f.gpPct)}</td><td>${n1(x.f.jobs)}</td><td>${n1(x.f.leads)}</td>
+        <td>${n0(x.cap.target)}</td><td>${n0(x.cap.hires)}</td><td>${pct(div(x.f.revenue,B.total.revenue))}</td></tr>`).join('')}
+      <tr class="tot"><td>Consolidated</td><td>${money0k(B.total.revenue)}</td><td>${money0k(B.total.netProfit)}</td>
+        <td>${pct(B.total.gpPct)}</td><td>${n1(B.total.jobs)}</td><td>${n1(B.total.leads)}</td>
+        <td>${n0(B.capTotal.target)}</td><td>${n0(B.capTotal.hires)}</td><td>100.0%</td></tr>
+    </tbody></table></div>`,
+      `Add a department with <b>+</b> above. Removing one with <b>×</b> takes it out of the roll-up and keeps its numbers — bring it back with <b>+</b>.`) : '');
 }
 
 /* ─── 03 KEY METRICS ────────────────────────────────────────────── */
@@ -1381,7 +2191,7 @@ function renderMetrics(){
   };
   const grp=(t2,tag)=>`<tr class="grp"><td colspan="7">${esc(t2)} <span class="pill accent" style="margin-left:8px">${esc(tag)}</span></td></tr>`;
 
-  return head('03 · The scoreboard','Key Metrics',
+  return head('05 · The scoreboard','Key Metrics',
     `Where you are, where you need to be, and the size of the gap. Targets come from the budget you set on the <strong>Budget &amp; Workforce</strong> tab — department by department if you run divisions, then consolidated here.`)
   + sech('Current · Target · Gap', `Target = the consolidated budget${S.divisionsOn?` across ${B.per.length} division${B.per.length===1?'':'s'}`:''}`)
   + `<div class="scrollx"><table class="t">
@@ -1444,7 +2254,7 @@ function stratCard(s,i){
     <div class="cmeta">
       <span class="pill ${s.outcome==='Freedom'?'accent':s.outcome==='Asset'?'good':'neutral'}">${esc(s.outcome)}</span>
       <span class="pill ${s.stage==='Scaling'?'good':'neutral'}">${esc(s.stage)}</span>
-      ${['A','B','C'].map(k=>`<button class="pill ${(s.scenarios||[]).includes(k)?'accent':'neutral'}" data-stogscen="${i}|${k}" style="border:0;cursor:pointer">Plan ${k}</button>`).join('')}
+      <button class="pill ${s.on===false?'neutral':'accent'}" data-stogon="${i}" style="border:0;cursor:pointer" title="${s.on===false?'Parked — this strategy is not in the forecast':'In the plan — this strategy is in the forecast'}">${s.on===false?'Parked':'In the plan'}</button>
     </div>
     <div class="cf">
       ${cfi('Domain', sel('domain',DOMAINS,s.domain), true)}
@@ -1477,9 +2287,10 @@ function strategyImpact(s){
 }
 function renderStrategies(){
   const invalid = S.strategies.filter(s=>!s.levers||!s.levers.length).length;
-  return head('04 · The work','Strategies',
+  return head('07 · The work','Strategies',
     `Seven things, repeated in cycle. Each strategy carries a <strong>mindset shift</strong> — the member has to move through the shift in order to execute the strategy, and executing the strategy is what delivers the growth. This is not a to-do list: every strategy carries a <strong>lever</strong>, and the forecast is the sum of those levers. Change one and the five-year picture moves.`)
-  + sech('The strategy stack', `${S.strategies.length} strategies · ${invalid} with no lever set`)
+  + sech('The strategy stack', `${planStrategies().length} in the plan · ${S.strategies.length-planStrategies().length} parked · ${invalid} with no lever set`)
+  + `<div class="note" style="margin-top:0">Every strategy is either <strong>in the plan</strong> or <strong>parked</strong>. Only the ones in the plan move the forecast — click the copper chip on a card to park it, and click it again to bring it back. Parking keeps the work on the page without pretending it is happening.</div>`
   + `<div class="btnrow" style="margin-top:0">
       <button class="btn accent" id="btnAddStrat">+ Add strategy</button>
       <button class="btn" id="btnStratLib">Add from the seven</button>
@@ -1489,80 +2300,88 @@ function renderStrategies(){
   + `<div class="note">Refine before you scale. A member who scales an unrefined process adds revenue and loses freedom — which fails both of the outcomes in section 01.</div>`;
 }
 
-/* ─── 05 SCENARIOS ──────────────────────────────────────────────── */
-function renderScenarios(){
-  const P = {A:project('A'), B:project('B'), C:project('C')};
-  const g = guardrails(P[S.active]);
-  const cmp = (label,fmt,pick)=>`<tr><td>${esc(label)}</td>${['A','B','C'].map(k=>{
-      const v=pick(P[k]); return `<td${k===S.active?' style="font-weight:700;color:var(--accent)"':''}>${(FMT[fmt]||n0)(v)}</td>`;
-    }).join('')}</tr>`;
-
-  return head('05 · The forecast','Scenarios',
-    `Three plans, one baseline. Plan A is what you commit to in the room; B is what happens if it all lands; C is what happens if it does not. The switch at the top of the screen sets which one drives every tab below.`)
-
-  + sech('Side by side', `Year 5 · ${S.strategies.length} strategies assigned across the three plans`)
-  + `<div class="scrollx"><table class="t"><thead><tr><th>Year 5</th>
-      ${['A','B','C'].map(k=>`<th${k===S.active?' style="color:var(--accent)"':''}>Plan ${k} · ${esc(S.scenarios[k].label)}</th>`).join('')}</tr></thead><tbody>
-      ${cmp('Revenue','money0k',p=>p.years[5].rev)}
-      ${cmp('Gross margin','pct',p=>p.years[5].gpPct)}
-      ${cmp('EBITDA','money0k',p=>p.years[5].ebitda)}
-      ${cmp('Net profit','money0k',p=>p.years[5].np)}
-      ${cmp('Team size','n0',p=>p.years[5].cap.total)}
-      ${cmp('Owner hours a week','n1',p=>p.years[5].ownerHours)}
-      ${cmp('Business value','money0k',p=>p.years[5].value.equity)}
-      ${cmp('Freedom score','n0',p=>p.years[5].freedom.score)}
-      ${cmp('Cumulative cash','money0k',p=>p.years[5].cumCash)}
-      ${cmp('Strategies assigned','n0',p=>strategiesFor(p.key).length)}
-    </tbody></table></div>`
-  + chartBox('Revenue by scenario','ch-scen',{type:'line',h:300,fmt:money0k,
-      x:['Today','Y1','Y2','Y3','Y4','Y5'],
-      series:[{name:'A',color:CH.accent,values:P.A.years.map(y=>y.rev)},
-              {name:'B',color:CH.steel,dash:'6 4',values:P.B.years.map(y=>y.rev)},
-              {name:'C',color:CH.muted,dash:'2 4',values:P.C.years.map(y=>y.rev)}]},
-      'All three run off the same baseline. The distance between them is the value of the strategy stack, not of optimism.')
-
-  + sech('Guardrails', `Plan ${S.active}`)
-  + (g.length ? g.map(x=>`<div class="alert ${x.lvl==='bad'?'bad':''}"><div><b>${esc(x.t)}</b>${esc(x.m)}</div></div>`).join('')
-     : `<div class="alert good"><div><b>Clear</b>Nothing in Plan ${S.active} trips a guardrail. Hiring rate, margin movement, cost per head and funding all sit inside their limits.</div></div>`)
-
-  + sech('Assumptions behind each plan','Macro movement applies at the start of each year, before strategies')
-  + `<div class="cards">${['A','B','C'].map(k=>{
-      const sc=S.scenarios[k];
-      return `<div class="card"><h3 class="ch">Plan ${k} · ${esc(sc.label)}</h3>
-        <div class="f" style="padding:9px 0"><div class="flab"><div class="fl">EBITDA multiple</div><div class="fh">Sets the business value</div></div>
-          <input type="number" step="0.1" data-path="scenarios.${k}.multiple" value="${num(sc.multiple)}" style="width:80px"></div>
-        <table class="t" style="font-size:12.5px;margin-top:10px"><thead><tr><th>Year</th><th>Market</th><th>Price</th><th>Overhead</th></tr></thead><tbody>
-        ${sc.macro.map((m,y)=>`<tr><td>Y${y+1}</td>
-          <td><input type="number" step="0.5" data-path="scenarios.${k}.macro.${y}.market" data-kind="pct" value="${(num(m.market)*100).toFixed(1)}" style="width:62px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:3px 6px"></td>
-          <td><input type="number" step="0.5" data-path="scenarios.${k}.macro.${y}.price" data-kind="pct" value="${(num(m.price)*100).toFixed(1)}" style="width:62px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:3px 6px"></td>
-          <td><input type="number" step="0.5" data-path="scenarios.${k}.macro.${y}.ovh" data-kind="pct" value="${(num(m.ovh)*100).toFixed(1)}" style="width:62px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:3px 6px"></td></tr>`).join('')}
-        </tbody></table>
-        <div class="tiny" style="margin-top:9px">${strategiesFor(k).length} strategies assigned</div></div>`;
-    }).join('')}</div>`;
-}
-
-/* ─── 06 FIVE YEAR ──────────────────────────────────────────────── */
-function renderFiveYear(){
-  const pr=project(S.active), Y=pr.years, X=['Today','Y1','Y2','Y3','Y4','Y5'];
-  const y5=Y[5], y0=Y[0];
+/* ─── 02 HORIZON ────────────────────────────────────────────────
+   Opens by reading the Vision page back to the member, then shows what
+   the plan actually lands on and where the two disagree. */
+function renderHorizon(){
+  const pr=project(), Y=pr.years, X=['Today','Y1','Y2','Y3','Y4','Y5'];
+  const y5=Y[5], y0=Y[0], V=S.vision, VF=visionFigures(pr), G=guardrails(pr);
   const r=(label,fmt,pick,cls)=>`<tr class="${cls||''}"><td>${esc(label)}</td>${Y.map(y=>`<td>${(FMT[fmt]||n0)(pick(y))}</td>`).join('')}</tr>`;
 
-  return head('06 · The horizon','Five-Year Rolling',
-    `Plan ${S.active} across five years. As real years complete they replace forecast years and the window rolls forward.`)
+  /* said vs produced. lower:true means a smaller number is the win. */
+  const vrow=(label,said,plan,fmt,lower,note)=>{
+    const F=FMT[fmt]||n0;
+    const has = said!=null && Number.isFinite(said) && said!==0;
+    const gap = (has && plan!=null && Number.isFinite(plan)) ? plan-said : null;
+    const ok  = gap==null ? null : (lower ? gap<=0 : gap>=0);
+    return `<tr><td>${esc(label)}${note?`<div class="tiny">${esc(note)}</div>`:''}</td>
+      <td class="want inp">${has?`<b>${F(said)}</b>`:'<span class="muted">not set</span>'}</td>
+      <td class="calc"><b>${F(plan)}</b></td>
+      <td class="${ok==null?'':(ok?'up':'down')}">${gap==null?'—':signed(gap,F)}</td>
+      <td>${ok==null?'<span class="pill neutral">—</span>'
+            :(ok?'<span class="pill good">Plan gets you there</span>'
+                :'<span class="pill bad">Plan falls short</span>')}</td></tr>`;
+  };
+  const said = k => { const v=V.biz[k]; return (v===null||v===undefined||v==='')?null:num(v); };
+  const saidFreedom = (V.freedom.y5===null||V.freedom.y5===undefined||V.freedom.y5==='')?null:num(V.freedom.y5);
+  const saidLife = k => { const v=V.life[k]; return (v===null||v===undefined||v==='')?null:num(v); };
 
-  + `<div class="mgrid" style="margin-top:34px">
+  const alsoSaid = [
+    ['Weeks of holiday a year', saidLife('holidays'), n1],
+    ['Weekends worked a month', saidLife('weekends'), n1],
+    ['Evenings home for dinner', saidLife('evenings'), n1],
+    ['Adventures completed', saidLife('adventures'), n0],
+    ['Investments outside the business', saidLife('investments'), money0k]
+  ].filter(x=>x[1]!=null);
+
+  return head('03 · The horizon','Horizon',
+    `What you wrote on the Vision page, and what the plan actually lands on. Where the two disagree is the work — either the plan changes, or the vision does.`)
+
+  + sech('What you said you wanted','From the Vision page')
+  + `<div class="stmt" style="margin-bottom:26px">${V.statement?esc(V.statement)
+      :`<span class="muted">No statement written yet. Go back to Vision, answer the seven prompts, and write it — it anchors everything below.</span>`}</div>`
+  + `<div class="scrollx"><table class="t bud">
+      <thead><tr><th>In five years</th><th>What you said</th><th>What the plan produces</th><th>Difference</th><th></th></tr></thead><tbody>
+      <tr class="grp"><td colspan="5">The business</td></tr>
+      ${vrow('Revenue', said('revenue'), y5.rev, 'money0k', false, 'Annual, excluding GST')}
+      ${vrow('Net profit', said('profit'), y5.np, 'money0k', false, 'Annual, after your salary')}
+      ${vrow('Business value', said('value'), y5.value.equity, 'money0k', false, `${n1(pr.plan.multiple)}× normalised EBITDA`)}
+      ${vrow('Team size', said('team'), y5.cap.total, 'n0', false, 'Everyone the revenue requires')}
+      <tr class="grp"><td colspan="5">The life</td></tr>
+      ${vrow('Hours worked per week', saidLife('hours'), y5.ownerHours, 'n1', true, `${n1(y0.ownerHours)} a week today`)}
+      ${vrow('Personal income drawn', saidLife('income'), num(S.wellness.targ.income), 'money0k', false, 'Against your year-5 target in Setup')}
+      ${vrow('Freedom score', saidFreedom, VF.scoreY5, 'n0', false, 'Out of 100 — yours against the one the model works out')}
+    </tbody></table></div>
+    <div class="cap">"What you said" is what you typed on the Vision page. "What the plan produces" is what the baseline plus your strategy stack actually delivers by year five. A red row is not a failure — it is the conversation to bring to the room.</div>`
+
+  + (alsoSaid.length ? `<div class="scrollx" style="margin-top:22px"><table class="t"><thead><tr><th>You also said</th><th>By year five</th></tr></thead><tbody>
+      ${alsoSaid.map(([l,v,f])=>`<tr><td>${esc(l)}</td><td><b>${f(v)}</b></td></tr>`).join('')}
+      ${V.life.whatFor?`<tr><td>What the money is for</td><td style="text-align:left;white-space:normal">${esc(V.life.whatFor)}</td></tr>`:''}
+      <tr><td>Your role</td><td><span class="pill accent">${esc(V.biz.role)}</span></td></tr>
+    </tbody></table></div>
+    <div class="cap">Nothing in this block is modelled — it is what you committed to. It prints on the one-pager and the room holds you to it.</div>` : '')
+
+  + thriveReflection()
+
+  + sech('Where the plan lands','Year 5')
+  + `<div class="mgrid">
       ${metric('Revenue, year 5', y5.rev,'money0k', `from ${money0k(y0.rev)}`,'hero','f_rev')}
       ${metric('EBITDA, year 5', y5.ebitda,'money0k', `${pct(div(y5.ebitda,y5.rev),1)} of revenue`,'','f_eb')}
-      ${metric('Business value', y5.value.equity,'money0k', `${n1(pr.scenario.multiple)}× EBITDA`,'accent','f_val')}
+      ${metric('Business value', y5.value.equity,'money0k', `${n1(pr.plan.multiple)}× EBITDA`,'accent','f_val')}
       ${metric('Owner hours', y5.ownerHours,'hrs', `from ${hrs(y0.ownerHours)} a week`,'','f_hrs')}
       ${metric('Team size', y5.cap.total,'n0', `from ${n0(y0.cap.total)} people`,'','f_team')}
-      ${metric('Freedom score', y5.freedom.score,'n0', `from ${n0(y0.freedom.score)}`,'','f_fs')}
-    </div>`
+      ${metric('Freedom score', VF.scoreY5,'n0', `from ${n0(VF.scoreToday)}`,'','f_fs')}
+    </div>
+    <div class="cap">These are the model's figures — what the baseline plus your strategy stack produces. Anything you typed over on the Vision page stays yours and shows there; this strip never hands your own number back to you as if the plan had produced it.</div>`
 
   + chartBox('The thesis — your hours down, the asset up','ch-dual',{type:'dual',h:330,x:X,
       left:{name:'Owner hours a week',fmt:v=>n0(v)+'h',values:Y.map(y=>y.ownerHours)},
       right:{name:'Business value',fmt:money0k,values:Y.map(y=>y.value.equity)}},
       'Two lines moving in opposite directions is the whole point of Boardroom. If they move together, the plan is buying revenue with your time.')
+
+  + chartBox('Your freedom score, year by year','ch-free',{type:'line',h:300,fmt:n0,x:X,
+      series:[{name:'Freedom',color:CH.accent,values:Y.map(y=>y.freedom.score)}]},
+      'Scored out of 100 against your own baseline and your own year-5 targets, not against anyone else. Owner hours are modelled from the strategy stack; the rest interpolate. Set the targets in Setup.')
 
   + `<div class="chgrid">
       ${chartBox('Revenue, gross profit and EBITDA','ch-pnl',{type:'line',h:290,fmt:money0k,x:X,
@@ -1575,16 +2394,13 @@ function renderFiveYear(){
                 {name:'Ops managers',color:CH.accent,values:Y.map(y=>y.cap.opsManagers)},
                 {name:'Estimators',color:'#8FA3AF',values:Y.map(y=>y.cap.estimators)},
                 {name:'Office',color:CH.rule,values:Y.map(y=>y.cap.office)}]},
-        'Headcount the revenue requires at your own benchmarks — not a number you type in. Today\'s column is what your current revenue needs, which may differ from who is actually on the payroll.')}
-      ${chartBox('Freedom score','ch-free',{type:'line',h:290,fmt:n0,x:X,
-        series:[{name:'Freedom',color:CH.accent,values:Y.map(y=>y.freedom.score)}]},
-        'Weighted from your own baseline and your own year-5 targets. Owner hours are modelled; the rest interpolate.')}
-      ${chartBox('Cash generated each year','ch-cash',{type:'bar',h:290,fmt:money0k,x:X.slice(1),
-        series:[{name:'Cash after tax, capex and working capital',color:CH.steel,values:Y.slice(1).map(y=>y.cash)}]},
-        'Profit is not cash. Growth absorbs working capital before it returns any.')}
+        'Headcount the revenue requires at your own benchmarks — not a number you type in.')}
     </div>`
+  + chartBox('Cash generated each year','ch-cash',{type:'bar',h:290,fmt:money0k,x:X.slice(1),
+      series:[{name:'Cash after tax, capex and working capital',color:CH.steel,values:Y.slice(1).map(y=>y.cash)}]},
+      'Profit is not cash. Growth absorbs working capital before it returns any.')
 
-  + sech('The numbers','Plan '+S.active)
+  + sech('The numbers','Every year, whole of business')
   + `<div class="scrollx"><table class="t"><thead><tr><th></th>${X.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>
       <tr class="grp"><td colspan="7">Profit and loss</td></tr>
       ${r('Revenue','money0k',y=>y.rev)}
@@ -1615,7 +2431,13 @@ function renderFiveYear(){
       ${r('Owner hours a week','n1',y=>y.ownerHours)}
       ${r('Freedom score','n0',y=>y.freedom.score)}
       ${r('Business value','money0k',y=>y.value.equity,'tot')}
-    </tbody></table></div>`;
+    </tbody></table></div>
+    <div class="cap">As real years complete they replace forecast years and the window rolls forward.</div>`
+
+  + sech('Guardrails','Automatic checks on whether this plan is buildable')
+  + (G.length ? G.map(x=>`<div class="alert ${x.lvl==='bad'?'bad':''}"><div><b>${esc(x.t)}</b>${esc(x.m)}</div></div>`).join('')
+     : `<div class="alert good"><div><b>Clear</b>Nothing in the plan trips a guardrail. Hiring rate, margin movement, cost per head and funding all sit inside their limits.</div></div>`)
+  + `<div class="cap">Set the hiring limit and the money settings on the Setup tab. A guardrail is a prompt for the room, not a blocker.</div>`;
 }
 
 /* ─── 08 ONE YEAR ───────────────────────────────────────────────── */
@@ -1632,7 +2454,7 @@ function rotateToStart(cal){
   return Array.from({length:12},(_,i)=>cal[(st+i)%12]);
 }
 function renderOneYear(){
-  const pr=project(S.active), R=pr.rows.filter(r=>r.y===1);
+  const pr=project(), R=pr.rows.filter(r=>r.y===1);
   const B=budget(), F=B.total;
   const seas=S.oneYear.seasonality.map(num);
   const meanIx=seas.length?sum(seas)/12:1, ok=Math.abs(meanIx-1)<0.005;
@@ -1643,7 +2465,7 @@ function renderOneYear(){
   const mrow=(label,fmt,pick)=>`<tr><td>${esc(label)}</td>${R.map(r=>`<td>${(FMT[fmt]||n0)(pick(r))}</td>`).join('')}<td class="tot">${(FMT[fmt]||n0)(sum(R.map(pick)))}</td></tr>`;
 
   return head('08 · The year in front of you','One Year',
-    `Year 1 broken to twelve months. Three lines run side by side all year: the <strong>budget</strong> you set on the Budget &amp; Workforce tab, the <strong>forecast</strong> from Plan ${S.active}, and the <strong>actuals</strong> you enter each month. This is the tab you bring to the room every cycle.`)
+    `Year 1 broken to twelve months. Three lines run side by side all year: the <strong>budget</strong> you set on the Budget &amp; Workforce tab, the <strong>forecast</strong> from the plan, and the <strong>actuals</strong> you enter each month. This is the tab you bring to the room every cycle.`)
 
   + sech('Seasonality — how busy each month is',
       ok?`<span class="pill good">Averages 1.00× — balanced</span>`
@@ -1675,18 +2497,18 @@ function renderOneYear(){
       <tr class="tot"><td>The year</td><td>${meanIx.toFixed(2)}× average</td><td></td><td>100.0%</td>
         <td>${money0k((F.revenue||0)*12)}</td><td>${money0k(sum(R.map(r=>r.rev)))}</td></tr>
     </tbody></table></div>
-    <div class="cap">The dark tick on each bar marks an average month. <b>Budget revenue</b> is the monthly run rate from your department budgets, shaped by these twelve numbers. <b>Forecast revenue</b> is Plan ${esc(S.active)} for the same month — it grows through the year because the strategy stack ramps.</div>`
+    <div class="cap">The dark tick on each bar marks an average month. <b>Budget revenue</b> is the monthly run rate from your department budgets, shaped by these twelve numbers. <b>Forecast revenue</b> is the plan for the same month — it grows through the year because the strategy stack ramps.</div>`
 
   + sech('Budget, forecast and actual','The three lines the room looks at')
   + `<div class="scrollx"><table class="t grid"><thead><tr><th></th>${R.map((r,i)=>`<th>${esc(monthName(i))}</th>`).join('')}<th class="tot">Year</th></tr></thead><tbody>
       <tr class="grp"><td colspan="14">Revenue</td></tr>
       <tr class="der"><td>Budget</td>${seas.map((_,i)=>`<td>${money0k(budgetRev(i))}</td>`).join('')}<td class="tot">${money0k((F.revenue||0)*12)}</td></tr>
-      <tr class="der"><td>Forecast — Plan ${esc(S.active)}</td>${R.map(r=>`<td>${money0k(r.rev)}</td>`).join('')}<td class="tot">${money0k(sum(R.map(r=>r.rev)))}</td></tr>
+      <tr class="der"><td>Forecast — the plan</td>${R.map(r=>`<td>${money0k(r.rev)}</td>`).join('')}<td class="tot">${money0k(sum(R.map(r=>r.rev)))}</td></tr>
       <tr><td>Actual</td>${A.map((x,i)=>`<td><input type="number" step="any" data-act="${i}|rev" value="${x.rev==null?'':x.rev}"></td>`).join('')}<td class="tot">${A.some(x=>x.rev!=null)?money0k(sum(A.map(x=>num(x.rev)))):'—'}</td></tr>
       <tr class="der"><td>Actual vs budget</td>${A.map((x,i)=>{const v=x.rev==null?null:num(x.rev)-budgetRev(i); return `<td class="${v==null?'':v>=0?'up':'down'}">${v==null?'—':signed(v,money0k)}</td>`;}).join('')}<td class="tot"></td></tr>
       <tr class="grp"><td colspan="14">Net profit</td></tr>
       <tr class="der"><td>Budget</td>${seas.map((_,i)=>`<td>${money0k((F.netProfit||0)*idx(i))}</td>`).join('')}<td class="tot">${money0k((F.netProfit||0)*12)}</td></tr>
-      <tr class="der"><td>Forecast — Plan ${esc(S.active)}</td>${R.map(r=>`<td>${money0k(r.np)}</td>`).join('')}<td class="tot">${money0k(sum(R.map(r=>r.np)))}</td></tr>
+      <tr class="der"><td>Forecast — the plan</td>${R.map(r=>`<td>${money0k(r.np)}</td>`).join('')}<td class="tot">${money0k(sum(R.map(r=>r.np)))}</td></tr>
       <tr><td>Actual</td>${A.map((x,i)=>`<td><input type="number" step="any" data-act="${i}|np" value="${x.np==null?'':x.np}"></td>`).join('')}<td class="tot">${A.some(x=>x.np!=null)?money0k(sum(A.map(x=>num(x.np)))):'—'}</td></tr>
       <tr class="der"><td>Actual vs budget</td>${A.map((x,i)=>{const v=x.np==null?null:num(x.np)-(F.netProfit||0)*idx(i); return `<td class="${v==null?'':v>=0?'up':'down'}">${v==null?'—':signed(v,money0k)}</td>`;}).join('')}<td class="tot"></td></tr>
     </tbody></table></div>
@@ -1699,7 +2521,7 @@ function renderOneYear(){
               {name:'Actual',color:CH.ink,values:A.map(x=>x.rev==null?null:num(x.rev))}]},
       'Actual only draws for the months you have entered.')
 
-  + sech('The monthly plan','Every driver, Plan '+S.active)
+  + sech('The monthly plan','Every driver, month by month')
   + `<div class="scrollx"><table class="t grid"><thead><tr><th></th>${R.map((r,i)=>`<th>${esc(monthName(i))}</th>`).join('')}<th class="tot">Year</th></tr></thead><tbody>
       ${mrow('Leads','n0',r=>r.leads)}
       ${mrow('Quotes','n0',r=>r.quotes)}
@@ -1722,16 +2544,16 @@ function renderOneYear(){
 
 /* ─── 08 CONSOLIDATED ───────────────────────────────────────────── */
 function renderConsolidated(){
-  const pr=project(S.active), Y=pr.years, b=pr.b, y0=Y[0], y5=Y[5];
-  const top=S.strategies.filter(s=>(s.scenarios||[]).includes(S.active))
+  const pr=project(), Y=pr.years, b=pr.b, y0=Y[0], y5=Y[5];
+  const top=planStrategies()
     .map(s=>({s, w:sum((s.levers||[]).map(l=>Math.abs(num(l.value))))*(num(s.confidence)/100)}))
     .sort((a,c)=>c.w-a.w).slice(0,5);
 
-  return head('08 · The one-pager','Consolidated',
+  return head('09 · The one-pager','Consolidated',
     `Everything above, on one page, ready to print and put on the table.`)
   + `<div class="stmt" style="margin-top:26px">${S.vision.statement?esc(S.vision.statement):`<span class="muted">Write the vision statement on tab 01 and it appears here.</span>`}</div>`
 
-  + sech('Where you are, where you are going',`Plan ${S.active} · ${esc(S.scenarios[S.active].label)}`)
+  + sech('Where you are, where you are going',`Today against year five, at ${n1(pr.plan.multiple)}× EBITDA`)
   + `<div class="mgrid">
       ${metric('Revenue',y0.rev,'money0k','Today','','k_r0')}
       ${metric('Revenue',y5.rev,'money0k','Year 5','hero','k_r5')}
@@ -1768,7 +2590,7 @@ function renderConsolidated(){
   + (top.length ? `<div class="scrollx"><table class="t"><thead><tr><th>Strategy</th><th>Domain</th><th>Serves</th><th>Stage</th><th>Owner</th><th>Levers</th></tr></thead><tbody>
       ${top.map(x=>`<tr><td>${esc(x.s.name||'Untitled')}</td><td>${esc(x.s.domain)}</td><td>${esc(x.s.outcome)}</td><td>${esc(x.s.stage)}</td><td>${esc(x.s.owner||'—')}</td>
         <td style="text-align:left">${(x.s.levers||[]).map(l=>DRIVERS[l.driver]?esc(DRIVERS[l.driver].fmt(num(l.value))):'').filter(Boolean).join(' · ')||'—'}</td></tr>`).join('')}
-    </tbody></table></div>` : `<div class="empty">No strategies assigned to Plan ${S.active}.</div>`)
+    </tbody></table></div>` : `<div class="empty">No strategies in the plan yet. Add them on tab 07 — the forecast is flat until you do.</div>`)
 
   + sech('Signed off','')
   + `<div class="two"><div><div class="sub">Member</div><h3>${esc(S.meta.owner||'—')}</h3><div class="tiny" style="margin-top:30px;border-top:1px solid var(--rule);padding-top:8px">Signature · Date</div></div>
@@ -1777,14 +2599,14 @@ function renderConsolidated(){
 
 /* ─── 09 ORG CHART ──────────────────────────────────────────────── */
 function renderOrg(){
-  const pr=project(S.active);
+  const pr=project();
   const o=orgAt(pr, UI.orgYear);
   const o0=orgAt(pr,0), o5=orgAt(pr,5);
   const yr=pr.years.find(x=>x.y===UI.orgYear)||pr.years[0];
   const reconFixed = yr.fixed!=null ? o.costFixed - yr.fixed : null;
   const reconCos   = yr.cos!=null ? o.costCos - yr.cos : null;
 
-  return head('09 · The team that gets you out','Org Chart',
+  return head('10 · The team that gets you out','Org Chart',
     `Generated from the capacity engine, not drawn by hand. Roles appear as spans of control are exceeded. The copper boxes are the roles <strong>you</strong> still occupy — watching them clear between today and year five is the Owner-Operator to CEO shift, made literal.`)
 
   + `<div class="btnrow" style="margin-top:26px">
@@ -1829,9 +2651,9 @@ function renderSettings(){
       <div class="f"><div class="flab"><div class="fl">Owner</div></div><input type="text" data-path="meta.owner" data-kind="str" value="${esc(S.meta.owner)}" style="text-align:left"></div>
       ${selectField('Currency','meta.currency',['NZD','AUD','GBP','USD'])}
     </div><div>
-      <div class="f"><div class="flab"><div class="fl">Baseline starts</div><div class="fh">The twelve month columns run from here.</div></div>
+      <div class="f"><div class="flab"><div class="fl">The twelve months start at</div><div class="fh">The column headings on the Scenario Forecaster run from here. You can type over any of them.</div></div>
         <select data-path="meta.startMonth" data-kind="num">${MONTHS.map((m,i)=>`<option value="${i}"${i===num(S.meta.startMonth)?' selected':''}>${m}</option>`).join('')}</select></div>
-      ${field('Baseline start year','meta.startYear',{step:1})}
+      ${field('Starting year','meta.startYear',{step:1})}
       <label class="toggle" style="margin-top:16px"><input type="checkbox" id="togDivisions" ${S.divisionsOn?'checked':''}> Run divisions</label>
       <div class="fh" style="margin-top:6px">Off by default — one P&L and one funnel. Turn it on if you run separate divisions. Nothing is lost when you turn it back off.</div>
     </div></div>`
@@ -1853,6 +2675,21 @@ function renderSettings(){
       ${field('Drawings above your salary','fin.drawingsAbove',{help:'Annual'})}
       ${field('Maximum on-tools hires a quarter','fin.maxHiresPerQuarter',{help:'Trips a guardrail when a plan exceeds it'})}
     </div></div>`
+
+  + sech('The plan — valuation and macro movement','One plan. These sit underneath every forecast on every tab.')
+  + `<div class="fgrid"><div>
+      <div class="f"><div class="flab"><div class="fl">EBITDA multiple</div><div class="fh">Sets the business value. Ask your broker or accountant what a business like yours trades on — trades typically 2.5–4×.</div></div>
+        <input type="number" step="0.1" data-path="plan.multiple" value="${num(S.plan.multiple)}" style="width:90px"></div>
+      <div class="fh" style="margin-top:10px">Macro movement applies at the <em>start</em> of each year, before any strategy. It is what happens to the business if you change nothing — market drift, your annual price rise, and overhead creep.</div>
+    </div><div>
+      <table class="t" style="font-size:13px"><thead><tr><th>Year</th><th>Market %</th><th>Price %</th><th>Overhead %</th></tr></thead><tbody>
+      ${S.plan.macro.map((m,y)=>`<tr><td>Year ${y+1}</td>
+        <td><input type="number" step="0.5" data-path="plan.macro.${y}.market" data-kind="pct" value="${(num(m.market)*100).toFixed(1)}" style="width:70px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:4px 7px"></td>
+        <td><input type="number" step="0.5" data-path="plan.macro.${y}.price" data-kind="pct" value="${(num(m.price)*100).toFixed(1)}" style="width:70px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:4px 7px"></td>
+        <td><input type="number" step="0.5" data-path="plan.macro.${y}.ovh" data-kind="pct" value="${(num(m.ovh)*100).toFixed(1)}" style="width:70px;text-align:right;border:1px solid var(--rule);border-radius:5px;padding:4px 7px"></td></tr>`).join('')}
+      </tbody></table>
+    </div></div>
+    <div class="cap">Market moves leads, price moves the average job value, overhead moves fixed costs. Strategies then apply on top — that is the difference between drifting and planning.</div>`
 
   + sech('Role costs','Annual package per role — drives the org chart and its reconciliation')
   + `<div class="fgrid"><div>
@@ -1881,8 +2718,8 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.1 — Budget &amp; Workforce, per-department budgets, busy-ness seasonality')}
-      ${metric('Self-tests',51,'n0','Golden cases with hand-calculated answers')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.4 — Scenario Forecaster on 04, one plan, Thrive Index')}
+      ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`
 
@@ -2012,7 +2849,7 @@ function assumptionsTable(dv, cap, capNow){
 
 function renderBudget(){
   if(!S.divisionsOn) UI.div='WOB';
-  else if(UI.div==='WOB'){ const a=S.divisions.find(d=>d.active&&d.id!=='WOB'); UI.div=a?a.id:'D1'; }
+  else if(UI.div==='WOB' || UI.div==='CONS'){ const a=S.divisions.find(d=>d.active&&d.id!=='WOB'); UI.div=a?a.id:'D1'; }
   const dv = currentDivision();
   const nz = normalise(dv), f = funnel(dv.t);
   const cap  = capacity(f.revenue, f.quotes, dv.a, {onTools:nz.onTools});
@@ -2020,7 +2857,7 @@ function renderBudget(){
   const B = budget();
   const dpath = divPath(dv.id);
 
-  return head('04 · The budget','Budget & Workforce',
+  return head('06 · The budget','Budget & Workforce',
     `Where the business is now, where it needs to get to, and the team that gets it there — set one department at a time, then rolled up. This is the shape of the original Boardroom calculator: <strong>desired versus actuals</strong>, then the <strong>assumptions</strong> behind it, then the <strong>workforce planning</strong> that falls out of both.`)
 
   + (S.divisionsOn ? `<div class="divchips">
@@ -2037,7 +2874,7 @@ function renderBudget(){
       <span><i class="swout"></i>The <b>dark</b> boxes calculate</span>
       <span>Nothing labelled as an input is ever a formula.</span></div>`
 
-  + sech(`Where ${dv.name} is now`, `${nz.n} of 12 months entered on the Baseline tab`)
+  + sech(`Where ${dv.name} is now`, `${nz.n} of 12 months entered on the Scenario Forecaster`)
   + `<div class="mgrid">
       ${metric('Revenue', nz.revenueM,'money','Per month','','bg_rev')}
       ${metric('Gross margin', nz.gpPct,'pct','Total GP ÷ total revenue','','bg_gp')}
@@ -2095,14 +2932,14 @@ function renderBudget(){
       <tr class="tot"><td>Total team</td>${B.per.map(x=>`<td>${n0(x.cap.total)}</td>`).join('')}<td class="want"><b>${n0(B.capTotal.total)}</b></td></tr>
     </tbody></table></div>` : '')
 
-  + `<div class="note">This budget is the monthly run rate the business has to hit. The One Year tab takes it and shapes it across twelve months; the Scenarios tab forecasts how the strategy stack gets you there.</div>`;
+  + `<div class="note">This budget is the monthly run rate the business has to hit. The One Year tab takes it and shapes it across twelve months; the Strategies tab is how the plan gets you there.</div>`;
 }
 /* ═══ §APP — routing, events, persistence ═══════════════════════ */
 
-const RENDERERS = {vision:renderVision, baseline:renderBaseline, metrics:renderMetrics,
-  budget:renderBudget, strategies:renderStrategies, scenarios:renderScenarios,
-  fiveyear:renderFiveYear, oneyear:renderOneYear, consolidated:renderConsolidated,
-  org:renderOrg, settings:renderSettings};
+const RENDERERS = {vision:renderVision, thrive:renderThrive, horizon:renderHorizon,
+  baseline:renderBaseline, metrics:renderMetrics, budget:renderBudget,
+  strategies:renderStrategies, oneyear:renderOneYear,
+  consolidated:renderConsolidated, org:renderOrg, settings:renderSettings};
 
 let dirty=false, fileHandle=null;
 
@@ -2117,7 +2954,20 @@ function paintSave(){
   else { el.textContent = fileHandle ? 'Saved' : 'Not linked'; el.className='savestat'; }
 }
 
+/* Replacing a tab's innerHTML destroys whatever input has focus, and the
+   browser fires focusout SYNCHRONOUSLY while that assignment is still in
+   flight. The focusout handler re-renders, so render() used to re-enter
+   itself: the inner pass drew the charts and cleared the pending queue, then
+   the outer pass overwrote the DOM with its own string and found nothing left
+   to draw. The chart vanished, the page got shorter, and the member was
+   thrown up the page mid-keystroke. One flag closes it. */
+let RENDERING = false;
 function render(all){
+  if(RENDERING) return;
+  RENDERING = true;
+  try{ renderNow(all); } finally { RENDERING = false; }
+}
+function renderNow(all){
   CURSYM = {NZD:'$',AUD:'$',GBP:'£',USD:'$'}[S.meta.currency]||'$';
   const ids = all ? Object.keys(RENDERERS) : [UI.tab];
   ids.forEach(k=>{
@@ -2127,7 +2977,6 @@ function render(all){
   });
   $$('.tab').forEach(t=>t.classList.toggle('on', t.id==='tab-'+UI.tab));
   $$('#rail a').forEach(a=>a.classList.toggle('on', a.dataset.tab===UI.tab));
-  $$('#scenseg button').forEach(b=>b.classList.toggle('on', b.dataset.scen===S.active));
   drawCharts();
   runTweens(document);
 }
@@ -2138,6 +2987,7 @@ function readValue(el){
   const kind=el.dataset.kind||'num';
   if(kind==='str') return el.value;
   if(kind==='pct') return num(el.value)/100;
+  if(kind==='numn') return el.value.trim()==='' ? null : num(el.value);
   return num(el.value);
 }
 function setSPath(p,val){
@@ -2154,7 +3004,26 @@ document.addEventListener('input', e=>{
   }
   else if(el.dataset.grid!=null){
     const d=S.divisions.find(x=>x.id===el.dataset.grid);
-    if(d){ d.months[+el.dataset.m][el.dataset.k]=num(el.value); touched=true; }
+    if(d){
+      const m=d.months[+el.dataset.m], k=el.dataset.k;
+      m[k] = (k==='gp' && el.value.trim()==='') ? null : num(el.value);
+      // cost of sales is never typed — keep the stored figure consistent with
+      // what was, so a saved file can never hold a revenue/GP/CoS that disagree
+      if(k==='gp' || k==='rev') m.cos = num(m.rev) - mgp(m);
+      touched=true;
+    }
+  }
+  else if(el.dataset.path==='thrive.energy.energising' || el.dataset.path==='thrive.energy.targetEnergising'){
+    const k = el.dataset.path==='thrive.energy.energising' ? 'energising' : 'targetEnergising';
+    const other = k==='energising' ? 'draining' : 'targetDraining';
+    const v = el.value.trim()==='' ? null : clamp(0,100,num(el.value));
+    S.thrive.energy[k] = v;
+    S.thrive.energy[other] = v==null ? null : 100-v;      // the two always make a week
+    touched=true;
+  }
+  else if(el.dataset.mname!=null){
+    (S.meta.monthNames = S.meta.monthNames || Array.from({length:12},()=>''))[+el.dataset.mname]=el.value;
+    touched=true;
   }
   else if(el.dataset.seas!=null){ S.oneYear.seasonality[+el.dataset.seas]=num(el.value); touched=true; }
   else if(el.dataset.act!=null){
@@ -2176,20 +3045,107 @@ document.addEventListener('input', e=>{
   markDirty();
   scheduleLiveRender(el);
 });
+/* An editable metric shows a formatted figure at rest and the raw number
+   while you are in it. No re-render on focus — that would rip the field out
+   from under the caret. */
+/* Baseline grid cells have no data-path — they are addressed by
+   division | month | metric. Same formatted-at-rest behaviour either way. */
+function editKey(el){
+  const d=el.dataset;
+  if(d.path!=null) return d.path;
+  if(d.grid!=null) return d.grid+'|'+d.m+'|'+d.k;
+  return null;
+}
+document.addEventListener('focusin', e=>{
+  if(RENDERING) return;
+  const el=e.target, k=el.classList&&(el.classList.contains('minput')||el.classList.contains('grp'))?editKey(el):null;
+  if(k){
+    UI.editing = k;
+    el.value = el.dataset.raw || '';
+    try{ el.select(); }catch(_){}
+  }
+});
+/* Down / Up / Enter walk straight down a column of a table, the way a
+   spreadsheet does, instead of leaving the member to reach for the mouse.
+   Left and right are untouched — they move the caret inside the number. */
+function cellNav(el, dir){
+  const td = el.closest('td'); if(!td) return false;
+  const tr = td.parentElement;
+  const ci = Array.prototype.indexOf.call(tr.children, td);
+  let row = dir>0 ? tr.nextElementSibling : tr.previousElementSibling;
+  while(row){
+    const cell = row.children[ci];
+    const inp = cell && cell.querySelector('input:not([type=hidden]):not([disabled]), textarea');
+    if(inp){ inp.focus({preventScroll:true}); try{ inp.select(); }catch(_){} return true; }
+    row = dir>0 ? row.nextElementSibling : row.previousElementSibling;
+  }
+  return false;
+}
+document.addEventListener('keydown', e=>{
+  const el=e.target;
+  if(el.classList && el.classList.contains('dren')){
+    if(e.key==='Enter'){ e.preventDefault(); el.blur(); }
+    if(e.key==='Escape'){ UI.renaming=null; render(); }
+    return;
+  }
+  if((el.tagName==='INPUT' && el.type!=='checkbox' && el.type!=='radio')
+     && (e.key==='ArrowDown' || e.key==='ArrowUp' || e.key==='Enter')){
+    const dir = e.key==='ArrowUp' ? -1 : 1;
+    if(cellNav(el, dir)) e.preventDefault();
+  }
+});
+document.addEventListener('focusout', e=>{
+  if(RENDERING) return;   // this blur is our own DOM swap, not the member leaving a field
+  if(e.target.classList && e.target.classList.contains('dren')){
+    const d=S.divisions.find(x=>x.id===e.target.dataset.divname);
+    if(d && e.target.value.trim()) d.name=e.target.value.trim();
+    UI.renaming=null; markDirty(); render(true); return;
+  }
+  const el=e.target, k=el.classList&&(el.classList.contains('minput')||el.classList.contains('grp'))?editKey(el):null;
+  if(k && UI.editing===k){
+    UI.editing = null; clearTimeout(liveTimer);
+    // Tab moves on before this fires. Re-rendering destroys the field the
+    // caret was heading for, so carry its identity across the render.
+    const next = e.relatedTarget && e.relatedTarget.dataset ? Object.assign({}, e.relatedTarget.dataset) : null;
+    keepPlace(next, null, null, false);
+  }
+});
+/* "use the calculated figure" sits inside the card, so a click would blur the
+   input and re-render the button away before the click landed. Take it on
+   mousedown and stop the blur. */
+document.addEventListener('mousedown', e=>{
+  const b = e.target.closest && e.target.closest('[data-clear]');
+  if(!b) return;
+  e.preventDefault();
+  setPath(b.dataset.clear, null);
+  UI.editing = null; markDirty(); render();
+});
+
 /* live recalc without stealing focus: re-render everything except the field being typed in */
 let liveTimer=null;
+/* Re-render without moving the page. .focus() scrolls its target into view,
+   which is what threw the member back up the page every time they typed a
+   number — so focus is restored with preventScroll and the scroll position
+   is put back exactly where it was. */
+function keepPlace(id, sel, selEnd, all){
+  const x = window.scrollX, y = window.scrollY;
+  render(all);
+  const back = id ? findSame(id) : null;
+  if(back){
+    back.focus({preventScroll:true});
+    if(sel!=null){ try{ back.setSelectionRange(sel,selEnd); }catch(_){} }
+  }
+  window.scrollTo(x, y);
+}
 function scheduleLiveRender(el){
   clearTimeout(liveTimer);
-  liveTimer=setTimeout(()=>{
-    const key = el.dataset.path||el.dataset.spath||el.dataset.grid||el.dataset.seas||el.dataset.act||el.dataset.rock||el.dataset.orole||el.dataset.divname;
-    const sel = el.selectionStart, selEnd = el.selectionEnd, id=el.dataset;
-    render();
-    const back = findSame(id);
-    if(back){ back.focus(); try{ back.setSelectionRange(sel,selEnd); }catch(_){} }
-  }, 260);
+  const id = Object.assign({}, el.dataset);
+  const sel = el.selectionStart, selEnd = el.selectionEnd;
+  liveTimer=setTimeout(()=>keepPlace(id, sel, selEnd), 260);
 }
 function findSame(d){
-  for(const k of ['path','spath','seas','divname']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
+  if(!d) return null;
+  for(const k of ['path','spath','seas','divname','mname']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
   if(d.grid!=null) return document.querySelector(`[data-grid="${CSS.escape(d.grid)}"][data-m="${d.m}"][data-k="${d.k}"]`);
   for(const k of ['act','rock','orole']) if(d[k]!=null) return document.querySelector(`[data-${k}="${CSS.escape(d[k])}"]`);
   return null;
@@ -2220,7 +3176,7 @@ document.addEventListener('change', e=>{
       if(withData.length) withData.forEach(d=>d.active=true);
       else { const d=S.divisions.find(x=>x.id==='D1'); if(d) d.active=true; }
       toast('Divisions on. '+S.divisions.filter(d=>d.active&&d.id!=='WOB').length+
-            ' switched on — turn others on from the Budget or Baseline tab.', 5000);
+            ' switched on — turn others on from the Scenario Forecaster or the Budget tab.', 5000);
     }
     markDirty(); render(true); return; }
   if(el.dataset.path!=null || el.dataset.spath!=null){ clearTimeout(liveTimer); render(); }
@@ -2228,20 +3184,24 @@ document.addEventListener('change', e=>{
 
 /* ─── clicks ───────────────────────────────────────────────────── */
 document.addEventListener('click', e=>{
-  const t=e.target.closest('[data-tab],[data-scen],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogscen],[data-addrock],[data-delrock],button');
+  const t=e.target.closest('[data-tab],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogon],[data-addrock],[data-delrock],[data-clear],[data-role],[data-tscale],[data-divren],[data-divoff],button');
+  if(t && t.disabled) return;
   if(!t) return;
   const d=t.dataset;
   if(d.tab){ go(d.tab); return; }
-  if(d.scen){ S.active=d.scen; render(true); return; }
-  if(d.divsel){ UI.div=d.divsel; render(); return; }
+  if(d.divren){ UI.renaming=d.divren; render();
+    setTimeout(()=>{ const i=$('.dren'); if(i){ i.focus(); i.select(); } },30); return; }
+  if(d.divoff!=null){ removeDepartment(d.divoff); return; }
+  if(d.divsel){ UI.div=d.divsel; UI.renaming=null; render(); return; }
   if(d.orgyear!=null){ UI.orgYear=+d.orgyear; render(); return; }
   if(d.delstrat!=null){ S.strategies.splice(+d.delstrat,1); markDirty(); render(); return; }
   if(d.addlever!=null){ const s=S.strategies[+d.addlever]; (s.levers=s.levers||[]).push({driver:'gpPct',value:1}); markDirty(); render(); return; }
   if(d.dellever!=null){ const [i,j]=d.dellever.split('|'); S.strategies[+i].levers.splice(+j,1); markDirty(); render(); return; }
-  if(d.stogscen){ const [i,k]=d.stogscen.split('|'); const s=S.strategies[+i];
-    s.scenarios=s.scenarios||[]; const at=s.scenarios.indexOf(k);
-    if(at>=0) s.scenarios.splice(at,1); else s.scenarios.push(k);
-    markDirty(); render(); return; }
+  if(d.stogon!=null){ const s=S.strategies[+d.stogon];
+    s.on = (s.on===false); markDirty(); render(); return; }
+  if(d.tscale){ applyScale(d.tscale); markDirty(); render(); return; }
+  if(d.clear){ setPath(d.clear, null); markDirty(); render(); return; }
+  if(d.role){ S.vision.biz.role = d.role; markDirty(); render(); return; }
   if(d.seaspreset){
     if(d.seaspreset==='baseline') seasonalityFromBaseline();
     else { S.oneYear.seasonality=rotateToStart(SEASON_PRESETS[d.seaspreset].slice()); markDirty(); render();
@@ -2251,9 +3211,17 @@ document.addEventListener('click', e=>{
   if(d.delrock!=null){ const [q,j]=d.delrock.split('|'); S.oneYear.rocks[+q].splice(+j,1); markDirty(); render(); return; }
 
   switch(t.id){
+    case 'btnAddDept': addDepartment(); break;
     case 'btnAddStrat': addStrategy(); break;
     case 'btnStratLib': openLibrary(); break;
     case 'btnDemo': loadDemo(); break;
+    case 'btnResetMonths': {
+      const d=currentDivision();
+      if(confirm(`Clear all twelve months of numbers for ${d.name}? Assumptions and desired numbers are kept.`)){
+        d.months=Array.from({length:12},blankMonth); markDirty(); render(true);
+        toast(`${d.name} cleared. Assumptions and desired numbers are untouched.`);
+      }
+      break; }
     case 'btnPaste': openPaste(); break;
     case 'btnSeasNorm': {
       const t=sum(S.oneYear.seasonality.map(num));
@@ -2263,6 +3231,7 @@ document.addEventListener('click', e=>{
     case 'btnSave': doSave(); break;
     case 'btnSaveAs': doSaveAs(); break;
     case 'btnLoad': $('#fileIn').click(); break;
+    case 'btnShare': exportShareable(); break;
     case 'btnPrint': printPack(); break;
     case 'btnSelfTest': runSelfTest(); break;
     case 'btnExportCsv': exportCsv(); break;
@@ -2270,12 +3239,99 @@ document.addEventListener('click', e=>{
   }
 });
 
+/* A 1–10 bar click. Key is life|<row>|<c or d>|<value> or cap|<row>|<value>.
+   Clicking the value already set clears it, so a misclick is one click to undo. */
+function applyScale(key){
+  const p=key.split('|');
+  if(p[0]==='life'){
+    const row=+p[1], col=p[2], v=+p[3];
+    const cell=S.thrive.life[row]; if(!cell) return;
+    cell[col] = (num(cell[col])===v && cell[col]!==null && cell[col]!=='') ? null : v;
+  } else if(p[0]==='cap'){
+    const row=+p[1], v=+p[2];
+    S.thrive.cap[row] = (num(S.thrive.cap[row])===v && S.thrive.cap[row]!==null && S.thrive.cap[row]!=='') ? null : v;
+  }
+}
+
+/* ─── departments ──────────────────────────────────────────────────
+   The first "+" on a single-P&L plan does not throw the existing twelve
+   months away — it becomes Department 1 and a second, empty department is
+   added beside it, which is what splitting a business actually means. */
+/* The data half of "+", kept pure so it can be tested.
+   Returns the outcome so the caller knows what to say. */
+function turnOnDepartments(){
+  if(S.divisionsOn) return 'already-on';
+  const depts   = S.divisions.filter(d=>d.id!=='WOB');
+  const withData= depts.filter(d=>d.months.some(entered));
+  const wob     = S.divisions.find(d=>d.id==='WOB');
+  const wobHas  = wob.months.some(entered);
+
+  S.divisionsOn = true;
+
+  // Departments already carry numbers — use them. Copying the single P&L in
+  // on top would double-count every dollar, which is exactly the bug the old
+  // workbook had. The single P&L is set aside, not deleted.
+  if(withData.length){
+    withData.forEach(d=>{ d.active = true; });
+    return wobHas ? 'kept-departments-wob-set-aside' : 'kept-departments';
+  }
+
+  // Nothing in any department: the twelve months become Department 1 and an
+  // empty Department 2 appears beside it. Nothing is lost, nothing is doubled.
+  const first = depts[0];
+  first.active = true;
+  if(wobHas){
+    first.months = JSON.parse(JSON.stringify(wob.months));
+    first.a      = JSON.parse(JSON.stringify(wob.a));
+    first.t      = JSON.parse(JSON.stringify(wob.t));
+    first.name   = 'Department 1';
+    const second = depts.find(d=>!d.active);
+    if(second){ second.active = true; second.name = 'Department 2'; }
+    return 'split';
+  }
+  return 'empty';
+}
+
+function addDepartment(){
+  if(!S.divisionsOn){
+    const how = turnOnDepartments();
+    UI.div = 'CONS';
+    markDirty(); render(true);
+    toast({
+      'split':'Your twelve months are now Department 1, and Department 2 is empty beside it. Split the numbers between them — Consolidated adds them back up.',
+      'kept-departments':'Departments are on. Consolidated adds them up.',
+      'kept-departments-wob-set-aside':'Your departments already had numbers, so those are what the plan uses. The single P&L is set aside — it comes back if you remove every department.',
+      'empty':'Departments are on. Consolidated adds them up.'
+    }[how] || 'Departments are on.', 8000);
+    return;
+  }
+  const next = S.divisions.find(d=>d.id!=='WOB' && !d.active);
+  if(!next){ toast('All seven departments are already on.'); return; }
+  next.active = true; UI.div = next.id; UI.renaming = next.id;
+  markDirty(); render(true);
+  setTimeout(()=>{ const i=$('.dren'); if(i){ i.focus(); i.select(); } },40);
+}
+function removeDepartment(id){
+  const d = S.divisions.find(x=>x.id===id); if(!d) return;
+  const on = S.divisions.filter(x=>x.id!=='WOB' && x.active);
+  if(!confirm(`Take ${d.name} out of the plan? Its twelve months and its assumptions are kept — bring it back with +.`)) return;
+  d.active = false;
+  if(on.length<=1){
+    S.divisionsOn = false; UI.div = 'WOB';
+    toast(`${d.name} removed. Back to one P&L — its numbers are kept and come back with +.`, 6000);
+  } else {
+    UI.div = 'CONS';
+    toast(`${d.name} taken out of the roll-up. Its numbers are kept.`, 5000);
+  }
+  markDirty(); render(true);
+}
+
 /* ─── strategies ───────────────────────────────────────────────── */
 function addStrategy(preset){
   S.strategies.push(Object.assign({
     name:'', domain:'Marketing', outcome:'Both', stage:'Strategy', shift:'', owner:S.meta.owner||'',
     startMonth:1, fullMonth:12, ramp:'linear', confidence:70, cost:0, refined:false,
-    scenarios:[S.active], levers:[]
+    on:true, levers:[]
   }, preset||{}));
   markDirty(); render();
   setTimeout(()=>{ const c=$$('.card[data-si]').pop(); if(c) c.querySelector('input').focus(); },40);
@@ -2334,12 +3390,12 @@ document.addEventListener('keydown',e=>{
 /* ─── paste from spreadsheet ───────────────────────────────────── */
 function openPaste(){
   overlay(`<h3 style="font-family:var(--serif);font-size:24px;margin:0 0 4px">Paste from a spreadsheet</h3>
-    <div class="tiny" style="margin-bottom:12px">Paste rows in this order, twelve columns each, tabs or commas between them. Blank lines are skipped. Order: revenue, cost of sales, fixed costs, overhead, jobs, quotes, leads, owner hours, on-tools, office.</div>
+    <div class="tiny" style="margin-bottom:12px">Paste rows in this order, twelve columns each, tabs or commas between them. Blank lines are skipped.<br><b>Order: revenue, gross profit, fixed cost, company overhead, invoices / jobs, quotes, leads, owner hours per week, on-tools headcount, office headcount.</b><br>Gross profit, not cost of sales — it is the line on your P&amp;L. Cost of sales is worked out from it.</div>
     <textarea id="pasteBox" class="full" style="min-height:180px;font-family:ui-monospace,monospace;font-size:12px" placeholder="180000&#9;192000&#9;…"></textarea>
     <div class="btnrow"><button class="btn accent" id="pasteGo">Bring it in</button></div>`,
     root=>{ root.querySelector('#pasteGo').onclick=()=>{
       const txt=root.querySelector('#pasteBox').value;
-      const keys=['rev','cos','fixed','ovh','jobs','quotes','leads','ownerHrs','onTools','office'];
+      const keys=['rev','gp','fixed','ovh','jobs','quotes','leads','ownerHrs','onTools','office'];
       const lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
       const dv=currentDivision(); let n=0;
       lines.forEach((line,i)=>{
@@ -2348,6 +3404,7 @@ function openPaste(){
         for(let m=0;m<12 && m<cells.length;m++){ dv.months[m][keys[i]]=cells[m]; }
         n++;
       });
+      dv.months.forEach(m=>{ m.cos = num(m.rev) - mgp(m); });
       closeOverlay(); markDirty(); render();
       toast(n?`Brought in ${n} row${n===1?'':'s'}.`:'Nothing recognised in that paste.');
     };});
@@ -2371,7 +3428,7 @@ function loadDemo(){
   const rev=[176000,168000,201000,214000,232000,241000,198000,186000,223000,239000,246000,209000];
   rev.forEach((r,i)=>{
     const m=dv.months[i];
-    m.rev=r; m.cos=Math.round(r*(0.655+((i%3)-1)*0.012));
+    m.rev=r; m.gp=Math.round(r*(1-(0.655+((i%3)-1)*0.012))); m.cos=r-m.gp;
     m.fixed=41000+ (i>5?2500:0); m.ovh=9500;
     m.jobs=Math.round(r/8400); m.quotes=Math.round(r/8400/0.46);
     m.leads=Math.round(r/8400/0.46/0.78);
@@ -2381,7 +3438,7 @@ function loadDemo(){
   const d1=S.divisions.find(x=>x.id==='D1'), d2=S.divisions.find(x=>x.id==='D2');
   [[d1,0.62],[d2,0.38]].forEach(([dd,sh])=>{
     dv.months.forEach((m,i)=>{
-      Object.keys(m).forEach(k=>{ dd.months[i][k] = (k==='ownerHrs') ? num(m[k])*(sh>0.5?0.6:0.4)
+      Object.keys(m).forEach(k=>{ dd.months[i][k] = (k==='ownerHrs') ? num(m[k])
         : Math.round(num(m[k])*sh*100)/100; });
     });
   });
@@ -2399,7 +3456,22 @@ function loadDemo(){
   S.meta.company=S.meta.company||'Example Plumbing Ltd'; S.meta.owner=S.meta.owner||'Sam';
   S.vision.statement=S.vision.statement||'In five years I own a business turning over four million with a leadership team running it, I work three days a week, I take six weeks off with the family, and it is worth enough to sell or hand to the kids.';
   S.vision.biz={revenue:5200000, profit:1000000, value:3000000, team:24, role:'CEO · Leader · Investor'};
-  S.vision.life={hours:35, holidays:6, weekends:0, evenings:5, income:280000, whatFor:'Six weeks in the islands every year, and the building bought outright.'};
+  S.vision.life={hours:35, holidays:6, weekends:0, evenings:5, income:280000,
+    adventures:12, investments:750000,
+    whatFor:'Six weeks in the islands every year, and the building bought outright.'};
+  S.thrive.life = [[4,9],[2,8],[4,8],[5,8],[5,9],[6,9],[5,8],[4,8],[3,9]]
+    .map(([c,d])=>({c,d}));
+  S.thrive.cap = [6,5,5,4,7,4,6,7,3];
+  S.thrive.energy = {energising:35, draining:65, targetEnergising:70, targetDraining:30};
+  S.thrive.aim = {
+    financial:'Get the business paying me $18k a month without me quoting a single job.',
+    time:'Hand estimating to a full-time estimator and get ten hours a week back by Q3.',
+    identity:'Stop being the best tradesman in the business and start being the person who builds the team.'};
+  S.thrive.fin = [
+    {level:'Current',     income:11500, shifts:''},
+    {level:'Comfortable', income:15000, shifts:'Four days on the tools, hire a leading hand'},
+    {level:'Thriving',    income:22000, shifts:'Off the tools entirely, estimator and ops manager in place'},
+    {level:'Optimal',     income:32000, shifts:'Rental income and a second branch; business runs without me'}];
   S.ownerRoles=[{role:'On tools',on:false,handover:0},{role:'Team Leader',on:false,handover:0},
                 {role:'Operations Manager',on:true,handover:0},{role:'Estimator',on:true,handover:2},
                 {role:'Office / Admin',on:false,handover:0}];
@@ -2411,7 +3483,7 @@ function loadDemo(){
 function addStrategyQuiet(preset,i){
   S.strategies.push(Object.assign({name:'',domain:'Marketing',outcome:'Both',stage:i<2?'Refining':'Execution',
     shift:'',owner:'',startMonth:1+i*3,fullMonth:12+i*3,ramp:'s',confidence:70,cost:0,refined:i<2,
-    scenarios:['A','B']}, JSON.parse(JSON.stringify(preset))));
+    on:true}, JSON.parse(JSON.stringify(preset))));
 }
 
 /* ─── save / load ──────────────────────────────────────────────── */
@@ -2462,6 +3534,25 @@ function mergeState(loaded){
   out.divisions.forEach(d=>{
     if(!d.t) d.t={netProfit:0,fixedCosts:0,gpPct:0.35,avgJobValue:0,quoteWin:0.5,leadQuote:0.8};
   });
+  // files written before v2.2 carried three scenarios (Plan A/B/C) and an active one.
+  // The plan the member was looking at becomes THE plan; strategies assigned to it stay
+  // in the plan and the rest are parked, so nothing is deleted and nothing is invented.
+  if(loaded && loaded.scenarios && !loaded.plan){
+    const key = loaded.active && loaded.scenarios[loaded.active] ? loaded.active
+              : Object.keys(loaded.scenarios)[0];
+    const old = loaded.scenarios[key] || {};
+    out.plan = {label:'The Plan',
+      multiple: (old.multiple!=null ? old.multiple : 3.0),
+      macro: Array.isArray(old.macro) && old.macro.length===5
+             ? JSON.parse(JSON.stringify(old.macro)) : Array.from({length:5},blankMacro)};
+    (out.strategies||[]).forEach(st=>{
+      if(st.on==null) st.on = Array.isArray(st.scenarios) ? st.scenarios.includes(key) : true;
+      delete st.scenarios;
+    });
+  }
+  delete out.scenarios; delete out.active;
+  (out.strategies||[]).forEach(st=>{ if(st.on==null) st.on=true; delete st.scenarios; });
+
   // files written before the per-department budget carried one global target block
   if(loaded && loaded.targets && (!loaded.divisions || !loaded.divisions[0] || !loaded.divisions[0].t)){
     const w=out.divisions.find(d=>d.id==='WOB');
@@ -2491,10 +3582,36 @@ function printPack(){
   setTimeout(()=>window.print(), 120);
 }
 
+/* ─── send someone a filled-in copy ─────────────────────────────
+   The app and the member's numbers are normally two files. That is fine
+   for the member and useless for anyone they send it to, who would open
+   a blank calculator. This bakes the current plan into a copy of the app
+   so the recipient opens ONE attachment and sees the numbers. */
+function exportShareable(){
+  const clone = document.documentElement.cloneNode(true);
+  clone.querySelectorAll('.tab').forEach(t=>{ t.innerHTML=''; t.className='tab'; });
+  const first = clone.querySelector('#tab-vision'); if(first) first.className='tab on';
+  const t=clone.querySelector('#toast'); if(t){ t.textContent=''; t.className=''; }
+  const o=clone.querySelector('#ovl'); if(o) o.remove();
+  clone.querySelectorAll('script[data-embedded]').forEach(n=>n.remove());
+  const ss=clone.querySelector('#savestat'); if(ss){ ss.textContent=''; ss.className='savestat'; }
+
+  const sc=document.createElement('script');
+  sc.setAttribute('data-embedded','1');
+  /* escape < so a statement containing a closing script tag cannot break out */
+  sc.textContent='window.__BRGP__='+JSON.stringify(S).replace(/</g,'\\u003c')+';';
+  (clone.querySelector('head')||clone).appendChild(sc);
+
+  const stamp = new Date().toISOString().slice(0,10);
+  const co = (S.meta.company||'boardroom').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  download(`${co}-growth-plan-${stamp}.html`, '<!DOCTYPE html>\n'+clone.outerHTML, 'text/html');
+  toast('Downloaded a copy with your numbers baked in. Attach that file — whoever opens it sees the plan filled in, not an empty calculator.', 8000);
+}
+
 /* ─── CSV export ───────────────────────────────────────────────── */
 function exportCsv(){
-  const pr=project(S.active), Y=pr.years;
-  const rows=[['Boardroom Growth Plan', S.meta.company||'', 'Plan '+S.active, S.scenarios[S.active].label]];
+  const pr=project(), Y=pr.years;
+  const rows=[['Boardroom Growth Plan', S.meta.company||'', 'The plan', n1(pr.plan.multiple)+'x EBITDA']];
   rows.push([]);
   const line=(l,pick,f)=>rows.push([l].concat(Y.map(y=>{ const v=pick(y); return (v==null||!Number.isFinite(v))?'':(f?f(v):Math.round(v*100)/100); })));
   rows.push(['Metric'].concat(Y.map(y=>y.label)));
@@ -2575,26 +3692,26 @@ function runSelfTest(){
   T('5 · pricing hours come from quotes', cap.pricingHours, 56);
   T('5 · estimators', cap.estimators, 1);
 
-  // 6 — scenario with no strategies moves only by macro
+  // 6 — a plan with no strategies moves only by macro
   S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
   fill(d,12,()=>({rev:100000,cos:65000,fixed:25000,jobs:12,quotes:24,leads:30,ownerHrs:60,onTools:4,office:1}));
-  S.scenarios.A.macro=S.scenarios.A.macro.map(()=>({market:0.10,price:0,wage:0,ovh:0}));
-  let pr=project('A');
+  S.plan.macro=S.plan.macro.map(()=>({market:0.10,price:0,wage:0,ovh:0}));
+  let pr=project();
   T('6 · no strategies → year 1 = baseline × market growth', pr.years[1].rev, 1200000*1.10, 500);
   T('6 · year 2 compounds', pr.years[2].rev, 1200000*1.21, 900);
 
   // 7 — two strategies on the same driver add up
   S.strategies=[
-    {name:'a',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:2}]},
-    {name:'b',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:3}]}
+    {name:'a',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:2}]},
+    {name:'b',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:3}]}
   ];
-  pr=project('A');
+  pr=project();
   T('7 · overlapping levers sum in percentage points', pr.years[1].gpPct, 0.35+0.05, 1e-6);
   S.strategies[1].confidence=50;
-  pr=project('A');
+  pr=project();
   T('7 · confidence weights the lever', pr.years[1].gpPct, 0.35+0.02+0.015, 1e-6);
-  S.strategies=[{name:'c',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:7,fullMonth:7,ramp:'linear',confidence:100,cost:0,scenarios:['A'],levers:[{driver:'gpPct',value:6}]}];
-  pr=project('A');
+  S.strategies=[{name:'c',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:7,fullMonth:7,ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:6}]}];
+  pr=project();
   T('7 · a lever starting in month 7 affects only half of year 1', pr.years[1].gpPct, 0.38, 0.0005);
 
   // 8 — divisions: only ACTIVE divisions roll up; assumptions are weighted, never summed
@@ -2646,6 +3763,34 @@ function runSelfTest(){
   const BG2=budget();
   T('8b · switching a department off removes it from the budget', BG2.total.revenue, 125000, 0.5);
 
+  // 8c — the Thrive Index, and the two defects carried over from the workbook
+  S=defaultState();
+  S.thrive.life=[[4,9],[2,8],[4,8],[5,8],[5,9],[6,9],[5,8],[4,8],[3,9]].map(([c,d])=>({c,d}));
+  S.thrive.cap=[6,5,5,4,7,4,6,7,3];
+  S.thrive.energy={energising:35,draining:65,targetEnergising:70,targetDraining:30};
+  let TX=thriveScores();
+  T('8c · TIS is the sum of current over 90', TX.tis, 38/90*100, 1e-9);
+  T('8c · TIS lands in the right band', TX.level, 'Stable');
+  T('8c · desired TIS scored the same way', TX.tisD, 76/90*100, 1e-9);
+  T('8c · desired band', TX.levelD, 'Thriving');
+  T('8c · points to the next level', TX.toNext, 60-38/90*100, 1e-9);
+  T('8c · biggest gap is found', TX.biggest[0].gap, 6);
+  T('8c · all nine capability rows are counted', TX.capCounted, 9);
+  T('8c · capability total includes the ninth row', TX.capTotal, 47);
+  T('8c · the workbook dropped the ninth row and summed the header', TX.capTotal!==44, true);
+  T('8c · capability band', TX.capBand, 'Capable manager');
+  T('8c · energy is read from the value, not the header', TX.energising, 35);
+  T('8c · energy gap against the 70% benchmark', TX.energyGap, -35);
+  S.thrive.life[0].c=null;
+  TX=thriveScores();
+  T('8c · a cleared score drops out of the count', TX.counted, 8);
+  T('8c · TIS re-scores on what is left', TX.tis, 34/90*100, 1e-9);
+  S=defaultState();
+  TX=thriveScores();
+  T('8c · a blank scorecard scores nothing, not zero', TX.tis, null);
+  T('8c · and has no band', TX.level, null);
+  T('8c · blank capability too', TX.capTotal, null);
+
   // freedom score in both directions, and the degenerate guard
   S=defaultState();
   S.wellness.base={hours:70,onBiz:10,weekends:4,evenings:1,holidays:1,weeksWithout:0,income:100000,outside:0,exercise:0,sleep:6};
@@ -2661,13 +3806,161 @@ function runSelfTest(){
   S.targets={netProfit:-1,fixedCosts:0,gpPct:0,avgJobValue:0,quoteWin:0,leadQuote:0};
   let bad=0;
   try{
-    const p2=project('A');
+    const p2=project();
     JSON.stringify(p2.years, (k,v)=>{ if(typeof v==='number' && !Number.isFinite(v)) bad++; return v; });
     const f2=funnel(S.targets);
     Object.values(f2).forEach(v=>{ if(typeof v==='number' && !Number.isFinite(v)) bad++; });
   }catch(err){ bad=-1; out.push('<span class="f">FAIL</span>  10 · fuzz threw: '+err.message); }
   T('10 · fuzzed inputs produce no NaN or Infinity', bad, 0);
 
+  // 10b — baseline entry is GROSS PROFIT; cost of sales is derived
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,()=>({rev:100000, gp:35000, fixed:20000, ovh:5000, jobs:10, quotes:20, leads:25, ownerHrs:60, onTools:4, office:1}));
+  let nz=normalise(d);
+  T('10b · gross profit is read from what was entered', nz.gp, 420000);
+  T('10b · cost of sales is derived, never typed', nz.cos, 780000);
+  T('10b · margin is total GP over total revenue', nz.gpPct, 0.35, 1e-9);
+  T('10b · net profit nets off fixed costs and overhead', nz.netProfit, 420000-300000);
+
+  // an older file that stored cost of sales still reads correctly
+  d=S.divisions.find(x=>x.id==='WOB');
+  d.months.forEach(m=>{ m.gp=null; m.cos=65000; });
+  nz=normalise(d);
+  T('10b · a pre-v2.3 file falls back to cost of sales', nz.gp, (100000-65000)*12);
+  T('10b · and its margin still lands', nz.gpPct, 0.35, 1e-9);
+
+  // a blank gross profit on a month with revenue is not silently a full margin
+  d.months.forEach(m=>{ m.gp=0; m.cos=0; });
+  nz=normalise(d);
+  T('10b · gross profit typed as zero is honoured as zero', nz.gp, 0);
+
+  // months entered, not months on screen — a 3-month average is a 3-month average
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,3,()=>({rev:90000, gp:36000, fixed:20000, jobs:9, quotes:18, leads:22}));
+  nz=normalise(d);
+  T('10b · monthly revenue averages over months ENTERED', nz.revenueM, 90000);
+  T('10b · not over twelve', nz.revenueM===270000/12 ? 0 : 1, 1);
+  T('10b · margin on a partial year', nz.gpPct, 0.40, 1e-9);
+
+  // month headings
+  S=defaultState(); S.meta.startMonth=0; S.meta.startYear=2026;
+  T('10b · a heading is derived when it is left blank', monthName(0)==='Jan 26' ? 1 : 0, 1);
+  S.meta.monthNames[0]='Opening';
+  T('10b · and taken from the member when they type one', monthName(0)==='Opening' ? 1 : 0, 1);
+  S.meta.monthNames[0]='   ';
+  T('10b · whitespace is not a heading', monthName(0)==='Jan 26' ? 1 : 0, 1);
+
+  // 10c — turning departments on must never lose money and never double it
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,()=>({rev:100000, gp:35000, fixed:25000, jobs:10, quotes:20, leads:25, ownerHrs:60, onTools:4}));
+  let before = business().revenueM;
+  T('10c · single P&L monthly revenue', before, 100000);
+  T('10c · the split reports what it did', turnOnDepartments()==='split' ? 1 : 0, 1);
+  T('10c · consolidated revenue is unchanged by the split', business().revenueM, before);
+  T('10c · two departments exist afterwards', activeDivisions().length, 2);
+  T('10c · the twelve months landed in the first', normalise(activeDivisions()[0]).revenueM, 100000);
+  T('10c · the second is empty, not a copy', normalise(activeDivisions()[1]).revenueM==null?0:normalise(activeDivisions()[1]).revenueM, 0);
+  T('10c · an empty department does not halve the owner week', business().ownerHours, 60);
+
+  // departments that already carry numbers are used as they are
+  S=defaultState();
+  const wob=S.divisions.find(x=>x.id==='WOB'), dA=S.divisions[1], dB=S.divisions[2];
+  fill(wob,12,()=>({rev:100000, gp:35000, fixed:25000, jobs:10, quotes:20, leads:25, ownerHrs:60, onTools:4}));
+  fill(dA,12,()=>({rev:60000, gp:21000, fixed:15000, jobs:6, quotes:12, leads:15, ownerHrs:60, onTools:2}));
+  fill(dB,12,()=>({rev:40000, gp:14000, fixed:10000, jobs:4, quotes:8, leads:10, ownerHrs:60, onTools:2}));
+  T('10c · existing departments are kept, the single P&L set aside',
+    turnOnDepartments()==='kept-departments-wob-set-aside' ? 1 : 0, 1);
+  T('10c · and the single P&L is NOT copied on top', business().revenueM, 100000);
+  T('10c · which is the departments, not the departments plus the P&L', business().revenueM===200000?0:1, 1);
+
+  // consolidated months add money and volume but never owner hours
+  const cm = consolidatedMonths();
+  T('10c · consolidated month revenue adds', num(cm[0].rev), 100000);
+  T('10c · consolidated month gross profit adds', num(cm[0].gp), 35000);
+  T('10c · consolidated month headcount adds', num(cm[0].onTools), 4);
+  T('10c · consolidated month owner hours do NOT add', num(cm[0].ownerHrs), 60);
+  T('10c · the consolidated grid agrees with the roll-up on owner hours',
+    sum(cm.filter(entered).map(m=>num(m.ownerHrs)))/cm.filter(entered).length, business().ownerHours, 1e-9);
+
+  // 10d — the week always adds to 100, and the pair cannot drift apart
+  S=defaultState();
+  S.thrive.energy.energising=30;
+  let X=thriveScores();
+  T('10d · draining is the balance of the week', X.draining, 70);
+  T('10d · the two make one week', X.energising+X.draining, 100);
+  S.thrive.energy.energising=0;  X=thriveScores();
+  T('10d · zero energising is honoured, not treated as blank', X.draining, 100);
+  S.thrive.energy.energising=140; X=thriveScores();
+  T('10d · over 100 clamps', X.energising, 100);
+  T('10d · and its balance is zero, never negative', X.draining, 0);
+  S.thrive.energy.energising=null; X=thriveScores();
+  T('10d · nothing entered stays nothing, not zero', X.draining==null?1:0, 1);
+  S.thrive.energy.energising=45; S.thrive.energy.targetEnergising=70; X=thriveScores();
+  T('10d · the target pair balances too', X.targetDraining, 30);
+  T('10d · the gap is measured against the target', X.energyGap, -25);
+  S.thrive.energy={energising:30, draining:20, targetEnergising:70, targetDraining:10};
+  X=thriveScores();
+  T('10d · a stored draining that disagrees is ignored, not shown', X.draining, 70);
+  T('10d · same for the stored target', X.targetDraining, 30);
+
+  // 10e — a re-render must never leave a chart container empty. This is what
+  // the re-entrancy bug looked like from the outside: the page silently got
+  // shorter mid-keystroke and threw the member up the page.
+  S=JSON.parse(snap);
+  const emptyCharts = () => $$('.chartbox > div[id]').filter(d=>!d.innerHTML.trim()).length;
+  UI.tab='thrive'; render(true);
+  T('10e · every chart is drawn after a full render', emptyCharts(), 0);
+  render();
+  T('10e · and after a partial one', emptyCharts(), 0);
+  UI.tab='horizon'; render(); render(); render();
+  T('10e · and after three in a row', emptyCharts(), 0);
+  // the guard itself: a nested call is refused, not queued
+  let nested = 'not-called';
+  RENDERING = true;
+  try{ render(true); nested = 'ran'; }catch(err){ nested = 'threw'; }
+  RENDERING = false;
+  T('10e · render refuses to re-enter itself', nested==='ran' ? 1 : 0, 1);
+  T('10e · and the guard resets', RENDERING ? 1 : 0, 0);
+  UI.tab='settings';
+
+  // 11 — one plan: parking a strategy takes it out of the forecast entirely
+  S=defaultState(); d=S.divisions.find(x=>x.id==='WOB');
+  fill(d,12,()=>({rev:100000,cos:65000,fixed:25000,jobs:12,quotes:24,leads:30,ownerHrs:60,onTools:4,office:1}));
+  S.plan.macro=S.plan.macro.map(()=>({market:0,price:0,wage:0,ovh:0}));
+  S.strategies=[{name:'p',domain:'Sales',outcome:'Both',stage:'Execution',startMonth:1,fullMonth:1,
+                 ramp:'linear',confidence:100,cost:0,on:true,levers:[{driver:'gpPct',value:4}]}];
+  T('11 · a strategy in the plan moves the forecast', project().years[1].gpPct, 0.39, 1e-6);
+  S.strategies[0].on=false;
+  T('11 · a parked strategy moves nothing', project().years[1].gpPct, 0.35, 1e-6);
+  T('11 · parked strategies are excluded from the stack', planStrategies().length, 0);
+  S.strategies[0].on=true;
+  T('11 · unparking puts it straight back', planStrategies().length, 1);
+
+  // 12 — a v2.1 file (Plan A/B/C) still opens, and opens as one plan
+  const legacy = {
+    plan:undefined, active:'B',
+    scenarios:{A:{name:'A',label:'Base',multiple:3.0,macro:Array.from({length:5},()=>({market:0.05,price:0.03,wage:0.03,ovh:0.03}))},
+               B:{name:'B',label:'Stretch',multiple:3.7,macro:Array.from({length:5},()=>({market:0.09,price:0.03,wage:0.03,ovh:0.03}))},
+               C:{name:'C',label:'Conservative',multiple:2.5,macro:Array.from({length:5},()=>({market:0.01,price:0.03,wage:0.03,ovh:0.03}))}},
+    strategies:[{name:'in B',scenarios:['B'],levers:[{driver:'gpPct',value:2}],confidence:100},
+                {name:'in A only',scenarios:['A'],levers:[{driver:'gpPct',value:9}],confidence:100},
+                {name:'in all',scenarios:['A','B','C'],levers:[{driver:'gpPct',value:1}],confidence:100}]
+  };
+  delete legacy.plan;
+  const mig = mergeState(JSON.parse(JSON.stringify(legacy)));
+  T('12 · the plan the member was on becomes the plan', mig.plan.multiple, 3.7);
+  T('12 · its macro comes with it', mig.plan.macro[0].market, 0.09, 1e-9);
+  T('12 · the old scenario block is gone', mig.scenarios===undefined ? 1 : 0, 1);
+  T('12 · the active-plan pointer is gone', mig.active===undefined ? 1 : 0, 1);
+  T('12 · strategies that were in that plan stay in the plan', mig.strategies.filter(x=>x.on!==false).length, 2);
+  T('12 · strategies that were not are parked, not deleted', mig.strategies.length, 3);
+  T('12 · no strategy still carries a scenario list', mig.strategies.filter(x=>x.scenarios!==undefined).length, 0);
+
+  // the Setup card publishes SELFTEST_COUNT. If a case is added and that
+  // constant is not moved with it, the card would quietly lie — so check it.
+  if(pass+fail !== SELFTEST_COUNT){
+    fail++; out.push(`<span class="f">FAIL</span>  0 · SELFTEST_COUNT says ${SELFTEST_COUNT}, ${pass+fail} checks actually ran — update it in 03-core.js`);
+  }
   S=JSON.parse(snap);
   render(true);
   const el=$('#selftestout');
@@ -2676,6 +3969,11 @@ function runSelfTest(){
 }
 
 /* ─── init ─────────────────────────────────────────────────────── */
+/* a copy that was emailed carries its numbers with it */
+if(window.__BRGP__){
+  try{ S = mergeState(window.__BRGP__); }
+  catch(err){ console.error('embedded plan could not be read', err); }
+}
 render(true);
 paintSave();
 if(/[?&]selftest=1/.test(location.search)) { go('settings'); setTimeout(runSelfTest, 200); }

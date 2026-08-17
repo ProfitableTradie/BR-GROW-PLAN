@@ -5,3 +5,8 @@
 .DS_Store
 node_modules/
 *.log
+
+# Scratch landing area for flattened builds exported from Cowork, kept only
+# long enough to split back into src/ and verify with `cmp`. Never a source
+# of truth — src/ is.
+src-incoming/

@@ -57,7 +57,7 @@ const FMT = {money, money0k, pct, n0, n1, hrs, pp};
 /* ═══ STATE ══════════════════════════════════════════════════════ */
 
 function blankMonth(){
-  return {rev:0,cos:0,fixed:0,ovh:0,jobs:0,quotes:0,leads:0,ownerHrs:0,onTools:0,office:0};
+  return {rev:0,gp:null,cos:0,fixed:0,ovh:0,jobs:0,quotes:0,leads:0,ownerHrs:0,onTools:0,office:0};
 }
 function blankDivision(id,name,active){
   return {id, name, active:!!active, months:Array.from({length:12},blankMonth),
@@ -66,8 +66,9 @@ function blankDivision(id,name,active){
     t:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8}};
 }
 function blankMacro(){ return {market:0.05, price:0.03, wage:0.03, ovh:0.03}; }
-function blankScenario(name,label,mult){
-  return {name, label, multiple:mult, macro:Array.from({length:5},blankMacro)};
+const SELFTEST_COUNT = 122; /* every check in runSelfTest(), last verified run */
+function blankPlan(){
+  return {label:'The Plan', multiple:3.0, macro:Array.from({length:5},blankMacro)};
 }
 
 const DRIVERS = {
@@ -85,14 +86,56 @@ const STAGES  = ['Strategy','Planning','Execution','Community','Accountability',
 const OUTCOMES= ['Freedom','Asset','Both'];
 const OWNER_ROLES = ['On tools','Team Leader','Operations Manager','Estimator','Office / Admin'];
 
+/* ═══ THE THRIVE INDEX ════════════════════════════════════════════
+   From Thrive_Index_Professional.xlsx. Nine life categories scored
+   1–10 now and 1–10 wanted, nine owner-capability dimensions, the
+   energising/draining split, the three shifts and the income each
+   lifestyle level needs. See CALC-SPEC for the two off-by-one
+   defects in the workbook that are corrected here. */
+const THRIVE_LIFE = [
+  ['Financial freedom','Financial'],
+  ['Time freedom / balance','Time'],
+  ['Physical health & energy','Health'],
+  ['Mental wellbeing','Mind'],
+  ['Relationships — family, partner, friends','Relationships'],
+  ['Career fulfilment / purpose','Purpose'],
+  ['Environment / lifestyle design — where you live, work, play','Environment'],
+  ['Growth / learning / progress','Growth'],
+  ['Enjoyment / fun / experiences','Fun']
+];
+const THRIVE_CAP = [
+  'Strategic decision-making',
+  'Financial literacy & risk judgement',
+  'Leadership & people development',
+  'Systems thinking — can create scalable processes',
+  'Commercial growth capability — sales & BD',
+  'Governance & compliance awareness',
+  'Emotional resilience & stress tolerance',
+  'Ownership mindset — accountability, long-term vision',
+  'Ability to step back from day-to-day operations'
+];
+const THRIVE_LEVELS = ['Current','Comfortable','Thriving','Optimal'];
+const THRIVE_SHIFTS = [
+  ['financial','Financial shift','e.g. +$2k a week of passive income'],
+  ['time','Time shift','e.g. free 10 hours a week through delegation'],
+  ['identity','Identity shift','e.g. move from operator to leader']
+];
+
 function defaultState(){
   return {
     v: 1,
-    meta:{company:'', owner:'', startMonth:0, startYear:new Date().getFullYear(), currency:'NZD'},
+    meta:{company:'', owner:'', startMonth:0, startYear:new Date().getFullYear(), currency:'NZD',
+          /* blank = the name derived from the start month. Type over any of them. */
+          monthNames:Array.from({length:12},()=>'')},
     vision:{
       statement:'',
-      biz:{revenue:0, profit:0, value:0, team:0, role:'CEO'},
-      life:{hours:35, holidays:6, weekends:0, evenings:5, income:0, whatFor:''}
+      biz:{revenue:null, profit:null, value:null, team:null, role:'CEO · Leader · Investor'},
+      life:{hours:35, holidays:6, weekends:0, evenings:5, income:null,
+            adventures:null, investments:null, whatFor:''},
+      /* null on any of these means "use the figure the model derives".
+         Type a number and it overrides; clear it and the model takes over again. */
+      freedom:{today:null, y5:null, hoursToday:null, hoursY5:null},
+      asset:{valueToday:null, valueY5:null, valueCreated:null}
     },
     divisionsOn:false,
     divisions:[
@@ -114,16 +157,18 @@ function defaultState(){
       base:{hours:0, onBiz:0, weekends:0, evenings:0, holidays:0, weeksWithout:0, income:0, outside:0, exercise:0, sleep:0},
       targ:{hours:35, onBiz:60, weekends:0, evenings:5, holidays:6, weeksWithout:4, income:0, outside:0, exercise:4, sleep:7.5}
     },
+    thrive:{
+      life: THRIVE_LIFE.map(()=>({c:null,d:null})),
+      cap:  THRIVE_CAP.map(()=>null),
+      energy:{energising:null, draining:null, targetEnergising:70, targetDraining:30},
+      aim:{financial:'', time:'', identity:''},
+      fin: THRIVE_LEVELS.map(l=>({level:l, income:null, shifts:''}))
+    },
     ownerRoles:[{role:'On tools',on:false,handover:0},{role:'Team Leader',on:false,handover:0},
                 {role:'Operations Manager',on:true,handover:0},{role:'Estimator',on:true,handover:0},
                 {role:'Office / Admin',on:false,handover:0}],
     strategies:[],
-    scenarios:{
-      A:blankScenario('A','Base',3.0),
-      B:blankScenario('B','Stretch',3.5),
-      C:blankScenario('C','Conservative',2.5)
-    },
-    active:'A',
+    plan:blankPlan(),
     oneYear:{ seasonality:Array.from({length:12},()=>1), actuals:Array.from({length:12},()=>({rev:null,gp:null,jobs:null,leads:null,np:null})), rocks:[[],[],[],[]] }
   };
 }
@@ -132,13 +177,20 @@ let S = defaultState();
 /* ═══ §1 BASELINE NORMALISATION ══════════════════════════════════
    Period ratios, never averages of ratios. (Defect #10) */
 
-const entered = m => (num(m.rev)>0 || num(m.jobs)>0 || num(m.leads)>0 || num(m.quotes)>0);
+const entered = m => (num(m.rev)>0 || num(m.gp)>0 || num(m.jobs)>0 || num(m.leads)>0 || num(m.quotes)>0);
+
+/* The member enters GROSS PROFIT, because that is the line printed on a
+   Xero / MYOB / QuickBooks P&L. Cost of sales is derived from it.
+   Plans saved before v2.3 stored cost of sales instead — those months have
+   no gp, so fall back to revenue − cost of sales and nothing is lost. */
+const mgp  = m => (m.gp===null||m.gp===undefined||m.gp==='') ? (num(m.rev)-num(m.cos)) : num(m.gp);
+const mcos = m => num(m.rev) - mgp(m);
 
 function normalise(dv){
   const ms = dv.months.filter(entered);
   const n  = ms.length;
   const t = {
-    rev:sum(ms.map(m=>num(m.rev))), cos:sum(ms.map(m=>num(m.cos))),
+    rev:sum(ms.map(m=>num(m.rev))), cos:sum(ms.map(mcos)),
     fixed:sum(ms.map(m=>num(m.fixed))), ovh:sum(ms.map(m=>num(m.ovh))),
     jobs:sum(ms.map(m=>num(m.jobs))), quotes:sum(ms.map(m=>num(m.quotes))),
     leads:sum(ms.map(m=>num(m.leads)))
@@ -165,7 +217,7 @@ function normalise(dv){
     a: dv.a
   };
   // monthly spread on GP% so volatility is visible
-  const gps = ms.map(m=> div(num(m.rev)-num(m.cos), num(m.rev))).filter(v=>v!=null).sort((x,y)=>x-y);
+  const gps = ms.map(m=> div(mgp(m), num(m.rev))).filter(v=>v!=null).sort((x,y)=>x-y);
   r.gpSpread = gps.length ? {lo:gps[0], mid:gps[Math.floor(gps.length/2)], hi:gps[gps.length-1]} : null;
   return r;
 }
@@ -201,7 +253,12 @@ function business(){
     gpPct:div(gp,rev), jobs, quotes, leads,
     avgJobValue:div(rev,jobs), quoteWin:div(jobs,quotes), leadQuote:div(quotes,leads),
     onTools:t('onTools'), office:t('office'),
-    ownerHours: norms.length ? sum(norms.map(x=>num(x.ownerHours)))/norms.length : null,
+    /* Owner hours belong to the OWNER, not to a department. Average across
+       the departments that actually reported them — an empty department must
+       not halve the owner's week, because that week feeds the Freedom Score,
+       the thesis chart and the guardrails. */
+    ownerHours: (()=>{ const h=norms.map(x=>x.ownerHours).filter(v=>v!=null&&Number.isFinite(v));
+                       return h.length ? sum(h)/h.length : null; })(),
     revenueM:div(rev,n), cosM:div(cos,n), gpM:div(gp,n), fixedM:div(fx,n),
     netProfitM:div(gp-fx,n), jobsM:div(jobs,n), quotesM:div(quotes,n), leadsM:div(leads,n),
     a: weightedAssumptions(norms)
@@ -294,7 +351,8 @@ function ramp(s, month){
   const t = (month-a)/Math.max(1,(b-a));
   return s.ramp==='s' ? 0.5 - 0.5*Math.cos(Math.PI*t) : t;
 }
-const strategiesFor = key => S.strategies.filter(s => (s.scenarios||['A']).includes(key));
+/* One plan. A strategy is either in it or parked. */
+const planStrategies = () => S.strategies.filter(s => s.on !== false);
 
 /* ═══ §5 FORWARD PROJECTION — 60 months, drivers first ═══════════
    Revenue is never projected directly. Drivers are projected and
@@ -307,8 +365,8 @@ function seasonIndex(i){
   return (w[i]/tot)*12;
 }
 
-function projectMonthly(key){
-  const b = business(), a = b.a, sc = S.scenarios[key];
+function projectMonthly(){
+  const b = business(), a = b.a, sc = S.plan;
   const CT = consolidatedTargets();
   const base = {
     leads:  b.leadsM || 0,
@@ -320,7 +378,7 @@ function projectMonthly(key){
     revPerHead: num(a.revPerHead)||25000,
     ownerHours: b.ownerHours!=null ? b.ownerHours : num(S.wellness.base.hours)
   };
-  const strats = strategiesFor(key);
+  const strats = planStrategies();
   const rows = [];
   for(let m=1; m<=60; m++){
     const y = Math.ceil(m/12);
@@ -377,9 +435,9 @@ function projectMonthly(key){
 }
 
 /* ═══ §6 ANNUAL AGGREGATION, CASH, VALUE, FREEDOM ════════════════ */
-function project(key){
-  const p = projectMonthly(key);
-  const b = p.b, sc = S.scenarios[key], f = S.fin;
+function project(){
+  const p = projectMonthly();
+  const b = p.b, sc = S.plan, f = S.fin;
   const years = [];
   // Year 0 = the baseline, annualised.
   const y0 = {
@@ -425,7 +483,7 @@ function project(key){
     years.push(o);
   }
   let cum=0; years.forEach(y=>{ if(y.y>0){ cum+=y.cash; y.cumCash=cum; } else y.cumCash=0; });
-  return {key, years, rows:p.rows, b, scenario:sc};
+  return {years, rows:p.rows, b, plan:sc};
 }
 
 function ebitdaOf(netProfitAnnual){
@@ -469,6 +527,89 @@ function freedomAt(y, projectedHours){
   return {score: wUsed>0 ? score/wUsed : null, parts};
 }
 
+/* ═══ §6b THE VISION FIGURES ═════════════════════════════════════
+   Every headline on the Vision tab is derived from the model but can be
+   typed over. One place decides which wins, so the Vision tab and the
+   Horizon tab can never disagree with each other. */
+function visionFigures(pr){
+  const V = S.vision, y0 = pr.years[0], y5 = pr.years[5];
+  const ovr = (v,d) => (v===null||v===undefined||v==='') ? d : num(v);
+  const wellnessSet = Object.keys(S.wellness.base).some(k=>num(S.wellness.base[k])>0);
+  const s0 = v => (!wellnessSet || v==null || !Number.isFinite(v)) ? 0 : v;
+
+  const fToday = ovr(V.freedom.today, s0(y0.freedom.score));
+  const fY5    = ovr(V.freedom.y5,    s0(y5.freedom.score));
+  const hToday = ovr(V.freedom.hoursToday, y0.ownerHours);
+  const hY5    = ovr(V.freedom.hoursY5,    y5.ownerHours);
+  const vToday = ovr(V.asset.valueToday, y0.value.equity);
+  const vY5    = ovr(V.asset.valueY5,    y5.value.equity);
+  const createdDerived = (vY5!=null && vToday!=null) ? vY5-vToday : null;
+  const created = ovr(V.asset.valueCreated, createdDerived);
+  const dh = (hToday!=null && hY5!=null) ? hToday-hY5 : null;
+  const perHour = (created!=null && dh) ? created/(dh*48) : null;
+
+  return {ovr, wellnessSet, s0, y0, y5,
+          fToday, fY5, hToday, hY5, vToday, vY5, createdDerived, created, dh, perHour,
+          scoreToday:s0(y0.freedom.score), scoreY5:s0(y5.freedom.score)};
+}
+
+/* ═══ §6c THRIVE INDEX SCORING ═══════════════════════════════════
+   TIS = sum of the nine "current" scores ÷ 90, as a percentage, exactly
+   as the workbook computed it. Two things the workbook got wrong are
+   fixed here:
+     · Calculations!G3 read Owner_Capability!B1 — the column HEADER —
+       so every capability score was shifted a row, the text header was
+       summed as a value, and the ninth dimension was never read at all.
+     · Calculations!K2 read Time_Energy!B1, the header, for the same
+       reason.
+   And a blank sheet scored 0.0% / "Surviving" because SUM() of empty
+   cells returns 0, never "", so the IF guard could not fire. Nothing
+   is scored here until something is entered. */
+const tvals = a => a.filter(v=>v!==null&&v!==undefined&&v!=='').map(num);
+
+function thriveScores(){
+  const T = S.thrive, MAX = THRIVE_LIFE.length*10;   // 90
+  const cur = tvals(T.life.map(x=>x.c));
+  const des = tvals(T.life.map(x=>x.d));
+  const tis  = cur.length ? sum(cur)/MAX*100 : null;
+  const tisD = des.length ? sum(des)/MAX*100 : null;
+  const level = v => v==null ? null
+    : v<40?'Surviving' : v<60?'Stable' : v<80?'Comfortable' : v<90?'Thriving' : 'Optimal';
+  const toNext = v => v==null ? null
+    : v<40?40-v : v<60?60-v : v<80?80-v : v<90?90-v : 0;
+
+  const capV = tvals(T.cap);
+  const capTotal = capV.length ? sum(capV) : null;
+  const capBand = capTotal==null ? null
+    : capTotal<40?'Emerging operator' : capTotal<60?'Capable manager'
+    : capTotal<80?'Growth leader' : 'Director-ready';
+
+  const gaps = THRIVE_LIFE.map((L,i)=>{
+    const c=T.life[i].c, d=T.life[i].d;
+    const has = c!==null&&c!==''&&d!==null&&d!=='';
+    return {i, label:L[0], short:L[1], c:(c===''||c==null)?null:num(c),
+            d:(d===''||d==null)?null:num(d), gap: has ? num(d)-num(c) : null};
+  });
+  const en = T.energy.energising;
+  const energising = (en===''||en==null)?null:clamp(0,100,num(en));
+  /* The two halves of a week make one week. Draining is never typed — it is
+     whatever energising leaves behind, so the pair can never fail to add up. */
+  const draining   = energising==null ? null : 100-energising;
+  const targetEnergising = (T.energy.targetEnergising===''||T.energy.targetEnergising==null)
+                           ? null : clamp(0,100,num(T.energy.targetEnergising));
+  const targetDraining   = targetEnergising==null ? null : 100-targetEnergising;
+
+  return {
+    tis, tisD, level:level(tis), levelD:level(tisD), toNext:toNext(tis),
+    lift: (tis!=null&&tisD!=null) ? tisD-tis : null,
+    counted:cur.length, of:THRIVE_LIFE.length,
+    capTotal, capBand, capCounted:capV.length, capMax:THRIVE_CAP.length*10,
+    gaps, biggest:[...gaps].filter(g=>g.gap!=null&&g.gap>0).sort((a,b)=>b.gap-a.gap),
+    energising, draining, targetEnergising, targetDraining,
+    energyGap: (energising==null||targetEnergising==null) ? null : energising-targetEnergising
+  };
+}
+
 /* ═══ §7 GUARDRAILS & CONTRADICTIONS ═════════════════════════════ */
 function guardrails(pr){
   const out=[], f=S.fin;
@@ -495,8 +636,8 @@ function guardrails(pr){
     const ph = y3.cap.pricingHours;
     out.push({lvl:'bad', t:'The plan and the life contradict each other',
       m: est && ph
-        ? `Plan ${pr.key} has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you're still the estimator and ${n0(ph)} pricing hours a month have nowhere else to go. Either hire, or the hours don't fall.`
-        : `Plan ${pr.key} has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you still hold ${held.map(r=>r.role).join(', ')} with no handover planned. Either hand it over, or the hours don't fall.`});
+        ? `The plan has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you're still the estimator and ${n0(ph)} pricing hours a month have nowhere else to go. Either hire, or the hours don't fall.`
+        : `The plan has you at ${n1(y3.ownerHours)} hours a week in Year 3, but you still hold ${held.map(r=>r.role).join(', ')} with no handover planned. Either hand it over, or the hours don't fall.`});
   }
   return out;
 }

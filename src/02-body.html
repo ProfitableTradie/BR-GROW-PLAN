@@ -1,16 +1,12 @@
 <div class="bar">
-  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.1</span></div>
-  <div class="seg" id="scenseg" title="Active scenario — drives every forecast tab">
-    <button data-scen="A" class="on">Plan A<span class="lbl2"> · Base</span></button>
-    <button data-scen="B">Plan B<span class="lbl2"> · Stretch</span></button>
-    <button data-scen="C">Plan C<span class="lbl2"> · Conservative</span></button>
-  </div>
+  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.4</span></div>
   <div class="spacer"></div>
   <span class="savestat" id="savestat">Not linked</span>
   <button class="tbtn primary" id="btnSave">Save</button>
   <button class="tbtn" id="btnSaveAs">Save as…</button>
   <button class="tbtn" id="btnLoad">Open…</button>
-  <button class="tbtn" id="btnPrint">Print pack</button>
+  <button class="tbtn" id="btnShare">Email copy</button>
+  <button class="tbtn" id="btnPrint">Print</button>
   <input type="file" id="fileIn" accept=".json,application/json" hidden>
 </div>
 
@@ -18,15 +14,19 @@
 <nav class="rail" id="rail">
   <div class="rlabel">The Plan</div>
   <a data-tab="vision" class="on"><span class="n">01</span><span class="t">Vision<span class="d">Five years, business and life</span></span></a>
-  <a data-tab="baseline"><span class="n">02</span><span class="t">Baseline<span class="d">Twelve months of actuals</span></span></a>
-  <a data-tab="metrics"><span class="n">03</span><span class="t">Key Metrics<span class="d">Current, target, gap</span></span></a>
-  <a data-tab="budget"><span class="n">04</span><span class="t">Budget &amp; Workforce<span class="d">Desired vs actuals, by department</span></span></a>
-  <a data-tab="strategies"><span class="n">05</span><span class="t">Strategies<span class="d">The levers that move it</span></span></a>
-  <a data-tab="scenarios"><span class="n">06</span><span class="t">Scenarios<span class="d">Plan A, B and C</span></span></a>
+  <a data-tab="thrive"><span class="n">02</span><span class="t">Thrive Index<span class="d">The life the business funds</span></span></a>
+  <a data-tab="horizon"><span class="n">03</span><span class="t">Horizon<span class="d">What the plan lands on</span></span></a>
   <div class="div"></div>
-  <div class="rlabel">The Forecast</div>
-  <a data-tab="fiveyear"><span class="n">07</span><span class="t">Five-Year Rolling<span class="d">The horizon</span></span></a>
+  <div class="rlabel">Where you are</div>
+  <a data-tab="baseline"><span class="n">04</span><span class="t">Scenario Forecaster<span class="d">Actuals, desired, workforce</span></span></a>
+  <a data-tab="metrics"><span class="n">05</span><span class="t">Key Metrics<span class="d">Current, target, gap</span></span></a>
+  <a data-tab="budget"><span class="n">06</span><span class="t">Budget &amp; Workforce<span class="d">Desired vs actuals, by department</span></span></a>
+  <div class="div"></div>
+  <div class="rlabel">How you get there</div>
+  <a data-tab="strategies"><span class="n">07</span><span class="t">Strategies<span class="d">The levers that move it</span></span></a>
   <a data-tab="oneyear"><span class="n">08</span><span class="t">One Year<span class="d">Broken to months</span></span></a>
+  <div class="div"></div>
+  <div class="rlabel">The room</div>
   <a data-tab="consolidated"><span class="n">09</span><span class="t">Consolidated<span class="d">The boardroom one-pager</span></span></a>
   <a data-tab="org"><span class="n">10</span><span class="t">Org Chart<span class="d">Today to Year 5</span></span></a>
   <div class="div"></div>
@@ -37,12 +37,12 @@
 <main>
   <div class="wrap">
     <section class="tab on" id="tab-vision"></section>
+    <section class="tab" id="tab-thrive"></section>
+    <section class="tab" id="tab-horizon"></section>
     <section class="tab" id="tab-baseline"></section>
     <section class="tab" id="tab-metrics"></section>
     <section class="tab" id="tab-budget"></section>
     <section class="tab" id="tab-strategies"></section>
-    <section class="tab" id="tab-scenarios"></section>
-    <section class="tab" id="tab-fiveyear"></section>
     <section class="tab" id="tab-oneyear"></section>
     <section class="tab" id="tab-consolidated"></section>
     <section class="tab" id="tab-org"></section>
