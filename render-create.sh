@@ -11,7 +11,10 @@ set -e
 : "${RENDER_API_KEY:?Set RENDER_API_KEY first — see the comment at the top of this file}"
 
 REPO="https://github.com/ProfitableTradie/BR-GROW-PLAN"
-NAME="br-grow-plan"
+# The name sets the hostname (<name>.onrender.com) and must match the live site.
+# NOTE: this script CREATES a service. If a service of this name already exists,
+# repoint that one at this repo from the dashboard instead — see DEPLOY.md.
+NAME="boardroom-growth-plan"
 API="https://api.render.com/v1"
 
 extract() { tr ',' '\n' | grep -m1 "\"$1\"" | sed "s/.*\"$1\":\"\([^\"]*\)\".*/\1/"; }
@@ -65,4 +68,4 @@ echo "→ First deploy is building. Watch it at:"
 echo "   https://dashboard.render.com/static/$SERVICE_ID"
 echo
 echo "   When it goes live, check the maths survived the trip:"
-echo "   ${URL:-https://$NAME.onrender.com}/?selftest=1   →  should say 51 passed · 0 failed"
+echo "   ${URL:-https://$NAME.onrender.com}/?selftest=1   →  should say 122 passed · 0 failed"

@@ -14,9 +14,16 @@
 # server.js and package.json in this repo make that work with no extra
 # dependencies. See RENDER.md.
 
+# The service NAME determines the hostname: <name>.onrender.com. The live site
+# members already use is boardroom-growth-plan.onrender.com, so the name below
+# must stay `boardroom-growth-plan` — changing it moves the URL and strands
+# anyone holding a link. Up to v2.5 this said `br-grow-plan`, a hostname that
+# was never created and served nothing; the real site was running from the
+# predecessor repo (ProfitableTradie/boardroom-growth-plan, lowercase).
+
 services:
   - type: web
-    name: br-grow-plan
+    name: boardroom-growth-plan
     runtime: static
     buildCommand: sh ./build.sh
     staticPublishPath: ./public
