@@ -588,7 +588,7 @@ input.dren:focus{outline:2px solid #fff; outline-offset:1px}
   <div class="div"></div>
   <div class="rlabel">Where you are</div>
   <a data-tab="baseline"><span class="n">04</span><span class="t">Scenario Forecaster<span class="d">Actuals, desired, workforce</span></span></a>
-  <a data-tab="metrics"><span class="n">05</span><span class="t">Key Metrics<span class="d">Current, target, gap</span></span></a>
+  <a data-tab="metrics"><span class="n">05</span><span class="t">Delta Review<span class="d">Current, target, gap</span></span></a>
   <a data-tab="budget"><span class="n">06</span><span class="t">Budget &amp; Workforce<span class="d">Desired vs actuals, by department</span></span></a>
   <div class="div"></div>
   <div class="rlabel">How you get there</div>
@@ -2191,7 +2191,7 @@ function renderMetrics(){
   };
   const grp=(t2,tag)=>`<tr class="grp"><td colspan="7">${esc(t2)} <span class="pill accent" style="margin-left:8px">${esc(tag)}</span></td></tr>`;
 
-  return head('05 · The scoreboard','Key Metrics',
+  return head('05 · The scoreboard','Delta Review',
     `Where you are, where you need to be, and the size of the gap. Targets come from the budget you set on the <strong>Budget &amp; Workforce</strong> tab — department by department if you run divisions, then consolidated here.`)
   + sech('Current · Target · Gap', `Target = the consolidated budget${S.divisionsOn?` across ${B.per.length} division${B.per.length===1?'':'s'}`:''}`)
   + `<div class="scrollx"><table class="t">

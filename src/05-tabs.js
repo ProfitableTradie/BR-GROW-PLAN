@@ -519,7 +519,7 @@ function renderMetrics(){
   };
   const grp=(t2,tag)=>`<tr class="grp"><td colspan="7">${esc(t2)} <span class="pill accent" style="margin-left:8px">${esc(tag)}</span></td></tr>`;
 
-  return head('05 · The scoreboard','Key Metrics',
+  return head('05 · The scoreboard','Delta Review',
     `Where you are, where you need to be, and the size of the gap. Targets come from the budget you set on the <strong>Budget &amp; Workforce</strong> tab — department by department if you run divisions, then consolidated here.`)
   + sech('Current · Target · Gap', `Target = the consolidated budget${S.divisionsOn?` across ${B.per.length} division${B.per.length===1?'':'s'}`:''}`)
   + `<div class="scrollx"><table class="t">
