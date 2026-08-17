@@ -1059,7 +1059,7 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.4 — Scenario Forecaster on 04, one plan, Thrive Index')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.5 — Delta Review on 05, Thrive Index score repeated at the foot of 02')}
       ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`

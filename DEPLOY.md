@@ -100,9 +100,9 @@ It finds your workspace, creates the static site named `br-grow-plan`, and print
 open "https://br-grow-plan.onrender.com/?selftest=1"
 ```
 
-Should say **51 passed · 0 failed**. That's the maths verified on the live site, not just on a laptop.
+Should say **122 passed · 0 failed**. That's the maths verified on the live site, not just on a laptop.
 
-Then check the plain URL loads the app and the top bar reads **Boardroom Growth Plan v2.1**.
+Then check the plain URL loads the app and the top bar reads **Boardroom Growth Plan v2.5**.
 
 ---
 

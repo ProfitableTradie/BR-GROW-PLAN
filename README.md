@@ -31,26 +31,38 @@ Boardroom takes an owner who works *in* their business and turns them into a CEO
 1. **Freedom — time and money.** Time and money the owner can actually use.
 2. **An asset — sellable or a legacy.** A value that exists independently of the owner.
 
-Every screen in this tool has to serve one of those. The single chart that carries the whole thesis is on the Five-Year Rolling tab: owner hours falling while business value rises. If those two lines move together, the plan is buying revenue with the owner's time and it has failed.
+Every screen in this tool has to serve one of those. The single chart that carries the whole thesis is on the **Horizon** tab: owner hours falling while business value rises. If those two lines move together, the plan is buying revenue with the owner's time and it has failed.
+
+The **Thrive Index** is the other half of the argument, and it is deliberately the second tab rather than an appendix: it is the honest answer to *why bother*, and it is meant to be scored before anyone goes near the numbers.
 
 ---
 
 ## The ten tabs
 
+Grouped the way the conversation runs in the room: the plan, where you are, how you get there, then the room itself.
+
 | | Tab | What it answers |
 |---|---|---|
+| | *The plan* | |
 | 01 | **Vision** | What do five years look like — for the business and for the life behind it |
-| 02 | **Baseline** | Twelve months of what actually happened |
-| 03 | **Key Metrics** | Current, target and the size of the gap, across money, funnel, delivery, people and freedom |
-| 04 | **Budget & Workforce** | Desired vs actuals → assumptions → workforce planning, one department at a time, then the consolidated view on budget |
-| 05 | **Strategies** | The levers. Not a to-do list — the forecast is the sum of these |
-| 06 | **Scenarios** | Plan A (Base), Plan B (Stretch), Plan C (Conservative), side by side, with guardrails |
-| 07 | **Five-Year Rolling** | The horizon: P&L, team, cash, freedom, value |
-| 08 | **One Year** | Year 1 to twelve months — budget, forecast and actual side by side — plus the ninety-day rocks |
+| 02 | **Thrive Index** | The life the business is supposed to be funding. Nine life categories scored today and wanted, owner capability, the energising/draining split, and what each lifestyle level costs a month. The score is shown at the top and again at the foot, so you are not scrolling back up to see what the nine rows did |
+| 03 | **Horizon** | What the plan lands on: P&L, team, cash, freedom, value across five years |
+| | *Where you are* | |
+| 04 | **Scenario Forecaster** | Twelve months of actuals, the desired numbers, and the workforce that follows from them |
+| 05 | **Delta Review** | Current, target and the size of the gap, across money, funnel, delivery, people and freedom |
+| 06 | **Budget & Workforce** | Desired vs actuals → assumptions → workforce planning, one department at a time, then the consolidated view on budget |
+| | *How you get there* | |
+| 07 | **Strategies** | The levers. Not a to-do list — the forecast is the sum of these. A strategy is either in the plan or parked |
+| 08 | **One Year** | Year 1 broken to twelve months — budget, forecast and actual side by side — plus the ninety-day rocks |
+| | *The room* | |
 | 09 | **Consolidated** | The boardroom one-pager, built to print |
 | 10 | **Org Chart** | Today → Year 5, generated from the capacity engine, with the owner's roles clearing |
 
 Plus **Setup** for the money settings, wellness baseline and targets, role costs and the self-test.
+
+### One plan, not three
+
+Earlier versions ran Plan A (Base), Plan B (Stretch) and Plan C (Conservative) side by side. That turned out to be three ways to avoid committing to one. There is now **one plan**: a strategy is either in it or **parked**. Parked strategies move nothing, but they are kept rather than deleted, so a lever can be shelved and brought back without being retyped. A plan file saved by v2.1 opens fine — whichever scenario you were last on becomes the plan, and the rest of its strategies are parked.
 
 ### Budget & Workforce — the old workbook's shape, done right
 
@@ -76,7 +88,7 @@ leads → (lead-to-quote rate) → quotes → (quote-to-win rate) → jobs
 
 Each strategy carries one or more **levers** — `gross margin +2pp`, `leads +25 a month`, `owner hours −8 a week` — with a start month, a full-effect month, a ramp shape and a confidence percentage. The five-year picture is the ramped, confidence-weighted sum of those levers applied to the baseline, month by month for sixty months.
 
-Change one number in one strategy card and it flows through Key Metrics, Scenarios, Five-Year, One Year, Consolidated, the Org Chart, the Freedom Score and the business valuation.
+Change one number in one strategy card and it flows through Delta Review, Horizon, One Year, Consolidated, the Org Chart, the Freedom Score and the business valuation.
 
 Full detail in [CALC-SPEC.md](CALC-SPEC.md).
 
@@ -84,12 +96,13 @@ Full detail in [CALC-SPEC.md](CALC-SPEC.md).
 
 ## Using it
 
-- **Load example** on the Baseline tab fills a plausible trade business so you can see the whole thing working. Every number is editable.
+- **Load example** on the Scenario Forecaster tab fills a plausible trade business so you can see the whole thing working. Every number is editable.
 - **Paste from spreadsheet** takes a block of twelve columns straight out of Xero or Excel.
+- **Enter gross profit, not cost of sales.** Read gross profit straight off your P&L; cost of sales is derived from it. Files saved before v2.3 stored it the other way round and still open correctly.
 - **Save / Save as** writes a `.json` file. In Chrome and Edge it writes back into the same file; elsewhere it downloads. **Open…** or drag a `.json` onto the window to load one.
 - **Print pack** prints all ten tabs to A4 with colour intact.
-- **Export the model to CSV** (Assumptions tab) drops the whole five-year model into Excel.
-- **Run the self-test** (Setup tab, or `?selftest=1`) runs 51 checks with hand-calculated expected answers.
+- **Export the model to CSV** (Setup tab) drops the whole five-year model into Excel.
+- **Run the self-test** (Setup tab, or `?selftest=1`) runs 122 checks with hand-calculated expected answers.
 
 Data lives in memory and in the file you save. Nothing is written to browser storage and nothing leaves the machine.
 

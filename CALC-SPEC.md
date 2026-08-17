@@ -1,6 +1,8 @@
 # Boardroom Growth Plan — Calculation Specification
 
-Everything the application computes, written so it can be ported to Excel or a server-side web app without reading the JavaScript.
+**Describes v2.5.** Everything the application computes, written so it can be ported to Excel or a server-side web app without reading the JavaScript.
+
+Every rule here is pinned by a case in the app's own self-test suite — 122 golden cases with hand-calculated answers, runnable from the Setup tab or by loading the app with `?selftest=1`. Where a rule exists because something upstream got it wrong, the defect is named, so nobody re-introduces it in good faith.
 
 All money is **excluding GST**. All rates are stored as decimals (0.35), displayed as percentages (35.0%). `—` is rendered wherever a value cannot be computed; the code never produces `NaN`, `Infinity`, `undefined` or `#DIV/0!`.
 
@@ -12,10 +14,21 @@ All money is **excluding GST**. All rates are stored as decimals (0.35), display
 
 A month counts as *entered* if revenue, jobs, quotes or leads is greater than zero. Only entered months are used; `n` is how many there are.
 
+**Gross profit is entered, cost of sales is derived** (changed in v2.3, inverting the original convention). A member reads gross profit straight off their P&L; asking them to compute cost of sales first was an invitation to get it wrong.
+
+```
+GrossProfit(month) = the figure entered
+CostOfSales(month) = Revenue(month) − GrossProfit(month)      DERIVED — never typed
+```
+
+Gross profit entered as an explicit `0` is honoured as zero, not treated as blank. Only `null`, `undefined` and `''` count as unentered.
+
+**Reading a file saved before v2.3.** Those months stored cost of sales and carry no `gp`, so the engine falls back to `Revenue − CostOfSales` per month and nothing is lost. The fallback is per-month, not per-file, so a part-migrated plan still totals correctly. (`mgp()` / `mcos()`; self-test 10b.)
+
 ```
 Revenue        = Σ monthly revenue
-CostOfSales    = Σ monthly cost of sales
-GrossProfit    = Revenue − CostOfSales
+GrossProfit    = Σ monthly gross profit                   (entered, or the fallback above)
+CostOfSales    = Revenue − GrossProfit
 GP%            = GrossProfit / Revenue                    [guard]
 FixedCosts     = Σ (fixed costs + company overhead)
 NetProfit      = GrossProfit − FixedCosts                 DERIVED — never typed
@@ -169,7 +182,9 @@ fixedCosts = BaselineFixedCosts    × ovhFactor
 revPerHead = BaselineRevPerHead    × priceFactor
 ```
 
-**Step 2 — strategy levers.** For each strategy assigned to the scenario:
+**One plan, not three** (changed in v2.4). There is a single plan with a single set of macro assumptions and a single multiple. A strategy is either **in the plan** or **parked**. Parked strategies are excluded from the stack entirely — they move nothing — but they are kept, not deleted, so a lever can be shelved and brought back without being retyped. `planStrategies()` is the only source of levers the projection sees. (Self-test 11.)
+
+**Step 2 — strategy levers.** For each strategy in the plan:
 
 ```
 rampFactor(m) = 0                          m < startMonth
@@ -235,6 +250,75 @@ Any year where cumulative cash is negative raises an **unfunded growth** alert s
 
 ---
 
+## 6c. The Thrive Index
+
+Ported from `Thrive_Index_Professional.xlsx`. This is the life the business is meant to fund, and it is scored before any of the numbers above are touched. Code: `§6c THRIVE INDEX SCORING`, `thriveScores()`.
+
+### The index itself
+
+Nine life categories, each scored 1–10 twice — where you are **today** and where you want to **be**.
+
+```
+MAX   = 9 categories × 10 = 90
+TIS       = Σ (today scores)  / 90 × 100        null until at least one is entered
+TISwanted = Σ (wanted scores) / 90 × 100
+Lift      = TISwanted − TIS                     [null if either side is null]
+Gap(row)  = wanted − today                      [null unless BOTH are entered]
+```
+
+Only entered scores are summed, and the divisor stays **90 regardless** — a part-filled scorecard reads as genuinely lower, not flatteringly rescaled. `counted` reports how many of the nine were scored so the screen can say so.
+
+| TIS | Band | Points to the next band |
+|---|---|---|
+| < 40 | Surviving | 40 − TIS |
+| < 60 | Stable | 60 − TIS |
+| < 80 | Comfortable | 80 − TIS |
+| < 90 | Thriving | 90 − TIS |
+| ≥ 90 | Optimal | 0 — already at the top |
+
+`biggest` is the entered rows with a positive gap, sorted widest first; the three largest are called out, because a five-year plan that does not move them is the wrong plan.
+
+### Owner and director capability
+
+Nine capability dimensions, scored 1–10, **summed not averaged** (max 90).
+
+| Total | Band |
+|---|---|
+| < 40 | Emerging operator |
+| < 60 | Capable manager |
+| < 80 | Growth leader |
+| ≥ 80 | Director-ready |
+
+The ninth row — stepping back from day-to-day operations — is the one that decides whether the business is an asset or a job.
+
+### Time and energy
+
+```
+Energising        = entered, clamped to [0,100]
+Draining          = 100 − Energising            DERIVED — never typed
+TargetEnergising  = entered, clamped to [0,100]  (benchmark 70%)
+TargetDraining    = 100 − TargetEnergising       (benchmark 30%)
+EnergyGap         = Energising − TargetEnergising
+```
+
+Draining is never stored as an input, so the two halves of a week cannot fail to add up. A stored draining figure that disagrees with `100 − energising` is **ignored, not displayed** (self-test 10d). Zero energising is honoured as zero, not treated as blank.
+
+Rule of thumb stated on screen: every ten points of energising is worth roughly five points of Thrive Index.
+
+### Three defects in the source workbook, corrected here
+
+The spreadsheet this replaces got three things wrong. They are fixed, and the self-tests pin the corrections so they cannot come back:
+
+1. **`Calculations!G3` read `Owner_Capability!B1` — the column header, not the first score.** Every capability score was shifted by one row, the text header was summed as if it were a value, and the ninth dimension was never read at all. (Self-tests: *all nine capability rows are counted*, *the workbook dropped the ninth row and summed the header*.)
+2. **`Calculations!K2` read `Time_Energy!B1`** — the same off-by-one, on the energy split. Energy is now read from the value, not the header.
+3. **A blank scorecard scored 0.0% and reported "Surviving".** `SUM()` over empty cells returns `0`, never `""`, so the sheet's `IF` guard could never fire. Here nothing is scored until something is entered: a blank scorecard has no score and **no band**, which is different from scoring zero. Clearing a score drops it out of the count and the index re-scores on what is left.
+
+### What each lifestyle level costs
+
+The bridge from the life to the numbers: a monthly income figure per level (Current, Comfortable, Thriving, Optimal) and the key shifts required. Whatever *Thriving* costs a month is what the business has to pay the owner — that figure is what belongs in desired net profit and personal income, and the rest of the plan works backwards from it. This is the only join between this section and the financial model; nothing here feeds the forecast automatically.
+
+---
+
 ## 7. Asset value
 
 ```
@@ -247,7 +331,7 @@ EnterpriseValue  = NormalisedEBITDA × Multiple
 EquityValue      = EnterpriseValue + SurplusCash − Debt
 ```
 
-The multiple is **set by the member** per scenario (defaults: Plan A 3.0×, Plan B 3.5×, Plan C 2.5×). Every screen showing a value also states that the multiple is an assumption, not a valuation, and that a real valuation needs an adviser.
+The multiple is **set by the member** (default 3.0×). Every screen showing a value also states that the multiple is an assumption, not a valuation, and that a real valuation needs an adviser.
 
 Also reported: **value created per hour of owner time released** = ΔEquityValue ÷ (Δowner hours per week × 48).
 
@@ -297,7 +381,7 @@ The One Year tab runs three lines side by side for every month of Year 1:
 | Line | Where it comes from | Does it grow through the year? |
 |---|---|---|
 | **Budget** | The consolidated monthly run rate from the department budgets × `seasonIndex(month)` | No — it is a flat run rate, only reshaped by seasonality |
-| **Forecast** | Plan A/B/C month by month from the projection engine | Yes — the strategy stack ramps |
+| **Forecast** | The plan, month by month from the projection engine | Yes — the strategy stack ramps |
 | **Actual** | Entered by the member each month | — |
 
 Variance is reported against **budget**, because that is what the room committed to.
@@ -337,4 +421,16 @@ A role is tagged **owner-occupied** when the member has ticked it and either no 
 
 ## 12. Persistence
 
-State is a single JSON object held in memory. `localStorage` is not used. Saving writes the JSON via the File System Access API where available (Chrome, Edge) and falls back to a download elsewhere. Loading accepts a file picker or drag-and-drop and merges into a fresh default state, so files saved by older versions still open.
+State is a single JSON object held in memory. `localStorage` is not used — nothing is stored in the browser, so the file the member saves is the only copy and it is theirs. Saving writes the JSON via the File System Access API where available (Chrome, Edge) and falls back to a download elsewhere. Loading accepts a file picker or drag-and-drop and merges into a fresh default state, so files saved by older versions still open.
+
+### Migrations on load
+
+Every migration is one-way and additive: an older file is upgraded on open, nothing is discarded, and the member is never asked to convert anything by hand.
+
+| Written by | What it stored | How it is read now |
+|---|---|---|
+| before v2.2 | Twelve seasonality **percentage shares** adding to 100 | Converted to an index averaging 1.00 |
+| **v2.1** | Three scenarios (Plan A/B/C) plus an active-scenario pointer | The scenario the member was last on **becomes** the plan, and its macro assumptions come with it. Strategies that were in that scenario stay in the plan; strategies that were not are **parked, not deleted**. The old scenario block and the active pointer are removed, and no strategy is left carrying a scenario list. (Self-test 12.) |
+| before v2.3 | Monthly **cost of sales**, no gross profit | Gross profit falls back to `Revenue − CostOfSales` per month (§1) |
+
+A single P&L being split into departments is handled the same way: the twelve months move into the first department, the second is left genuinely empty rather than a copy, and consolidated revenue is unchanged by the split. If departments already exist, they are kept and the single P&L is set aside rather than copied on top of them. (Self-test 10c.)
