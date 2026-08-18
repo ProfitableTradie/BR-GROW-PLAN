@@ -13,14 +13,19 @@ function sech(title, hint, no){
 
 /* Present tense, associated, sensory. The member is asked to stand in the
    five-year day and describe it, not to forecast towards it. */
+/* Five prompts, associated and present-tense — you are standing in the day,
+   looking at a diary, hearing a room — rather than asked from outside it. None
+   of them is stored; the statement below is the only field on this section.
+   They reduce the eight areas the tab used to walk through, keeping the ones
+   that carry the most: the Monday walk-in and the handover, the diary and what
+   stopped, being away, the number, and what is said when you are not in the
+   room. */
 const VISION_PROMPTS = [
-  ['Step into it','It is <b>DATE</b>. You walk through the door on a Monday morning. What do you see happening without you?'],
-  ['The handover','Who is running the part of the day you run today? Say their name out loud, or the name of the role you will hire.'],
-  ['The Wednesday test','It is a Wednesday afternoon and you are not at work. Where are you, and who is with you?'],
-  ['Overheard','Your team are talking about you and you are not in the room. What are they saying?'],
-  ['The number','The valuation lands in your inbox. What does it say — and what is the first thing you feel when you read it?'],
-  ['What you stopped','What are you no longer doing that you still do every single week today?'],
-  ['The one you never let yourself plan','What have you done in these five years that you would never have let yourself plan for?']
+  ['Step into it','It is <b>DATE</b> and you walk in on a Monday morning. What is running without you, and who is handling the thing you would have handled?'],
+  ['The diary','You are looking at your own week. What is in it, what is no longer in it, and how does your chest feel while you read it?'],
+  ['Day ten','You are away and it is day ten. Where are you standing, what can you hear, and what is your phone doing?'],
+  ['The number','You open the statement. What is paid off, what came in that you did not work for, and what do you feel as you read it?'],
+  ['Overheard','Someone is describing what you built and you are not in the room. What do they say, and who is standing there because of it?']
 ];
 const ROLE_OPTIONS = ['CEO','Leader','Investor','CEO · Leader · Investor'];
 /* The nine. Every prompt in VISION_PROMPTS above lives on inside one of these,
@@ -67,21 +72,13 @@ function renderVision(){
   return head('01 · The Intent','Vision',
     `Boardroom takes an owner who works <em>in</em> their business and turns them into a CEO who owns an <em>asset</em>. Two outcomes come out of that, and they are the only two we are chasing: <strong>freedom — time and money</strong>, and <strong>an asset that is sellable or a legacy</strong>. Everything in this plan has to serve one of them.`)
 
-  + sech('Your five years, in your words', esc(D))
-  + `<div class="prompts">
-      <h4>Step into it before you write anything</h4>
-      <div class="pl">It is ${esc(D)} and you walk through the door on a Monday morning. Write all eight in the present tense, as if you are standing in that day already. Not "I want to" — "I am". The first one is the engine; the seven under it are what the engine is for. Take the time — this is the half of the plan that explains why the other half matters.</div>
-    </div>
-    <div class="dreams">${VISION_DREAM.map(([k,title,q,ph],i)=>`<div class="dream">
-        <div class="dn">${String(i+1).padStart(2,'0')}</div>
-        <h3>${title}</h3>
-        <p class="dq">${q.replace('<b>DATE</b>','<b>'+esc(D)+'</b>')}</p>
-        <textarea class="full" data-path="vision.dream.${k}" data-kind="str" placeholder="${esc(ph)}">${esc(S.vision.dream[k]||'')}</textarea>
-      </div>`).join('')}</div>`
-
   + sech('The statement', esc(D))
-  + `<div class="pl2">Now boil the nine above down to one paragraph. This is the version you say out loud in the room.</div>
-    <textarea class="full" data-path="vision.statement" data-kind="str" style="min-height:150px" placeholder="It is ${esc(D)}. My business is… I am… My week looks like…">${esc(S.vision.statement)}</textarea>
+  + `<div class="prompts">
+      <h4>Speak to these five, then write it</h4>
+      <div class="pl">Say each one out loud, in the present tense, as if you are standing in that day already — not "I want to" but "I am". The words you hear yourself use are the ones that belong in the statement underneath.</div>
+      <ol>${VISION_PROMPTS.map(([t,q])=>`<li><b>${t}.</b> ${q.replace('<b>DATE</b>','<b>'+esc(D)+'</b>')}</li>`).join('')}</ol>
+    </div>
+    <textarea class="full" data-path="vision.statement" data-kind="str" style="min-height:190px" placeholder="It is ${esc(D)}. My business is… I am… My week looks like…">${esc(S.vision.statement)}</textarea>
     <div class="cap">This prints on the Consolidated one-pager and on every export. Write it once, read it every cycle.</div>`
 
   + sech('Five years from today', esc(D))
@@ -1096,7 +1093,7 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.7 — eight Vision categories on 01, one Thrive Index score under the radar on 02')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.8 — five spoken prompts into the statement on 01, one Thrive Index score under the radar on 02')}
       ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`

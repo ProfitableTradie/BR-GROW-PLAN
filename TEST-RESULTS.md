@@ -1,11 +1,11 @@
 # Test Results — Boardroom Growth Plan
 
-**v2.7.** Run the suite in the app: **Setup → Run the self-test**, or open the file with `?selftest=1`.
+**v2.8.** Run the suite in the app: **Setup → Run the self-test**, or open the file with `?selftest=1`.
 
 ## Golden test cases
 
 ```
-126 passed · 0 failed
+123 passed · 0 failed
 ```
 
 Every case carries a hand-calculated expected answer. The suite is self-policing: `SELFTEST_COUNT` in `03-core.js` records how many checks there should be, and if the number that actually run disagrees, the suite fails itself rather than quietly reporting a smaller green run.
@@ -90,9 +90,7 @@ Introduced with the Thrive Index in v2.4. All three are pinned by group 8c so th
 - **Reconciliation** — org chart people cost is split into the cost-of-sales bucket (on tools, team leaders) and the fixed-cost bucket (owner, ops managers, estimators, office), each reconciled against the matching forecast line rather than comparing the whole wage bill to fixed costs.
 - **Duplicate tween keys** — every `data-tw` key in the document is unique. The Thrive Index score block used to be drawn twice on tab 02 and needed suffixed keys to stop the second copy sitting un-animated; v2.6 draws it once, under the radar, so the collision is now structurally impossible rather than merely avoided.
 
-- **Vision category keys** — `VISION_DREAM` in `05-tabs.js` and `S.vision.dream` in `03-core.js` are two lists in two files that must stay identical. A key present in one and misspelt in the other points a textarea at a field nothing reads, so the member’s writing is discarded silently and nothing else in the app would notice. Two cases pin the key sets together and confirm all eight are distinct.
-
-- **Retired Vision keys** — v2.6 shipped `home` and `friends` as separate categories and v2.7 replaced them with `social`. Because v2.6 was live, a member may already have written into either; `mergeState()` folds that text into `social` and drops the retired keys, so nothing is stranded in a field the app no longer renders. Two cases cover the fold and the cleanup, and the fold is skipped when `social` already has content so it cannot overwrite a later answer.
+- **Vision prompts** — the five prompts on tab 01 are spoken, not stored; the statement is the only field on that section. Nothing can therefore be lost to a bad key, and the only failure left is a duplicated or dropped heading, which would quietly shorten the exercise with no other check noticing. One case counts the five and confirms the headings are distinct.
 
 ## Deployment verification
 
@@ -113,9 +111,9 @@ The table below was exercised at v2.5 against `npm run dev` (which runs `build.s
 
 No file outside `public/` is reachable. Static-site deploys skip `server.js` entirely; `render.yaml` sets `buildCommand: sh ./build.sh` and `staticPublishPath: ./public`, which is the same build the table above exercises.
 
-**Re-verified at v2.7:** `sh ./build.sh` (260,328 bytes) and `GET /?selftest=1` over HTTP on the dev server — **126 passed · 0 failed**. The same URL over HTTPS on the deployed site is checked after each push; v2.6 and v2.7 both returned the local figure.
+**Re-verified at v2.8:** `sh ./build.sh` (257,827 bytes) and `GET /?selftest=1` over HTTP on the dev server — **123 passed · 0 failed**. The same URL over HTTPS on the deployed site is checked after each push; v2.6, v2.7 and v2.8 all returned the local figure.
 
-**Not re-verified at v2.7:** horizontal overflow at 1440/1024/820 px (last checked at v2.1). The **A4 print pack still needs a fresh look** — v2.6 added nine textareas to tab 01 and v2.7 leaves eight, either way the largest change to that tab’s printed length since the pack was last checked, and long member answers will page-break somewhere the old layout never had to.
+**Not re-verified at v2.8:** horizontal overflow at 1440/1024/820 px, and the A4 print pack across all tabs (both last checked at v2.1). The print risk v2.6 and v2.7 introduced has gone with them: tab 01 is back to a single statement box and a prompt card of five, so its printed length is close to what the pack was last checked against rather than eight textareas longer.
 
 ## Known limitations in this build
 

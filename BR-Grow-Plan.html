@@ -162,16 +162,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
 .prompts li{font-family:var(--serif); font-size:17px; line-height:1.5; margin-bottom:11px; color:#EDE9DC}
 .prompts li:last-child{margin-bottom:0}
 .prompts li b{color:var(--brand); font-family:var(--sans); font-size:14px; font-weight:700}
-/* The eight Vision categories. A stack, not a grid — they are read and answered
-   in order, and a two-column layout invites skipping the ones on the right. */
-.dreams{display:grid; gap:14px; margin-bottom:18px}
-.dream{background:var(--paper-2); border:1px solid var(--rule); border-radius:11px; padding:18px 20px 20px; transition:border-color .16s var(--ease)}
-.dream:focus-within{border-color:var(--accent-edge)}
-.dream .dn{font-family:var(--sans); font-size:12px; letter-spacing:.16em; font-weight:700; color:var(--accent); margin-bottom:5px}
-.dream h3{font-family:var(--serif); font-size:20px; line-height:1.2; margin:0 0 7px}
-.dream .dq{font-size:14px; line-height:1.55; color:var(--muted); margin:0 0 12px; max-width:70ch}
-.dream .dq b{color:var(--ink); font-weight:700}
-.dream textarea{min-height:96px}
 .pl2{font-size:14px; line-height:1.55; color:var(--muted); margin-bottom:12px; max-width:70ch}
 .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
 
@@ -579,7 +569,7 @@ input.dren:focus{outline:2px solid #fff; outline-offset:1px}
 </head>
 <body>
 <div class="bar">
-  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.7</span></div>
+  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.8</span></div>
   <div class="spacer"></div>
   <span class="savestat" id="savestat">Not linked</span>
   <button class="tbtn primary" id="btnSave">Save</button>
@@ -700,7 +690,7 @@ function blankDivision(id,name,active){
     t:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8}};
 }
 function blankMacro(){ return {market:0.05, price:0.03, wage:0.03, ovh:0.03}; }
-const SELFTEST_COUNT = 126; /* every check in runSelfTest(), last verified run */
+const SELFTEST_COUNT = 123; /* every check in runSelfTest(), last verified run */
 function blankPlan(){
   return {label:'The Plan', multiple:3.0, macro:Array.from({length:5},blankMacro)};
 }
@@ -763,12 +753,6 @@ function defaultState(){
           monthNames:Array.from({length:12},()=>'')},
     vision:{
       statement:'',
-      /* The prework. Nine categories the member writes in longhand before the
-         statement, which is then the distillation of them. Keys here must match
-         VISION_DREAM in 05-tabs.js — a typo would write to a field nothing
-         reads, so a self-test pins the two together. */
-      dream:{business:'', week:'', people:'', travel:'', social:'',
-             health:'', money:'', legacy:''},
       biz:{revenue:null, profit:null, value:null, team:null, role:'CEO · Leader · Investor'},
       life:{hours:35, holidays:6, weekends:0, evenings:5, income:null,
             adventures:null, investments:null, whatFor:''},
@@ -1702,14 +1686,19 @@ function sech(title, hint, no){
 
 /* Present tense, associated, sensory. The member is asked to stand in the
    five-year day and describe it, not to forecast towards it. */
+/* Five prompts, associated and present-tense — you are standing in the day,
+   looking at a diary, hearing a room — rather than asked from outside it. None
+   of them is stored; the statement below is the only field on this section.
+   They reduce the eight areas the tab used to walk through, keeping the ones
+   that carry the most: the Monday walk-in and the handover, the diary and what
+   stopped, being away, the number, and what is said when you are not in the
+   room. */
 const VISION_PROMPTS = [
-  ['Step into it','It is <b>DATE</b>. You walk through the door on a Monday morning. What do you see happening without you?'],
-  ['The handover','Who is running the part of the day you run today? Say their name out loud, or the name of the role you will hire.'],
-  ['The Wednesday test','It is a Wednesday afternoon and you are not at work. Where are you, and who is with you?'],
-  ['Overheard','Your team are talking about you and you are not in the room. What are they saying?'],
-  ['The number','The valuation lands in your inbox. What does it say — and what is the first thing you feel when you read it?'],
-  ['What you stopped','What are you no longer doing that you still do every single week today?'],
-  ['The one you never let yourself plan','What have you done in these five years that you would never have let yourself plan for?']
+  ['Step into it','It is <b>DATE</b> and you walk in on a Monday morning. What is running without you, and who is handling the thing you would have handled?'],
+  ['The diary','You are looking at your own week. What is in it, what is no longer in it, and how does your chest feel while you read it?'],
+  ['Day ten','You are away and it is day ten. Where are you standing, what can you hear, and what is your phone doing?'],
+  ['The number','You open the statement. What is paid off, what came in that you did not work for, and what do you feel as you read it?'],
+  ['Overheard','Someone is describing what you built and you are not in the room. What do they say, and who is standing there because of it?']
 ];
 const ROLE_OPTIONS = ['CEO','Leader','Investor','CEO · Leader · Investor'];
 /* The nine. Every prompt in VISION_PROMPTS above lives on inside one of these,
@@ -1756,21 +1745,13 @@ function renderVision(){
   return head('01 · The Intent','Vision',
     `Boardroom takes an owner who works <em>in</em> their business and turns them into a CEO who owns an <em>asset</em>. Two outcomes come out of that, and they are the only two we are chasing: <strong>freedom — time and money</strong>, and <strong>an asset that is sellable or a legacy</strong>. Everything in this plan has to serve one of them.`)
 
-  + sech('Your five years, in your words', esc(D))
-  + `<div class="prompts">
-      <h4>Step into it before you write anything</h4>
-      <div class="pl">It is ${esc(D)} and you walk through the door on a Monday morning. Write all eight in the present tense, as if you are standing in that day already. Not "I want to" — "I am". The first one is the engine; the seven under it are what the engine is for. Take the time — this is the half of the plan that explains why the other half matters.</div>
-    </div>
-    <div class="dreams">${VISION_DREAM.map(([k,title,q,ph],i)=>`<div class="dream">
-        <div class="dn">${String(i+1).padStart(2,'0')}</div>
-        <h3>${title}</h3>
-        <p class="dq">${q.replace('<b>DATE</b>','<b>'+esc(D)+'</b>')}</p>
-        <textarea class="full" data-path="vision.dream.${k}" data-kind="str" placeholder="${esc(ph)}">${esc(S.vision.dream[k]||'')}</textarea>
-      </div>`).join('')}</div>`
-
   + sech('The statement', esc(D))
-  + `<div class="pl2">Now boil the nine above down to one paragraph. This is the version you say out loud in the room.</div>
-    <textarea class="full" data-path="vision.statement" data-kind="str" style="min-height:150px" placeholder="It is ${esc(D)}. My business is… I am… My week looks like…">${esc(S.vision.statement)}</textarea>
+  + `<div class="prompts">
+      <h4>Speak to these five, then write it</h4>
+      <div class="pl">Say each one out loud, in the present tense, as if you are standing in that day already — not "I want to" but "I am". The words you hear yourself use are the ones that belong in the statement underneath.</div>
+      <ol>${VISION_PROMPTS.map(([t,q])=>`<li><b>${t}.</b> ${q.replace('<b>DATE</b>','<b>'+esc(D)+'</b>')}</li>`).join('')}</ol>
+    </div>
+    <textarea class="full" data-path="vision.statement" data-kind="str" style="min-height:190px" placeholder="It is ${esc(D)}. My business is… I am… My week looks like…">${esc(S.vision.statement)}</textarea>
     <div class="cap">This prints on the Consolidated one-pager and on every export. Write it once, read it every cycle.</div>`
 
   + sech('Five years from today', esc(D))
@@ -2785,7 +2766,7 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.7 — eight Vision categories on 01, one Thrive Index score under the radar on 02')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.8 — five spoken prompts into the statement on 01, one Thrive Index score under the radar on 02')}
       ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`
@@ -3617,12 +3598,6 @@ function mergeState(loaded){
       delete st.scenarios;
     });
   }
-  const dOld = loaded && loaded.vision && loaded.vision.dream;
-  if(dOld && (dOld.home || dOld.friends) && !(dOld.social||'').trim()){
-    out.vision.dream.social = [dOld.home, dOld.friends].filter(x=>(x||'').trim()).join('\n\n');
-  }
-  if(out.vision && out.vision.dream){ delete out.vision.dream.home; delete out.vision.dream.friends; }
-
   delete out.scenarios; delete out.active;
   (out.strategies||[]).forEach(st=>{ if(st.on==null) st.on=true; delete st.scenarios; });
 
@@ -4029,19 +4004,11 @@ function runSelfTest(){
   T('12 · strategies that were not are parked, not deleted', mig.strategies.length, 3);
   T('12 · no strategy still carries a scenario list', mig.strategies.filter(x=>x.scenarios!==undefined).length, 0);
 
-  // 13 — the nine Vision categories. VISION_DREAM drives the rendering and
-  // S.vision.dream holds the answers; if a key is misspelt in one of them the
-  // textarea writes somewhere nothing ever reads and the member silently loses
-  // what they typed. Nothing else in the app would notice, so pin them here.
-  const dreamKeys = VISION_DREAM.map(d=>d[0]).join(',');
-  const stateKeys = Object.keys(defaultState().vision.dream).join(',');
-  T('13 · Vision category keys match the state they write to', dreamKeys, stateKeys);
-  T('13b · eight categories, each with a distinct key', new Set(VISION_DREAM.map(d=>d[0])).size, 8);
-  const foldIn = mergeState({vision:{dream:{home:'The house is paid off.', friends:'Thursday golf.'}}});
-  T('13c · a v2.6 Home and Friends answer folds into Social',
-    foldIn.vision.dream.social, 'The house is paid off.\n\nThursday golf.');
-  T('13d · the retired keys do not linger in state', 
-    (foldIn.vision.dream.home===undefined && foldIn.vision.dream.friends===undefined), true);
+  // 13 — the Vision prompts. Nothing is stored against them, so the only thing
+  // that can go wrong is a duplicated or dropped heading, which would silently
+  // shorten the exercise with no other check noticing.
+  T('13 · five Vision prompts, each with a distinct heading',
+    new Set(VISION_PROMPTS.map(p2=>p2[0])).size, 5);
 
   // the Setup card publishes SELFTEST_COUNT. If a case is added and that
   // constant is not moved with it, the card would quietly lie — so check it.
