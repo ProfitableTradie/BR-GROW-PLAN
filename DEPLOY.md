@@ -146,8 +146,36 @@ Render redeploys on its own — `autoDeploy` is on, and it runs `sh ./build.sh` 
 **The site still shows the old version after a deploy**
 Check which repo the service is actually building from — Service → Settings → Repository. Until v2.5 the live site was fed by the predecessor repo `ProfitableTradie/boardroom-growth-plan` (lowercase), so pushing to `BR-GROW-PLAN` changed nothing visible. It must say `BR-GROW-PLAN`.
 
-**A new URL appeared with a suffix on it**
-Service names are global on Render, and the hostname follows the name. If you created a second service instead of repointing the existing one, you now have two — delete the new one and repoint `boardroom-growth-plan` instead, so members' links keep working.
+**A new URL appeared with a suffix on it — `boardroom-growth-plan-myi4.onrender.com`**
+
+This happened for real on 18 Aug 2026 and took several rounds to sort out, so the whole procedure is written down here.
+
+Two Render rules cause it, and the second is the one that catches people:
+
+1. `.onrender.com` names are **globally unique across every Render account**, not just yours. If the name is taken, Render silently appends a random suffix and deploys anyway — reporting a green *"Deploy live"* that is perfectly true and completely useless, because members are still on the old URL.
+2. **Renaming a service does not move its hostname.** The subdomain is claimed when the service is *created*. Renaming `…-myi4` to `boardroom-growth-plan` changes only the dashboard label; the URL stays put. There is no setting that moves it.
+
+Together those mean the fix is never "rename it". The service has to be **created while the name is free**:
+
+1. Find and delete whatever holds the name. Check *every* project group in the workspace — the dashboard list is scoped to one project and hides the rest. `⌘K` → search the name finds them all.
+2. **Verify the name is actually free before going further.** Load `https://boardroom-growth-plan.onrender.com` and confirm you get a bare `404 Not Found` (about 10 bytes) with no `last-modified` header. Anything else means something still holds it. This check is worth doing properly — a delete dialog that wants you to type the service name is easy to abandon halfway believing it worked.
+3. Delete the suffixed service too. Nothing is lost: it rebuilds from the commit on GitHub in about a minute.
+4. **New → Blueprint → `BR-GROW-PLAN` → Apply.** Confirm the name shown on the review screen has no suffix *before* clicking. `render.yaml` declares the name, so with it free the service is created on the right hostname.
+5. Don't leave a gap between 3 and 4 — the name is globally unclaimed in that window.
+
+If step 2 will not come back clean, the name is held by an account you don't control and no amount of deleting will free it. Attach a custom domain to the suffixed service instead (Settings → Custom Domains) — which is the better answer anyway, since it survives any future move off Render.
+
+**How to tell which build is actually being served**, without trusting the dashboard:
+
+| Signal | This repo's build | Anything else |
+|---|---|---|
+| `referrer-policy` response header | `strict-origin-when-cross-origin` | absent |
+| `cache-control` response header | `no-cache, must-revalidate` | Render default `public, max-age=0, s-maxage=300` |
+| `last-modified` | the deploy time | an older date |
+| External requests | **none** | e.g. Google Fonts |
+| `/?selftest=1` | `122 passed · 0 failed` | no self-test at all |
+
+Those two headers exist only because `render.yaml` declares them, so they are proof the deploy came from this repo. `last-modified` is the fastest way to spot a deploy that never happened.
 
 **Build succeeds, page is blank or 404**
 Publish directory isn't `public`. Service → Settings → Build & Deploy → set **Publish directory** to `public`, leave **Build command** empty, then Manual Deploy.
