@@ -1,11 +1,11 @@
 # Test Results — Boardroom Growth Plan
 
-**v2.5.** Run the suite in the app: **Setup → Run the self-test**, or open the file with `?selftest=1`.
+**v2.6.** Run the suite in the app: **Setup → Run the self-test**, or open the file with `?selftest=1`.
 
 ## Golden test cases
 
 ```
-122 passed · 0 failed
+124 passed · 0 failed
 ```
 
 Every case carries a hand-calculated expected answer. The suite is self-policing: `SELFTEST_COUNT` in `03-core.js` records how many checks there should be, and if the number that actually run disagrees, the suite fails itself rather than quietly reporting a smaller green run.
@@ -88,11 +88,13 @@ Introduced with the Thrive Index in v2.4. All three are pinned by group 8c so th
 
 - **Bad tokens** — no `NaN`, `Infinity`, `undefined` or `#DIV` appears in the rendered text of any tab with the example business loaded.
 - **Reconciliation** — org chart people cost is split into the cost-of-sales bucket (on tools, team leaders) and the fixed-cost bucket (owner, ops managers, estimators, office), each reconciled against the matching forecast line rather than comparing the whole wage bill to fixed costs.
-- **Duplicate tween keys** — the Thrive Index score block is rendered twice (top and foot of tab 02). Every `data-tw` key in the document is unique, so the two copies animate independently; `runTweens()` keeps one previous value per key and would leave a second copy un-animated if they collided.
+- **Duplicate tween keys** — every `data-tw` key in the document is unique. The Thrive Index score block used to be drawn twice on tab 02 and needed suffixed keys to stop the second copy sitting un-animated; v2.6 draws it once, under the radar, so the collision is now structurally impossible rather than merely avoided.
+
+- **Vision category keys** — `VISION_DREAM` in `05-tabs.js` and `S.vision.dream` in `03-core.js` are two lists in two files that must stay identical. A key present in one and misspelt in the other points a textarea at a field nothing reads, so the member’s writing is discarded silently and nothing else in the app would notice. Two cases pin the key sets together and confirm all nine are distinct.
 
 ## Deployment verification
 
-Re-verified for v2.5 against `npm run dev` (which runs `build.sh` then `server.js`):
+The table below was exercised at v2.5 against `npm run dev` (which runs `build.sh` then `server.js`). `server.js` is unchanged since, so the path-traversal and health rows still describe the shipping build:
 
 | Step | Result |
 |---|---|
@@ -109,7 +111,9 @@ Re-verified for v2.5 against `npm run dev` (which runs `build.sh` then `server.j
 
 No file outside `public/` is reachable. Static-site deploys skip `server.js` entirely; `render.yaml` sets `buildCommand: sh ./build.sh` and `staticPublishPath: ./public`, which is the same build the table above exercises.
 
-**Not re-verified for v2.5** (last checked at v2.1, and unchanged by v2.2–v2.5): horizontal overflow at 1440/1024/820 px, and the A4 print pack across all tabs.
+**Re-verified at v2.6:** `sh ./build.sh` (259,768 bytes), `GET /?selftest=1` over HTTP on the dev server — **124 passed · 0 failed** — and the same URL over HTTPS on the deployed site at `boardroom-growth-plan.onrender.com`, also **124 passed · 0 failed**.
+
+**Not re-verified at v2.6:** horizontal overflow at 1440/1024/820 px (last checked at v2.1). The **A4 print pack needs a fresh look** — v2.6 adds nine textareas to tab 01, the largest change to that tab’s printed length since the pack was last checked, and long member answers will page-break somewhere the old layout never had to.
 
 ## Known limitations in this build
 
