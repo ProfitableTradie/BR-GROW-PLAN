@@ -141,18 +141,18 @@ function renderThrive(){
   const T=S.thrive, X=thriveScores();
   const lvls=['Surviving','Stable','Comfortable','Thriving','Optimal'];
 
-  /* The score, drawn twice: as the summary up top and again as the payoff at
-     the foot of a long page, so you are not scrolling back up to see what the
-     nine rows did. One function, so the two can never disagree.
-     The tween keys must differ. runTweens() keeps one previous value per key
-     in TW and overwrites it as it walks the DOM, so two spans sharing a key
-     leave the second reading from===to — it would snap while its twin
-     counted up. */
-  const scoreBlock = (sfx, unscored) => `<div class="mgrid" style="margin-top:18px">
-      ${metric('Thrive Index today', X.tis,'n1', X.level?`${X.level} · out of 100`:unscored,'', 'ti_now'+sfx)}
-      ${metric('Thrive Index wanted', X.tisD,'n1', X.levelD?`${X.levelD}`:'', 'hero', 'ti_want'+sfx)}
-      ${metric('The lift', X.lift,'n1', X.lift!=null?'Points between today and wanted':'', 'accent','ti_lift'+sfx)}
-      ${metric('To the next level', X.toNext,'n1', X.level&&X.toNext!=null?(X.toNext>0?`points to leave ${X.level}`:'Already at the top band'):'','', 'ti_next'+sfx)}
+  /* The score, drawn once, below the radar and the gap note it comments on —
+     the shape, what it costs you, then the number, and you score the nine rows
+     before any of them appear. Kept as a function so the block stays together
+     if it moves again.
+     One instance also means one set of tween keys: runTweens() keeps a single
+     previous value per key in TW, so a duplicated key would leave the second
+     span reading from===to and snapping while its twin counted up. */
+  const scoreBlock = () => `<div class="mgrid" style="margin-top:18px">
+      ${metric('Thrive Index today', X.tis,'n1', X.level?`${X.level} · out of 100`:'Score the nine rows above','', 'ti_now')}
+      ${metric('Thrive Index wanted', X.tisD,'n1', X.levelD?`${X.levelD}`:'', 'hero', 'ti_want')}
+      ${metric('The lift', X.lift,'n1', X.lift!=null?'Points between today and wanted':'', 'accent','ti_lift')}
+      ${metric('To the next level', X.toNext,'n1', X.level&&X.toNext!=null?(X.toNext>0?`points to leave ${X.level}`:'Already at the top band'):'','', 'ti_next')}
     </div>
     <div class="lvlbar">${lvls.map(l=>`<div class="${X.level===l?'on':(X.levelD===l?'want':'')}">${esc(l)}</div>`).join('')}</div>`;
 
@@ -165,9 +165,6 @@ function renderThrive(){
       <b>How to fill it in.</b> Click the bars. Left bar is <b>where you are today</b>, right bar is <b>where you want to be</b>. One to ten, gut instinct, ten seconds a row. Click the same number again to clear it.<br>
       <b>Score it honestly.</b> Not the answer you would give in the room. The gap between the two bars is the whole point — a row with no gap needs no work, and a row with a gap of six is where your five years actually go.
     </div>`
-
-  + scoreBlock('', 'Score the nine rows below')
-    + `<div class="cap">Solid copper is where you are now. The pale band is where you are heading. Bands follow the Thrive Index: under 40 Surviving, under 60 Stable, under 80 Comfortable, under 90 Thriving, then Optimal.</div>`
 
   + `<div class="scrollx" style="margin-top:26px"><table class="t thrive">
       <thead><tr><th>Life category</th><th style="text-align:center">Where you are today</th>
@@ -193,6 +190,9 @@ function renderThrive(){
       'The pinched axes are the ones costing you. A balanced shape at a low score is a life that is evenly flat; a spiky shape says one part is carrying everything.')
 
   + (X.biggest.length ? `<div class="note">Your three biggest gaps: <b>${X.biggest.slice(0,3).map(g=>esc(g.short)+' (+'+n0(g.gap)+')').join('</b>, <b>')}</b>. If the five-year plan below does not move those three, it is the wrong plan.</div>` : '')
+
+  + scoreBlock()
+    + `<div class="cap">Solid copper is where you are now. The pale band is where you are heading. Bands follow the Thrive Index: under 40 Surviving, under 60 Stable, under 80 Comfortable, under 90 Thriving, then Optimal.</div>`
 
   + sech('Owner and director capability', X.capCounted?`${X.capCounted} of ${THRIVE_CAP.length} scored · ${esc(X.capBand||'')}`:'Rate yourself one to ten')
   + `<div class="scrollx"><table class="t thrive">
@@ -237,10 +237,7 @@ function renderThrive(){
           <input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="thrive.fin.${i}.income" data-kind="numn" data-raw="${esc(r.income==null?'':String(r.income))}" value="${UI.editing==='thrive.fin.'+i+'.income'?(r.income==null?'':r.income):grouped(r.income)}" aria-label="${esc(r.level)} monthly income"></div></td>
         <td style="text-align:left"><input type="text" class="full" style="font-size:13.5px" data-path="thrive.fin.${i}.shifts" data-kind="str" value="${esc(r.shifts||'')}" placeholder="${esc(i===1?'e.g. reduce workdays; hire help':i===2?'e.g. relocate; invest; outsource':i===3?'e.g. multiple income streams; legacy projects':'')}"></td></tr>`).join('')}
     </tbody></table></div>
-    <div class="cap">This is the line between the Thrive Index and the Budget tab. Whatever "Thriving" costs you a month is what the business has to pay you — put that figure into your desired net profit and personal income, and the rest of the plan works backwards from it.</div>`
-
-  + sech('Where you landed','The same score, now that you have filled the page in')
-  + scoreBlock('_foot', 'Score the nine rows above');
+    <div class="cap">This is the line between the Thrive Index and the Budget tab. Whatever "Thriving" costs you a month is what the business has to pay you — put that figure into your desired net profit and personal income, and the rest of the plan works backwards from it.</div>`;
 }
 
 function fiveYearDate(){
@@ -1059,7 +1056,7 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.5 — Delta Review on 05, Thrive Index score repeated at the foot of 02')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.5 — Delta Review on 05, Thrive Index score sits under the radar on 02')}
       ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`
