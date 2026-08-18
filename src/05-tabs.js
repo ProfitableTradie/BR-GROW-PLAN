@@ -23,6 +23,42 @@ const VISION_PROMPTS = [
   ['The one you never let yourself plan','What have you done in these five years that you would never have let yourself plan for?']
 ];
 const ROLE_OPTIONS = ['CEO','Leader','Investor','CEO · Leader · Investor'];
+/* The nine. Every prompt in VISION_PROMPTS above lives on inside one of these,
+   where the member is actually writing rather than being asked to answer out
+   loud: the handover and overheard fold into business, the Wednesday test and
+   what-you-stopped into week, the number into money, and the one you never let
+   yourself plan into legacy. "Step into it" became the framing line.
+   Keys must match S.vision.dream in 03-core.js; a self-test holds them level. */
+const VISION_DREAM = [
+  ['business','The Business',
+   'It is <b>DATE</b>. The business runs a full week without you in it. What size is it, who is running which part, and what are you actually doing in it? Then the harder half — what does it have to earn for everything below this to be affordable?',
+   'It turns over… The day to day is run by… I spend my time on…'],
+  ['week','Your Week',
+   'Walk through a normal Tuesday. What time do you start, what time do you stop, and what is in between? Name one thing you do every week today that you no longer do at all.',
+   'I start at… By three I am… I no longer…'],
+  ['home','Home',
+   'Where are you living, and what is the house? Describe a weeknight evening in it — who is there, what time you walk in, and whether the phone is face-down on the bench.',
+   'We are living… On a Tuesday evening…'],
+  ['people','The People at Home',
+   'Your partner, your kids, whoever home means. What do they get of you that they do not get this week? If they were asked what changed, what would they say?',
+   'They would say that I am…'],
+  ['travel','Travel &amp; Adventure',
+   'Where have you been in these five years, how long did you go for, and who came? Then say whether the business noticed you were gone.',
+   'Three weeks in… and the team ran…'],
+  ['friends','Friends &amp; Community',
+   'Who is still in your life that you barely see now? What are you part of that has nothing to do with work — the club, the board, the team, the Saturday thing?',
+   'Every Thursday I…'],
+  ['health','Health &amp; Energy',
+   'What shape are you in at that age, and what can you still physically do? Be specific: sleep, what you can lift, what you can climb, how you feel at four in the afternoon.',
+   'I sleep… I train… At the end of a day I…'],
+  ['money','Money Beyond the Business',
+   'What has the money built outside the business — property, shares, other income? What does it earn while you are asleep, and what is owned outright?',
+   'The building is owned outright, bringing in… a year.'],
+  ['legacy','Legacy',
+   'What was this all for? What do you leave, who have you backed, and what does your name mean around here? Include the one you would never have let yourself plan for.',
+   'What I leave behind is…']
+];
+
 
 function renderVision(){
   const pr = project(), y5 = pr.years[5], y0 = pr.years[0];
@@ -34,12 +70,20 @@ function renderVision(){
   return head('01 · The Intent','Vision',
     `Boardroom takes an owner who works <em>in</em> their business and turns them into a CEO who owns an <em>asset</em>. Two outcomes come out of that, and they are the only two we are chasing: <strong>freedom — time and money</strong>, and <strong>an asset that is sellable or a legacy</strong>. Everything in this plan has to serve one of them.`)
 
-  + sech('The statement', esc(D))
+  + sech('Your five years, in your words', esc(D))
   + `<div class="prompts">
-      <h4>Answer these out loud before you write anything</h4>
-      <div class="pl">Answer them in the present tense, as if you are standing in that day already. Not "I want to" — "I am". The words you use here are the ones you will hear yourself repeat in the room.</div>
-      <ol>${VISION_PROMPTS.map(([t,q])=>`<li><b>${esc(t)}.</b> ${q.replace('<b>DATE</b>','<b>'+esc(D)+'</b>')}</li>`).join('')}</ol>
+      <h4>Step into it before you write anything</h4>
+      <div class="pl">It is ${esc(D)} and you walk through the door on a Monday morning. Write all nine in the present tense, as if you are standing in that day already. Not "I want to" — "I am". The first one is the engine; the eight under it are what the engine is for. Take the time — this is the half of the plan that explains why the other half matters.</div>
     </div>
+    <div class="dreams">${VISION_DREAM.map(([k,title,q,ph],i)=>`<div class="dream">
+        <div class="dn">${String(i+1).padStart(2,'0')}</div>
+        <h3>${title}</h3>
+        <p class="dq">${q.replace('<b>DATE</b>','<b>'+esc(D)+'</b>')}</p>
+        <textarea class="full" data-path="vision.dream.${k}" data-kind="str" placeholder="${esc(ph)}">${esc(S.vision.dream[k]||'')}</textarea>
+      </div>`).join('')}</div>`
+
+  + sech('The statement', esc(D))
+  + `<div class="pl2">Now boil the nine above down to one paragraph. This is the version you say out loud in the room.</div>
     <textarea class="full" data-path="vision.statement" data-kind="str" style="min-height:150px" placeholder="It is ${esc(D)}. My business is… I am… My week looks like…">${esc(S.vision.statement)}</textarea>
     <div class="cap">This prints on the Consolidated one-pager and on every export. Write it once, read it every cycle.</div>`
 
@@ -143,8 +187,7 @@ function renderThrive(){
 
   /* The score, drawn once, below the radar and the gap note it comments on —
      the shape, what it costs you, then the number, and you score the nine rows
-     before any of them appear. Kept as a function so the block stays together
-     if it moves again.
+     before any of them appear. Kept as a function so the block stays together if it moves again.
      One instance also means one set of tween keys: runTweens() keeps a single
      previous value per key in TW, so a duplicated key would leave the second
      span reading from===to and snapping while its twin counted up. */

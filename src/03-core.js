@@ -66,7 +66,7 @@ function blankDivision(id,name,active){
     t:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8}};
 }
 function blankMacro(){ return {market:0.05, price:0.03, wage:0.03, ovh:0.03}; }
-const SELFTEST_COUNT = 122; /* every check in runSelfTest(), last verified run */
+const SELFTEST_COUNT = 124; /* every check in runSelfTest(), last verified run */
 function blankPlan(){
   return {label:'The Plan', multiple:3.0, macro:Array.from({length:5},blankMacro)};
 }
@@ -129,6 +129,12 @@ function defaultState(){
           monthNames:Array.from({length:12},()=>'')},
     vision:{
       statement:'',
+      /* The prework. Nine categories the member writes in longhand before the
+         statement, which is then the distillation of them. Keys here must match
+         VISION_DREAM in 05-tabs.js — a typo would write to a field nothing
+         reads, so a self-test pins the two together. */
+      dream:{business:'', week:'', home:'', people:'', travel:'',
+             friends:'', health:'', money:'', legacy:''},
       biz:{revenue:null, profit:null, value:null, team:null, role:'CEO · Leader · Investor'},
       life:{hours:35, holidays:6, weekends:0, evenings:5, income:null,
             adventures:null, investments:null, whatFor:''},

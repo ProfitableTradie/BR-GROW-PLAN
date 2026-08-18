@@ -1020,6 +1020,15 @@ function runSelfTest(){
   T('12 · strategies that were not are parked, not deleted', mig.strategies.length, 3);
   T('12 · no strategy still carries a scenario list', mig.strategies.filter(x=>x.scenarios!==undefined).length, 0);
 
+  // 13 — the nine Vision categories. VISION_DREAM drives the rendering and
+  // S.vision.dream holds the answers; if a key is misspelt in one of them the
+  // textarea writes somewhere nothing ever reads and the member silently loses
+  // what they typed. Nothing else in the app would notice, so pin them here.
+  const dreamKeys = VISION_DREAM.map(d=>d[0]).join(',');
+  const stateKeys = Object.keys(defaultState().vision.dream).join(',');
+  T('13 · Vision category keys match the state they write to', dreamKeys, stateKeys);
+  T('13b · nine categories, each with a distinct key', new Set(VISION_DREAM.map(d=>d[0])).size, 9);
+
   // the Setup card publishes SELFTEST_COUNT. If a case is added and that
   // constant is not moved with it, the card would quietly lie — so check it.
   if(pass+fail !== SELFTEST_COUNT){
