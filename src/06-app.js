@@ -614,6 +614,12 @@ function mergeState(loaded){
       delete st.scenarios;
     });
   }
+  const dOld = loaded && loaded.vision && loaded.vision.dream;
+  if(dOld && (dOld.home || dOld.friends) && !(dOld.social||'').trim()){
+    out.vision.dream.social = [dOld.home, dOld.friends].filter(x=>(x||'').trim()).join('\n\n');
+  }
+  if(out.vision && out.vision.dream){ delete out.vision.dream.home; delete out.vision.dream.friends; }
+
   delete out.scenarios; delete out.active;
   (out.strategies||[]).forEach(st=>{ if(st.on==null) st.on=true; delete st.scenarios; });
 
@@ -1027,7 +1033,12 @@ function runSelfTest(){
   const dreamKeys = VISION_DREAM.map(d=>d[0]).join(',');
   const stateKeys = Object.keys(defaultState().vision.dream).join(',');
   T('13 · Vision category keys match the state they write to', dreamKeys, stateKeys);
-  T('13b · nine categories, each with a distinct key', new Set(VISION_DREAM.map(d=>d[0])).size, 9);
+  T('13b · eight categories, each with a distinct key', new Set(VISION_DREAM.map(d=>d[0])).size, 8);
+  const foldIn = mergeState({vision:{dream:{home:'The house is paid off.', friends:'Thursday golf.'}}});
+  T('13c · a v2.6 Home and Friends answer folds into Social',
+    foldIn.vision.dream.social, 'The house is paid off.\n\nThursday golf.');
+  T('13d · the retired keys do not linger in state', 
+    (foldIn.vision.dream.home===undefined && foldIn.vision.dream.friends===undefined), true);
 
   // the Setup card publishes SELFTEST_COUNT. If a case is added and that
   // constant is not moved with it, the card would quietly lie — so check it.

@@ -111,7 +111,7 @@ open "https://boardroom-growth-plan.onrender.com/?selftest=1"
 
 Should say **122 passed · 0 failed**. That's the maths verified on the live site, not just on a laptop.
 
-Then check the plain URL loads the app and the top bar reads **Boardroom Growth Plan v2.6**.
+Then check the plain URL loads the app and the top bar reads **Boardroom Growth Plan v2.7**.
 
 ---
 

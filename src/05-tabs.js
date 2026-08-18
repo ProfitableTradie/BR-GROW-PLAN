@@ -36,18 +36,15 @@ const VISION_DREAM = [
   ['week','Your Week',
    'Walk through a normal Tuesday. What time do you start, what time do you stop, and what is in between? Name one thing you do every week today that you no longer do at all.',
    'I start at… By three I am… I no longer…'],
-  ['home','Home',
-   'Where are you living, and what is the house? Describe a weeknight evening in it — who is there, what time you walk in, and whether the phone is face-down on the bench.',
-   'We are living… On a Tuesday evening…'],
   ['people','The People at Home',
    'Your partner, your kids, whoever home means. What do they get of you that they do not get this week? If they were asked what changed, what would they say?',
    'They would say that I am…'],
   ['travel','Travel &amp; Adventure',
    'Where have you been in these five years, how long did you go for, and who came? Then say whether the business noticed you were gone.',
    'Three weeks in… and the team ran…'],
-  ['friends','Friends &amp; Community',
-   'Who is still in your life that you barely see now? What are you part of that has nothing to do with work — the club, the board, the team, the Saturday thing?',
-   'Every Thursday I…'],
+  ['social','Social',
+   'Who is still in your life that you barely see now? What are you part of that has nothing to do with work — the club, the board, the team, the Saturday thing? Say who you actually see, how often, and what you host or turn up to.',
+   'Every Thursday I… We have people over…'],
   ['health','Health &amp; Energy',
    'What shape are you in at that age, and what can you still physically do? Be specific: sleep, what you can lift, what you can climb, how you feel at four in the afternoon.',
    'I sleep… I train… At the end of a day I…'],
@@ -73,7 +70,7 @@ function renderVision(){
   + sech('Your five years, in your words', esc(D))
   + `<div class="prompts">
       <h4>Step into it before you write anything</h4>
-      <div class="pl">It is ${esc(D)} and you walk through the door on a Monday morning. Write all nine in the present tense, as if you are standing in that day already. Not "I want to" — "I am". The first one is the engine; the eight under it are what the engine is for. Take the time — this is the half of the plan that explains why the other half matters.</div>
+      <div class="pl">It is ${esc(D)} and you walk through the door on a Monday morning. Write all eight in the present tense, as if you are standing in that day already. Not "I want to" — "I am". The first one is the engine; the seven under it are what the engine is for. Take the time — this is the half of the plan that explains why the other half matters.</div>
     </div>
     <div class="dreams">${VISION_DREAM.map(([k,title,q,ph],i)=>`<div class="dream">
         <div class="dn">${String(i+1).padStart(2,'0')}</div>
@@ -1099,7 +1096,7 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.6 — nine Vision categories on 01, one Thrive Index score under the radar on 02')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.7 — eight Vision categories on 01, one Thrive Index score under the radar on 02')}
       ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`
