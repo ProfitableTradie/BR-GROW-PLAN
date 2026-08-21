@@ -1047,6 +1047,11 @@ if(window.__BRGP__){
 render(true);
 paintSave();
 if(/[?&]selftest=1/.test(location.search)) { go('settings'); setTimeout(runSelfTest, 200); }
+/* ?demo=1 — boot with the example business already loaded, for checking layout,
+   currency formatting and the derived figures with every field populated. The
+   same opt-in shape as ?selftest=1 above: deliberately URL-gated, because the
+   plain URL is the one members open and it must show their plan, not Sam's. */
+if(/[?&]demo=1/.test(location.search)) loadDemo();
 window.addEventListener('resize', ()=>{ clearTimeout(window._rz); window._rz=setTimeout(()=>render(), 220); });
 
 })();

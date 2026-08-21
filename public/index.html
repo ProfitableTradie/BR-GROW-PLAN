@@ -162,7 +162,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
 .prompts li{font-family:var(--serif); font-size:17px; line-height:1.5; margin-bottom:11px; color:#EDE9DC}
 .prompts li:last-child{margin-bottom:0}
 .prompts li b{color:var(--brand); font-family:var(--sans); font-size:14px; font-weight:700}
-.pl2{font-size:14px; line-height:1.55; color:var(--muted); margin-bottom:12px; max-width:70ch}
 .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
 
 /* ============ TABLES ============ */
@@ -1684,8 +1683,6 @@ function sech(title, hint, no){
 
 /* ─── 01 VISION ─────────────────────────────────────────────────── */
 
-/* Present tense, associated, sensory. The member is asked to stand in the
-   five-year day and describe it, not to forecast towards it. */
 /* Five prompts, associated and present-tense — you are standing in the day,
    looking at a diary, hearing a room — rather than asked from outside it. None
    of them is stored; the statement below is the only field on this section.
@@ -1701,40 +1698,6 @@ const VISION_PROMPTS = [
   ['Overheard','Someone is describing what you built and you are not in the room. What do they say, and who is standing there because of it?']
 ];
 const ROLE_OPTIONS = ['CEO','Leader','Investor','CEO · Leader · Investor'];
-/* The nine. Every prompt in VISION_PROMPTS above lives on inside one of these,
-   where the member is actually writing rather than being asked to answer out
-   loud: the handover and overheard fold into business, the Wednesday test and
-   what-you-stopped into week, the number into money, and the one you never let
-   yourself plan into legacy. "Step into it" became the framing line.
-   Keys must match S.vision.dream in 03-core.js; a self-test holds them level. */
-const VISION_DREAM = [
-  ['business','The Business',
-   'It is <b>DATE</b>. The business runs a full week without you in it. What size is it, who is running which part, and what are you actually doing in it? Then the harder half — what does it have to earn for everything below this to be affordable?',
-   'It turns over… The day to day is run by… I spend my time on…'],
-  ['week','Your Week',
-   'Walk through a normal Tuesday. What time do you start, what time do you stop, and what is in between? Name one thing you do every week today that you no longer do at all.',
-   'I start at… By three I am… I no longer…'],
-  ['people','The People at Home',
-   'Your partner, your kids, whoever home means. What do they get of you that they do not get this week? If they were asked what changed, what would they say?',
-   'They would say that I am…'],
-  ['travel','Travel &amp; Adventure',
-   'Where have you been in these five years, how long did you go for, and who came? Then say whether the business noticed you were gone.',
-   'Three weeks in… and the team ran…'],
-  ['social','Social',
-   'Who is still in your life that you barely see now? What are you part of that has nothing to do with work — the club, the board, the team, the Saturday thing? Say who you actually see, how often, and what you host or turn up to.',
-   'Every Thursday I… We have people over…'],
-  ['health','Health &amp; Energy',
-   'What shape are you in at that age, and what can you still physically do? Be specific: sleep, what you can lift, what you can climb, how you feel at four in the afternoon.',
-   'I sleep… I train… At the end of a day I…'],
-  ['money','Money Beyond the Business',
-   'What has the money built outside the business — property, shares, other income? What does it earn while you are asleep, and what is owned outright?',
-   'The building is owned outright, bringing in… a year.'],
-  ['legacy','Legacy',
-   'What was this all for? What do you leave, who have you backed, and what does your name mean around here? Include the one you would never have let yourself plan for.',
-   'What I leave behind is…']
-];
-
-
 function renderVision(){
   const pr = project(), y5 = pr.years[5], y0 = pr.years[0];
   const VF = visionFigures(pr);
@@ -4031,6 +3994,11 @@ if(window.__BRGP__){
 render(true);
 paintSave();
 if(/[?&]selftest=1/.test(location.search)) { go('settings'); setTimeout(runSelfTest, 200); }
+/* ?demo=1 — boot with the example business already loaded, for checking layout,
+   currency formatting and the derived figures with every field populated. The
+   same opt-in shape as ?selftest=1 above: deliberately URL-gated, because the
+   plain URL is the one members open and it must show their plan, not Sam's. */
+if(/[?&]demo=1/.test(location.search)) loadDemo();
 window.addEventListener('resize', ()=>{ clearTimeout(window._rz); window._rz=setTimeout(()=>render(), 220); });
 
 })();
