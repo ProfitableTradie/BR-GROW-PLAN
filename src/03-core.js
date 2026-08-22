@@ -66,7 +66,7 @@ function blankDivision(id,name,active){
     t:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8}};
 }
 function blankMacro(){ return {market:0.05, price:0.03, wage:0.03, ovh:0.03}; }
-const SELFTEST_COUNT = 123; /* every check in runSelfTest(), last verified run */
+const SELFTEST_COUNT = 128; /* every check in runSelfTest(), last verified run */
 function blankPlan(){
   return {label:'The Plan', multiple:3.0, macro:Array.from({length:5},blankMacro)};
 }
@@ -121,6 +121,69 @@ const THRIVE_SHIFTS = [
   ['identity','Identity shift','e.g. move from operator to leader']
 ];
 
+/* ─── org chart geometry and rules ─────────────────────────────────
+   The logical canvas. Every coordinate the member drags is stored in this
+   space and the SVG viewBox maps it to whatever width it is rendered at. */
+const ORG_W = 1200, ORG_BOX_W = 180, ORG_BOX_H = 78, ORG_SNAP = 20;
+
+/* A box exists from the year it appears onwards. */
+function orgBoxVisible(b, year){ return b!=null && num(b.from||0) <= num(year); }
+
+/* A link can only be drawn when both ends are on the page — otherwise a Y5
+   reporting line would hang off a box that does not exist yet in Y1. */
+function orgLinkVisible(l, boxes, year){
+  if(!l) return false;
+  const a=(boxes||[]).find(b=>b.id===l.a), b2=(boxes||[]).find(b=>b.id===l.b);
+  return !!(a && b2 && orgBoxVisible(a,year) && orgBoxVisible(b2,year));
+}
+
+/* null on a link means "whatever the chart is set to"; a string overrides it. */
+function orgLinkStyle(l, org){
+  const s2 = l && l.style;
+  return (s2==='straight'||s2==='angled') ? s2
+       : (org && org.lineStyle==='straight') ? 'straight' : 'angled';
+}
+
+/* Deleting a box has to take its links with it. A link pointing at a box that
+   no longer exists would render a line to nowhere, or throw looking for it. */
+function orgDeleteBox(org, id){
+  if(!org) return org;
+  org.boxes = (org.boxes||[]).filter(b=>b.id!==id);
+  org.links = (org.links||[]).filter(l=>l.a!==id && l.b!==id);
+  return org;
+}
+
+function orgNewId(prefix, existing){
+  const used = new Set((existing||[]).map(x=>x.id));
+  let n=1; while(used.has(prefix+n)) n++;
+  return prefix+n;
+}
+
+/* What the drawn chart costs, against what the capacity engine says it should.
+   The two are allowed to disagree — that disagreement is the point. */
+function orgDrawnCost(boxes, year){
+  return sum((boxes||[]).filter(b=>orgBoxVisible(b,year)).map(b=>num(b.cost)||0));
+}
+
+/* Where a link attaches: out of the bottom of the parent, into the top of the
+   child. Angled routes through the midpoint between them so siblings share a
+   spine; straight is a single segment. */
+function orgLinkPath(a, b, style){
+  const x1=num(a.x)+ORG_BOX_W/2, y1=num(a.y)+ORG_BOX_H;
+  const x2=num(b.x)+ORG_BOX_W/2, y2=num(b.y);
+  if(style==='straight') return `M${x1},${y1} L${x2},${y2}`;
+  const my = y2 > y1 ? y1 + (y2-y1)/2 : y1 + 24;
+  return `M${x1},${y1} L${x1},${my} L${x2},${my} L${x2},${y2}`;
+}
+
+function orgSnap(v){ return Math.round(num(v)/ORG_SNAP)*ORG_SNAP; }
+
+/* Tall enough for the lowest box, and never shorter than a sensible canvas. */
+function orgCanvasH(boxes){
+  const low = Math.max(0, ...(boxes||[]).map(b=>num(b.y)+ORG_BOX_H));
+  return Math.max(520, low + 60);
+}
+
 function defaultState(){
   return {
     v: 1,
@@ -136,6 +199,15 @@ function defaultState(){
          Type a number and it overrides; clear it and the model takes over again. */
       freedom:{today:null, y5:null, hoursToday:null, hoursY5:null},
       asset:{valueToday:null, valueY5:null, valueCreated:null}
+    },
+    /* The org chart is drawn by hand from v2.9. One layout, each box tagged with
+       the year it appears, so the four year views filter the same chart rather
+       than being four charts. Coordinates are in the canvas's logical space
+       (ORG_W wide), not pixels — the SVG viewBox scales it to any width, which
+       is also how it survives the 688px print column. */
+    org:{
+      lineStyle:'angled',
+      boxes:[], links:[]
     },
     divisionsOn:false,
     divisions:[

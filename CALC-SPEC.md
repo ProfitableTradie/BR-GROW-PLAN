@@ -1,6 +1,6 @@
 # Boardroom Growth Plan — Calculation Specification
 
-**Describes v2.8.** Everything the application computes, written so it can be ported to Excel or a server-side web app without reading the JavaScript.
+**Describes v2.9.** Everything the application computes, written so it can be ported to Excel or a server-side web app without reading the JavaScript.
 
 Every rule here is pinned by a case in the app's own self-test suite — 122 golden cases with hand-calculated answers, runnable from the Setup tab or by loading the app with `?selftest=1`. Where a rule exists because something upstream got it wrong, the defect is named, so nobody re-introduces it in good faith.
 

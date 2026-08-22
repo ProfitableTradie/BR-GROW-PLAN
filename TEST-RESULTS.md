@@ -1,11 +1,11 @@
 # Test Results — Boardroom Growth Plan
 
-**v2.8.** Run the suite in the app: **Setup → Run the self-test**, or open the file with `?selftest=1`.
+**v2.9.** Run the suite in the app: **Setup → Run the self-test**, or open the file with `?selftest=1`.
 
 ## Golden test cases
 
 ```
-123 passed · 0 failed
+128 passed · 0 failed
 ```
 
 Every case carries a hand-calculated expected answer. The suite is self-policing: `SELFTEST_COUNT` in `03-core.js` records how many checks there should be, and if the number that actually run disagrees, the suite fails itself rather than quietly reporting a smaller green run.
@@ -92,6 +92,8 @@ Introduced with the Thrive Index in v2.4. All three are pinned by group 8c so th
 
 - **Vision prompts** — the five prompts on tab 01 are spoken, not stored; the statement is the only field on that section. Nothing can therefore be lost to a bad key, and the only failure left is a duplicated or dropped heading, which would quietly shorten the exercise with no other check noticing. One case counts the five and confirms the headings are distinct.
 
+- **Drawn org chart** — tab 10 is hand-drawn from v2.9 and its rules are pure logic, so they are tested rather than eyeballed: a box tagged year 3 is hidden today and present from year 3; a link only draws when both ends are visible, so a year-5 reporting line cannot hang off a box that does not exist yet; a link with no style of its own inherits the chart default; and deleting a box deletes every link touching it, since a link pointing at a missing box would render a line to nowhere. Five cases.
+
 ## Deployment verification
 
 The table below was exercised at v2.5 against `npm run dev` (which runs `build.sh` then `server.js`). `server.js` is unchanged since, so the path-traversal and health rows still describe the shipping build:
@@ -111,9 +113,22 @@ The table below was exercised at v2.5 against `npm run dev` (which runs `build.s
 
 No file outside `public/` is reachable. Static-site deploys skip `server.js` entirely; `render.yaml` sets `buildCommand: sh ./build.sh` and `staticPublishPath: ./public`, which is the same build the table above exercises.
 
-**Re-verified at v2.8:** `sh ./build.sh` (257,827 bytes) and `GET /?selftest=1` over HTTP on the dev server — **123 passed · 0 failed**. The same URL over HTTPS on the deployed site is checked after each push; v2.6, v2.7 and v2.8 all returned the local figure.
+**Re-verified at v2.9:** `sh ./build.sh` (273,291 bytes) and `GET /?selftest=1` over HTTP on the dev server — **128 passed · 0 failed**. The same URL over HTTPS on the deployed site is checked after each push; v2.6 through v2.8 all returned the local figure.
 
-**Not re-verified at v2.8:** horizontal overflow at 1440/1024/820 px, and the A4 print pack across all tabs (both last checked at v2.1). The print risk v2.6 and v2.7 introduced has gone with them: tab 01 is back to a single statement box and a prompt card of five, so its printed length is close to what the pack was last checked against rather than eight textareas longer.
+**The A4 print pack was checked at v2.9** — the first time since v2.1 — and it was broken. Method: force the `@media print` block to apply on screen (`CSSMediaRule.media.mediaText = 'all'`), add `body.printall` as the Print button does, and measure at the true A4 content box of 688 × 1017 px.
+
+Two real faults, both long-standing rather than newly introduced:
+
+| | Before | After |
+|---|---|---|
+| Populated fields absent from the page | **35 of 111** | 0 |
+| Tables wider than the page | **7** (widest 1559px) | 0 |
+| Unbreakable blocks taller than a page | 1 | 0 |
+| Page overflows horizontally | yes | no (688 = 688) |
+
+The first was `field()` storing a value only inside an `<input>` while the print sheet hides `.f input` — so every derived figure printed and everything the member typed did not. Values now also render into a `.pval` span, hidden on screen. The second had four separate causes, each hidden behind the last: table `min-width` rules, a `.pill` carrying its own `nowrap` (165px inside a 138px column), a `.two` block stacking past a page while marked `break-inside:avoid`, and `.scrollx`'s 40px edge bleed.
+
+**Still not verified:** horizontal overflow at 1024/820 px (1440 is clean), and Letter paper, which is 6mm narrower than A4 and could resurface a marginal case. The pagination figure of roughly 36 pages is an estimate from content height, not a count from a produced PDF.
 
 ## Known limitations in this build
 

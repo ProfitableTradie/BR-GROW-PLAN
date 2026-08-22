@@ -1,5 +1,6 @@
 /* ═══ §TABS ══════════════════════════════════════════════════════ */
-const UI = {tab:'vision', div:'WOB', orgYear:0, editing:null, renaming:null};
+const UI = {tab:'vision', div:'WOB', orgYear:0, editing:null, renaming:null,
+            orgSel:null, orgSelLink:null, orgLinkFrom:null};
 
 function head(eyebrow, title, lead){
   return `<div class="pagehead"><div class="eyebrow">${esc(eyebrow)}</div>
@@ -937,6 +938,80 @@ function renderConsolidated(){
 }
 
 /* ─── 09 ORG CHART ──────────────────────────────────────────────── */
+/* The drawn org chart. One SVG carrying both the boxes and the lines, so the
+   whole thing scales as a unit through its viewBox — that is what makes it fit
+   the 688px print column without any print-specific layout work.
+   Boxes are not editable in place; selecting one opens the editor underneath.
+   Editing inside SVG would mean foreignObject and a pile of focus handling for
+   no gain, and a form reads better in a plan document anyway. */
+function orgCanvas(){
+  const org = S.org, year = UI.orgYear;
+  const boxes = (org.boxes||[]).filter(b=>orgBoxVisible(b,year));
+  const H = orgCanvasH(org.boxes);
+  const sel = UI.orgSel, linking = UI.orgLinkFrom;
+
+  const links = (org.links||[]).filter(l=>orgLinkVisible(l, org.boxes, year)).map(l=>{
+    const a=org.boxes.find(b=>b.id===l.a), b2=org.boxes.find(b=>b.id===l.b);
+    const st=orgLinkStyle(l, org);
+    return `<path class="olink ${UI.orgSelLink===l.id?'on':''}" data-olink="${esc(l.id)}"
+      d="${orgLinkPath(a,b2,st)}" fill="none" />`;
+  }).join('');
+
+  const cards = boxes.map(b=>{
+    const handedOver = num(b.handover)>0 && num(b.handover)<=year;
+    const isYours = b.owner && !handedOver;
+    return `<g class="ocard ${isYours?'owner':''} ${sel===b.id?'on':''} ${linking===b.id?'linking':''}"
+        data-obox="${esc(b.id)}" transform="translate(${num(b.x)},${num(b.y)})">
+      <rect width="${ORG_BOX_W}" height="${ORG_BOX_H}" rx="9"></rect>
+      ${isYours?`<text class="otag" x="12" y="17">YOU ARE DOING THIS</text>`:''}
+      <text class="orole" x="12" y="${isYours?36:28}">${esc((b.role||'Untitled role').slice(0,26))}</text>
+      <text class="oname" x="12" y="${isYours?52:46}">${esc((b.name||'Vacant').slice(0,26))}</text>
+      <text class="ocost" x="12" y="${isYours?68:64}">${esc(num(b.cost)?money0k(num(b.cost)):'—')}${
+        num(b.from)>0?` · from Y${num(b.from)}`:''}</text>
+    </g>`;
+  }).join('');
+
+  const empty = !org.boxes.length
+    ? `<div class="empty" style="margin-top:14px">Nothing drawn yet. <b>Add a role</b> to start — the first box is usually you.</div>` : '';
+
+  return `<div class="btnrow orgtools" style="margin-top:20px">
+      <button class="btn accent" id="btnOrgAdd">+ Add a role</button>
+      <button class="btn ${linking?'accent':''}" id="btnOrgLink">${linking?'Click the second box… (Esc)':'Link two boxes'}</button>
+      <button class="btn sm" id="btnOrgStyle">Lines: ${org.lineStyle==='straight'?'straight':'angled'}</button>
+      ${sel?`<button class="btn sm" id="btnOrgDel">Delete this role</button>`:''}
+      ${UI.orgSelLink?`<button class="btn sm" id="btnOrgLinkStyle">Flip this line</button>
+        <button class="btn sm" id="btnOrgLinkDel">Delete this line</button>`:''}
+    </div>
+    ${empty}
+    <div class="orgwrap"><svg class="orgsvg" viewBox="0 0 ${ORG_W} ${H}"
+        preserveAspectRatio="xMidYMin meet" role="img"
+        aria-label="Org chart, ${boxes.length} roles in ${year===0?'today':'year '+year}">
+      <g class="olinks">${links}</g>${cards}
+    </svg></div>
+    <div class="cap">Drag a box to move it — it snaps to a grid. Click one to edit or link it. ${
+      org.boxes.length>boxes.length?`<b>${org.boxes.length-boxes.length}</b> role${org.boxes.length-boxes.length===1?'':'s'} hidden in this year.`:''}</div>
+    ${orgBoxEditor()}`;
+}
+
+/* The editor for whichever box is selected. Reuses the same field() helpers as
+   the rest of the app, so it inherits the print-value spans and the grouped
+   money formatting for free. */
+function orgBoxEditor(){
+  const b = (S.org.boxes||[]).find(x=>x.id===UI.orgSel);
+  if(!b) return '';
+  const i = S.org.boxes.indexOf(b);
+  return sech('The role you selected', esc(b.role||'Untitled role'))
+    + `<div class="fgrid"><div>
+        ${field('Role title',`org.boxes.${i}.role`,{kind:'str'})}
+        ${field('Who holds it',`org.boxes.${i}.name`,{kind:'str',help:'Leave as Vacant if it is a hire you have not made'})}
+        ${field('Salary',`org.boxes.${i}.cost`,{kind:'numn',money:true,help:'Annual, all-in'})}
+      </div><div>
+        ${field('Appears in year',`org.boxes.${i}.from`,{kind:'numn',help:'0 for today. The box is hidden in earlier years.'})}
+        ${field('You hand it over in year',`org.boxes.${i}.handover`,{kind:'numn',help:'0 if it is not yours to hand over'})}
+        <label class="toggle" style="margin-top:12px"><input type="checkbox" data-obowner="${i}" ${b.owner?'checked':''}> <span>This is a role you occupy</span></label>
+      </div></div>`;
+}
+
 function renderOrg(){
   const pr=project();
   const o=orgAt(pr, UI.orgYear);
@@ -946,7 +1021,7 @@ function renderOrg(){
   const reconCos   = yr.cos!=null ? o.costCos - yr.cos : null;
 
   return head('10 · The team that gets you out','Org Chart',
-    `Generated from the capacity engine, not drawn by hand. Roles appear as spans of control are exceeded. The copper boxes are the roles <strong>you</strong> still occupy — watching them clear between today and year five is the Owner-Operator to CEO shift, made literal.`)
+    `Draw the team that gets you out. Add a box per role, link them, and tag each box with the year it arrives — then press through the years and watch the org build itself. The copper boxes are the roles <strong>you</strong> still occupy; watching them clear between today and year five is the Owner-Operator to CEO shift, made literal.`)
 
   + `<div class="btnrow" style="margin-top:26px">
       ${[0,1,3,5].map(y=>`<button class="btn ${UI.orgYear===y?'accent':''}" data-orgyear="${y}">${y===0?'Today':'Year '+y}</button>`).join('')}
@@ -957,14 +1032,16 @@ function renderOrg(){
       ${metric('Total team', o.cap.total,'n0','People','','o_tot')}
       ${metric('People cost', o.peopleCost,'money0k',`${money0k(o.costCos)} in cost of sales · ${money0k(o.costFixed)} in fixed costs`,'','o_cost')}
       ${metric('Hires from today', Math.max(0,(o.cap.target||0)-(o0.cap.target||0)),'n0','On tools','','o_hire')}
+      ${metric('Your chart costs', orgDrawnCost(S.org.boxes, UI.orgYear),'money0k',
+        (()=>{ const d=orgDrawnCost(S.org.boxes,UI.orgYear), m=o.peopleCost;
+               if(!S.org.boxes.length) return 'Nothing drawn yet';
+               const gap=d-m;
+               return Math.abs(gap) < 1000 ? 'In line with the model'
+                 : `${money0k(Math.abs(gap))} ${gap>0?'more':'less'} than the model funds`; })(),
+        (S.org.boxes.length && Math.abs(orgDrawnCost(S.org.boxes,UI.orgYear)-o.peopleCost)>=1000)?'accent':'', 'o_drawn')}
     </div>`
 
-  + `<div class="org">${o.rows.filter(r=>r.boxes.length).map((r,i)=>`
-      ${i?'<div class="orgstem"></div>':''}
-      <div class="orgrow">${r.boxes.map(b=>`<div class="obox ${b.owner?'owner':''} ${b.name==='Vacant'?'vacant':''}">
-        ${b.owner?'<span class="tag">You are doing this</span>':''}
-        <div class="or">${esc(b.role)}</div><div class="on">${esc(b.name)}</div><div class="oc">${money0k(b.cost)}</div>
-      </div>`).join('')}</div>`).join('')}</div>`
+  + orgCanvas()
 
   + (reconFixed!=null ? `<div class="alert ${reconFixed>0?'bad':'good'}"><div><b>Reconciliation — office and leadership</b>${money0k(o.costFixed)} of salaries sit in fixed costs (you, ops managers, estimators, office) against a forecast fixed cost line of ${money0k(yr.fixed)} — leaving ${money0k(yr.fixed-o.costFixed)} for rent, vehicles, insurance, software and everything else. ${reconFixed>0?'The wage bill alone exceeds the forecast fixed costs. Either the roles are too expensive or the forecast is too thin.':'That headroom looks workable — check it against your actual overheads.'}</div></div>`:'')
   + (reconCos!=null ? `<div class="alert ${reconCos>yr.cos?'bad':'good'}"><div><b>Reconciliation — on tools</b>${money0k(o.costCos)} of on-tools and team-leader wages against forecast cost of sales of ${money0k(yr.cos)}. Cost of sales also carries materials and subcontractors, so labour should be well under it — here it is ${pct(div(o.costCos,yr.cos),0)} of the line.</div></div>`:'')
@@ -986,12 +1063,12 @@ function renderSettings(){
 
   + sech('The business','')
   + `<div class="fgrid"><div>
-      <div class="f"><div class="flab"><div class="fl">Company</div></div><input type="text" data-path="meta.company" data-kind="str" value="${esc(S.meta.company)}" style="text-align:left"></div>
-      <div class="f"><div class="flab"><div class="fl">Owner</div></div><input type="text" data-path="meta.owner" data-kind="str" value="${esc(S.meta.owner)}" style="text-align:left"></div>
+      <div class="f"><div class="flab"><div class="fl">Company</div></div><input type="text" data-path="meta.company" data-kind="str" value="${esc(S.meta.company)}" style="text-align:left"><span class="pval">${esc(S.meta.company||'—')}</span></div>
+      <div class="f"><div class="flab"><div class="fl">Owner</div></div><input type="text" data-path="meta.owner" data-kind="str" value="${esc(S.meta.owner)}" style="text-align:left"><span class="pval">${esc(S.meta.owner||'—')}</span></div>
       ${selectField('Currency','meta.currency',['NZD','AUD','GBP','USD'])}
     </div><div>
       <div class="f"><div class="flab"><div class="fl">The twelve months start at</div><div class="fh">The column headings on the Scenario Forecaster run from here. You can type over any of them.</div></div>
-        <select data-path="meta.startMonth" data-kind="num">${MONTHS.map((m,i)=>`<option value="${i}"${i===num(S.meta.startMonth)?' selected':''}>${m}</option>`).join('')}</select></div>
+        <select data-path="meta.startMonth" data-kind="num">${MONTHS.map((m,i)=>`<option value="${i}"${i===num(S.meta.startMonth)?' selected':''}>${m}</option>`).join('')}</select><span class="pval">${esc(MONTHS[num(S.meta.startMonth)]||'—')}</span></div>
       ${field('Starting year','meta.startYear',{step:1})}
       <label class="toggle" style="margin-top:16px"><input type="checkbox" id="togDivisions" ${S.divisionsOn?'checked':''}> Run divisions</label>
       <div class="fh" style="margin-top:6px">Off by default — one P&L and one funnel. Turn it on if you run separate divisions. Nothing is lost when you turn it back off.</div>
@@ -1018,7 +1095,7 @@ function renderSettings(){
   + sech('The plan — valuation and macro movement','One plan. These sit underneath every forecast on every tab.')
   + `<div class="fgrid"><div>
       <div class="f"><div class="flab"><div class="fl">EBITDA multiple</div><div class="fh">Sets the business value. Ask your broker or accountant what a business like yours trades on — trades typically 2.5–4×.</div></div>
-        <input type="number" step="0.1" data-path="plan.multiple" value="${num(S.plan.multiple)}" style="width:90px"></div>
+        <input type="number" step="0.1" data-path="plan.multiple" value="${num(S.plan.multiple)}" style="width:90px"><span class="pval">${esc(n1(num(S.plan.multiple)))}×</span></div>
       <div class="fh" style="margin-top:10px">Macro movement applies at the <em>start</em> of each year, before any strategy. It is what happens to the business if you change nothing — market drift, your annual price rise, and overhead creep.</div>
     </div><div>
       <table class="t" style="font-size:13px"><thead><tr><th>Year</th><th>Market %</th><th>Price %</th><th>Overhead %</th></tr></thead><tbody>
@@ -1057,7 +1134,7 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.8 — five spoken prompts into the statement on 01, one Thrive Index score under the radar on 02')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.9 — the org chart on 10 is drawn by hand, and typed figures now print')}
       ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`

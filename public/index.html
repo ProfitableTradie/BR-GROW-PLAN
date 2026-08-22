@@ -183,11 +183,36 @@ table.t tr.sub td:first-child{padding-left:16px; color:var(--muted)}
 table.t tbody tr:hover td{background:#F3F6FC}
 table.t tr.grp:hover td, table.t tr.spacer:hover td{background:transparent}
 .scrollx{overflow-x:auto; margin:0 -40px; padding:0 40px}
+/* ── Drawn org chart. One SVG, so it scales as a unit and needs no print-
+   specific layout — the viewBox does that work. ── */
+.orgwrap{margin-top:14px; border:1px solid var(--rule); border-radius:11px;
+  background:var(--paper-2); overflow:hidden}
+.orgsvg{display:block; width:100%; height:auto; touch-action:none}
+.orgsvg .olink{stroke:var(--rule-2); stroke-width:2; stroke-linejoin:round}
+.orgsvg .olink.on{stroke:var(--accent); stroke-width:3}
+.orgsvg [data-olink]{cursor:pointer}
+.orgsvg [data-olink]:hover{stroke:var(--steel)}
+.ocard{cursor:grab}
+.ocard.dragging{cursor:grabbing}
+.ocard rect{fill:var(--paper-2); stroke:var(--rule-2); stroke-width:1.5}
+.ocard:hover rect{stroke:var(--steel)}
+.ocard.on rect{stroke:var(--accent); stroke-width:2.5}
+.ocard.linking rect{stroke:var(--brand); stroke-width:3}
+.ocard.owner rect{fill:var(--accent-soft); stroke:var(--accent)}
+.ocard .orole{font-family:var(--sans); font-size:14px; font-weight:700; fill:var(--ink)}
+.ocard .oname{font-family:var(--sans); font-size:12.5px; fill:var(--muted)}
+.ocard .ocost{font-family:var(--sans); font-size:11.5px; fill:var(--muted-2)}
+.ocard .otag{font-family:var(--sans); font-size:8.5px; font-weight:700; letter-spacing:.1em; fill:var(--accent)}
+.orgtools{flex-wrap:wrap}
 
 /* ============ FIELDS ============ */
 .fgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:0 40px}
 .f{padding:13px 0; border-bottom:1px solid var(--rule); display:flex; align-items:center; gap:16px}
 .f .flab{flex:1; min-width:0}
+/* Print-only echo of what the member typed. A field() value lives solely inside
+   an <input>, and the print sheet hides .f input — so without this the paper
+   shows the label and a blank space. Never visible on screen. */
+.pval{display:none}
 .f .fl{font-size:13.5px; font-weight:600; line-height:1.35}
 .f .fh{font-size:11.5px; color:var(--muted); line-height:1.4; margin-top:2px}
 .f input, .f select{
@@ -442,7 +467,38 @@ table.bud td.want b{font-size:14px}
   @page{size:A4; margin:14mm}
   body{background:#fff; font-size:10pt; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .bar,nav.rail,.btnrow,.btn,.f input,.f select,#toast,.noprint{display:none !important}
+  /* the drawn chart prints; its editing chrome does not */
+  .orgwrap{border:0; break-inside:avoid}
+  .ocard{cursor:default}
+  .ocard.on rect,.ocard.linking rect{stroke:var(--rule-2); stroke-width:1.5}
+  .ocard.owner rect{stroke:var(--accent); stroke-width:1.5}
   .f .out{width:auto}
+  /* the typed value, which the rule above just hid along with its input */
+  .f .pval{display:inline; font-weight:600; font-variant-numeric:tabular-nums}
+  .fmoney .pval{margin-left:1px}
+  /* Nothing scrolls on paper, so every table has to fit the 688px content box.
+     The on-screen min-widths exist to keep columns readable while .scrollx
+     handles the overflow — in print they are what pushes content off the page. */
+  /* on screen .scrollx bleeds 40px past the text column and scrolls; on paper
+     there is nothing to bleed into, so drop the negative margins with it */
+  .scrollx{overflow:visible !important; margin:0 !important; padding:0 !important}
+  table.t{width:100% !important; min-width:0 !important; table-layout:fixed; font-size:7pt}
+  table.t td, table.t th{padding:2px 3px !important; min-width:0 !important;
+    word-break:break-word; overflow-wrap:anywhere}
+  table.grid.pl{min-width:0 !important}
+  table.grid.pl col.cml,table.grid.pl col.cavg,table.grid.pl col.ctot{width:auto}
+  table.grid.pl td,table.grid.pl th,table.grid.pl input{font-size:7pt !important; padding:1px 2px !important}
+  .grid td:first-child,table.thrive td:first-child,table.asm td:first-child{min-width:0 !important}
+  .grid td.tot{min-width:0 !important}
+  .seasbar,.bargap{min-width:0 !important}
+  /* the last few px come from cell contents, not the table box: inputs and
+     money wrappers carry their own widths and long labels refuse to wrap */
+  table.t input,table.t select,table.t .fmoney,table.t .scale{width:100% !important; min-width:0 !important; max-width:100%}
+  table.t td,table.t th{white-space:normal !important}
+  /* pills carry their own nowrap, so the rule above does not reach them — a
+     five-word status pill was 165px inside a 138px column */
+  table.t .pill{white-space:normal !important; display:inline-block; max-width:100%}
+  table.t{max-width:100%}
   .shell{display:block}
   main{padding:0}
   .wrap{max-width:none; padding:0}
@@ -450,7 +506,11 @@ table.bud td.want b{font-size:14px}
   .tab.on{display:block !important}
   body.printall .tab{display:block !important; break-before:page}
   body.printall .tab:first-of-type{break-before:auto}
-  .sechead,.mgrid,.chartbox,.card,table.t tr,.two,.org{break-inside:avoid}
+  .sechead,.mgrid,.chartbox,.card,table.t tr,.org{break-inside:avoid}
+  /* .two stacks in print and exceeds a page, so let it split rather than
+     overflow; its children still avoid breaking individually */
+  .two{break-inside:auto}
+  .two > *{break-inside:avoid}
   .m.hero,.obox.owner{-webkit-print-color-adjust:exact; print-color-adjust:exact}
   h1.big{font-size:24pt}
 }
@@ -568,7 +628,7 @@ input.dren:focus{outline:2px solid #fff; outline-offset:1px}
 </head>
 <body>
 <div class="bar">
-  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.8</span></div>
+  <div class="brand"><span class="pre">Profitable Tradie&nbsp; ·&nbsp; </span><b>Boardroom Growth Plan</b> <span class="ver" data-ver>v2.9</span></div>
   <div class="spacer"></div>
   <span class="savestat" id="savestat">Not linked</span>
   <button class="tbtn primary" id="btnSave">Save</button>
@@ -689,7 +749,7 @@ function blankDivision(id,name,active){
     t:{netProfit:0, fixedCosts:0, gpPct:0.35, avgJobValue:0, quoteWin:0.5, leadQuote:0.8}};
 }
 function blankMacro(){ return {market:0.05, price:0.03, wage:0.03, ovh:0.03}; }
-const SELFTEST_COUNT = 123; /* every check in runSelfTest(), last verified run */
+const SELFTEST_COUNT = 128; /* every check in runSelfTest(), last verified run */
 function blankPlan(){
   return {label:'The Plan', multiple:3.0, macro:Array.from({length:5},blankMacro)};
 }
@@ -744,6 +804,69 @@ const THRIVE_SHIFTS = [
   ['identity','Identity shift','e.g. move from operator to leader']
 ];
 
+/* ─── org chart geometry and rules ─────────────────────────────────
+   The logical canvas. Every coordinate the member drags is stored in this
+   space and the SVG viewBox maps it to whatever width it is rendered at. */
+const ORG_W = 1200, ORG_BOX_W = 180, ORG_BOX_H = 78, ORG_SNAP = 20;
+
+/* A box exists from the year it appears onwards. */
+function orgBoxVisible(b, year){ return b!=null && num(b.from||0) <= num(year); }
+
+/* A link can only be drawn when both ends are on the page — otherwise a Y5
+   reporting line would hang off a box that does not exist yet in Y1. */
+function orgLinkVisible(l, boxes, year){
+  if(!l) return false;
+  const a=(boxes||[]).find(b=>b.id===l.a), b2=(boxes||[]).find(b=>b.id===l.b);
+  return !!(a && b2 && orgBoxVisible(a,year) && orgBoxVisible(b2,year));
+}
+
+/* null on a link means "whatever the chart is set to"; a string overrides it. */
+function orgLinkStyle(l, org){
+  const s2 = l && l.style;
+  return (s2==='straight'||s2==='angled') ? s2
+       : (org && org.lineStyle==='straight') ? 'straight' : 'angled';
+}
+
+/* Deleting a box has to take its links with it. A link pointing at a box that
+   no longer exists would render a line to nowhere, or throw looking for it. */
+function orgDeleteBox(org, id){
+  if(!org) return org;
+  org.boxes = (org.boxes||[]).filter(b=>b.id!==id);
+  org.links = (org.links||[]).filter(l=>l.a!==id && l.b!==id);
+  return org;
+}
+
+function orgNewId(prefix, existing){
+  const used = new Set((existing||[]).map(x=>x.id));
+  let n=1; while(used.has(prefix+n)) n++;
+  return prefix+n;
+}
+
+/* What the drawn chart costs, against what the capacity engine says it should.
+   The two are allowed to disagree — that disagreement is the point. */
+function orgDrawnCost(boxes, year){
+  return sum((boxes||[]).filter(b=>orgBoxVisible(b,year)).map(b=>num(b.cost)||0));
+}
+
+/* Where a link attaches: out of the bottom of the parent, into the top of the
+   child. Angled routes through the midpoint between them so siblings share a
+   spine; straight is a single segment. */
+function orgLinkPath(a, b, style){
+  const x1=num(a.x)+ORG_BOX_W/2, y1=num(a.y)+ORG_BOX_H;
+  const x2=num(b.x)+ORG_BOX_W/2, y2=num(b.y);
+  if(style==='straight') return `M${x1},${y1} L${x2},${y2}`;
+  const my = y2 > y1 ? y1 + (y2-y1)/2 : y1 + 24;
+  return `M${x1},${y1} L${x1},${my} L${x2},${my} L${x2},${y2}`;
+}
+
+function orgSnap(v){ return Math.round(num(v)/ORG_SNAP)*ORG_SNAP; }
+
+/* Tall enough for the lowest box, and never shorter than a sensible canvas. */
+function orgCanvasH(boxes){
+  const low = Math.max(0, ...(boxes||[]).map(b=>num(b.y)+ORG_BOX_H));
+  return Math.max(520, low + 60);
+}
+
 function defaultState(){
   return {
     v: 1,
@@ -759,6 +882,15 @@ function defaultState(){
          Type a number and it overrides; clear it and the model takes over again. */
       freedom:{today:null, y5:null, hoursToday:null, hoursY5:null},
       asset:{valueToday:null, valueY5:null, valueCreated:null}
+    },
+    /* The org chart is drawn by hand from v2.9. One layout, each box tagged with
+       the year it appears, so the four year views filter the same chart rather
+       than being four charts. Coordinates are in the canvas's logical space
+       (ORG_W wide), not pixels — the SVG viewBox scales it to any width, which
+       is also how it survives the 688px print column. */
+    org:{
+      lineStyle:'angled',
+      boxes:[], links:[]
     },
     divisionsOn:false,
     divisions:[
@@ -1645,8 +1777,8 @@ function field(label, path, opts){
   if(o.money) shown = (UI.editing===path) ? (v==null?'':v) : grouped(v);
   return `<div class="f"><div class="flab"><div class="fl">${esc(label)}</div>${o.help?`<div class="fh">${esc(o.help)}</div>`:''}</div>
     ${o.money
-      ? `<div class="fmoney"><span>${esc(CURSYM)}</span><input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" data-raw="${esc(v==null?'':String(v))}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}"></div>`
-      : `<input type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}">`}
+      ? `<div class="fmoney"><span>${esc(CURSYM)}</span><input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" data-raw="${esc(v==null?'':String(v))}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}"><span class="pval">${esc(shown===''||shown==null?'—':String(shown))}</span></div>`
+      : `<input type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}"><span class="pval">${esc(shown===''||shown==null?'—':String(shown))}</span>`}
   </div>`;
 }
 function outrow(label, valueHtml, help, cls){
@@ -1656,7 +1788,7 @@ function outrow(label, valueHtml, help, cls){
 function selectField(label, path, options, help){
   const v=getPath(path);
   return `<div class="f"><div class="flab"><div class="fl">${esc(label)}</div>${help?`<div class="fh">${esc(help)}</div>`:''}</div>
-    <select data-path="${esc(path)}" data-kind="str" aria-label="${esc(label)}">${options.map(o=>`<option value="${esc(o)}"${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
+    <select data-path="${esc(path)}" data-kind="str" aria-label="${esc(label)}">${options.map(o=>`<option value="${esc(o)}"${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select><span class="pval">${esc(v==null||v===''?'—':String(v))}</span></div>`;
 }
 function getPath(p){ return p.split('.').reduce((o,k)=> o==null?undefined : o[/^\d+$/.test(k)?+k:k], S); }
 function setPath(p,val){
@@ -1671,7 +1803,8 @@ function gapPill(delta, goodWhenPositive){
   return `<span class="pill ${good?'good':'bad'}">${good?'ahead':'gap'}</span>`;
 }
 /* ═══ §TABS ══════════════════════════════════════════════════════ */
-const UI = {tab:'vision', div:'WOB', orgYear:0, editing:null, renaming:null};
+const UI = {tab:'vision', div:'WOB', orgYear:0, editing:null, renaming:null,
+            orgSel:null, orgSelLink:null, orgLinkFrom:null};
 
 function head(eyebrow, title, lead){
   return `<div class="pagehead"><div class="eyebrow">${esc(eyebrow)}</div>
@@ -2609,6 +2742,80 @@ function renderConsolidated(){
 }
 
 /* ─── 09 ORG CHART ──────────────────────────────────────────────── */
+/* The drawn org chart. One SVG carrying both the boxes and the lines, so the
+   whole thing scales as a unit through its viewBox — that is what makes it fit
+   the 688px print column without any print-specific layout work.
+   Boxes are not editable in place; selecting one opens the editor underneath.
+   Editing inside SVG would mean foreignObject and a pile of focus handling for
+   no gain, and a form reads better in a plan document anyway. */
+function orgCanvas(){
+  const org = S.org, year = UI.orgYear;
+  const boxes = (org.boxes||[]).filter(b=>orgBoxVisible(b,year));
+  const H = orgCanvasH(org.boxes);
+  const sel = UI.orgSel, linking = UI.orgLinkFrom;
+
+  const links = (org.links||[]).filter(l=>orgLinkVisible(l, org.boxes, year)).map(l=>{
+    const a=org.boxes.find(b=>b.id===l.a), b2=org.boxes.find(b=>b.id===l.b);
+    const st=orgLinkStyle(l, org);
+    return `<path class="olink ${UI.orgSelLink===l.id?'on':''}" data-olink="${esc(l.id)}"
+      d="${orgLinkPath(a,b2,st)}" fill="none" />`;
+  }).join('');
+
+  const cards = boxes.map(b=>{
+    const handedOver = num(b.handover)>0 && num(b.handover)<=year;
+    const isYours = b.owner && !handedOver;
+    return `<g class="ocard ${isYours?'owner':''} ${sel===b.id?'on':''} ${linking===b.id?'linking':''}"
+        data-obox="${esc(b.id)}" transform="translate(${num(b.x)},${num(b.y)})">
+      <rect width="${ORG_BOX_W}" height="${ORG_BOX_H}" rx="9"></rect>
+      ${isYours?`<text class="otag" x="12" y="17">YOU ARE DOING THIS</text>`:''}
+      <text class="orole" x="12" y="${isYours?36:28}">${esc((b.role||'Untitled role').slice(0,26))}</text>
+      <text class="oname" x="12" y="${isYours?52:46}">${esc((b.name||'Vacant').slice(0,26))}</text>
+      <text class="ocost" x="12" y="${isYours?68:64}">${esc(num(b.cost)?money0k(num(b.cost)):'—')}${
+        num(b.from)>0?` · from Y${num(b.from)}`:''}</text>
+    </g>`;
+  }).join('');
+
+  const empty = !org.boxes.length
+    ? `<div class="empty" style="margin-top:14px">Nothing drawn yet. <b>Add a role</b> to start — the first box is usually you.</div>` : '';
+
+  return `<div class="btnrow orgtools" style="margin-top:20px">
+      <button class="btn accent" id="btnOrgAdd">+ Add a role</button>
+      <button class="btn ${linking?'accent':''}" id="btnOrgLink">${linking?'Click the second box… (Esc)':'Link two boxes'}</button>
+      <button class="btn sm" id="btnOrgStyle">Lines: ${org.lineStyle==='straight'?'straight':'angled'}</button>
+      ${sel?`<button class="btn sm" id="btnOrgDel">Delete this role</button>`:''}
+      ${UI.orgSelLink?`<button class="btn sm" id="btnOrgLinkStyle">Flip this line</button>
+        <button class="btn sm" id="btnOrgLinkDel">Delete this line</button>`:''}
+    </div>
+    ${empty}
+    <div class="orgwrap"><svg class="orgsvg" viewBox="0 0 ${ORG_W} ${H}"
+        preserveAspectRatio="xMidYMin meet" role="img"
+        aria-label="Org chart, ${boxes.length} roles in ${year===0?'today':'year '+year}">
+      <g class="olinks">${links}</g>${cards}
+    </svg></div>
+    <div class="cap">Drag a box to move it — it snaps to a grid. Click one to edit or link it. ${
+      org.boxes.length>boxes.length?`<b>${org.boxes.length-boxes.length}</b> role${org.boxes.length-boxes.length===1?'':'s'} hidden in this year.`:''}</div>
+    ${orgBoxEditor()}`;
+}
+
+/* The editor for whichever box is selected. Reuses the same field() helpers as
+   the rest of the app, so it inherits the print-value spans and the grouped
+   money formatting for free. */
+function orgBoxEditor(){
+  const b = (S.org.boxes||[]).find(x=>x.id===UI.orgSel);
+  if(!b) return '';
+  const i = S.org.boxes.indexOf(b);
+  return sech('The role you selected', esc(b.role||'Untitled role'))
+    + `<div class="fgrid"><div>
+        ${field('Role title',`org.boxes.${i}.role`,{kind:'str'})}
+        ${field('Who holds it',`org.boxes.${i}.name`,{kind:'str',help:'Leave as Vacant if it is a hire you have not made'})}
+        ${field('Salary',`org.boxes.${i}.cost`,{kind:'numn',money:true,help:'Annual, all-in'})}
+      </div><div>
+        ${field('Appears in year',`org.boxes.${i}.from`,{kind:'numn',help:'0 for today. The box is hidden in earlier years.'})}
+        ${field('You hand it over in year',`org.boxes.${i}.handover`,{kind:'numn',help:'0 if it is not yours to hand over'})}
+        <label class="toggle" style="margin-top:12px"><input type="checkbox" data-obowner="${i}" ${b.owner?'checked':''}> <span>This is a role you occupy</span></label>
+      </div></div>`;
+}
+
 function renderOrg(){
   const pr=project();
   const o=orgAt(pr, UI.orgYear);
@@ -2618,7 +2825,7 @@ function renderOrg(){
   const reconCos   = yr.cos!=null ? o.costCos - yr.cos : null;
 
   return head('10 · The team that gets you out','Org Chart',
-    `Generated from the capacity engine, not drawn by hand. Roles appear as spans of control are exceeded. The copper boxes are the roles <strong>you</strong> still occupy — watching them clear between today and year five is the Owner-Operator to CEO shift, made literal.`)
+    `Draw the team that gets you out. Add a box per role, link them, and tag each box with the year it arrives — then press through the years and watch the org build itself. The copper boxes are the roles <strong>you</strong> still occupy; watching them clear between today and year five is the Owner-Operator to CEO shift, made literal.`)
 
   + `<div class="btnrow" style="margin-top:26px">
       ${[0,1,3,5].map(y=>`<button class="btn ${UI.orgYear===y?'accent':''}" data-orgyear="${y}">${y===0?'Today':'Year '+y}</button>`).join('')}
@@ -2629,14 +2836,16 @@ function renderOrg(){
       ${metric('Total team', o.cap.total,'n0','People','','o_tot')}
       ${metric('People cost', o.peopleCost,'money0k',`${money0k(o.costCos)} in cost of sales · ${money0k(o.costFixed)} in fixed costs`,'','o_cost')}
       ${metric('Hires from today', Math.max(0,(o.cap.target||0)-(o0.cap.target||0)),'n0','On tools','','o_hire')}
+      ${metric('Your chart costs', orgDrawnCost(S.org.boxes, UI.orgYear),'money0k',
+        (()=>{ const d=orgDrawnCost(S.org.boxes,UI.orgYear), m=o.peopleCost;
+               if(!S.org.boxes.length) return 'Nothing drawn yet';
+               const gap=d-m;
+               return Math.abs(gap) < 1000 ? 'In line with the model'
+                 : `${money0k(Math.abs(gap))} ${gap>0?'more':'less'} than the model funds`; })(),
+        (S.org.boxes.length && Math.abs(orgDrawnCost(S.org.boxes,UI.orgYear)-o.peopleCost)>=1000)?'accent':'', 'o_drawn')}
     </div>`
 
-  + `<div class="org">${o.rows.filter(r=>r.boxes.length).map((r,i)=>`
-      ${i?'<div class="orgstem"></div>':''}
-      <div class="orgrow">${r.boxes.map(b=>`<div class="obox ${b.owner?'owner':''} ${b.name==='Vacant'?'vacant':''}">
-        ${b.owner?'<span class="tag">You are doing this</span>':''}
-        <div class="or">${esc(b.role)}</div><div class="on">${esc(b.name)}</div><div class="oc">${money0k(b.cost)}</div>
-      </div>`).join('')}</div>`).join('')}</div>`
+  + orgCanvas()
 
   + (reconFixed!=null ? `<div class="alert ${reconFixed>0?'bad':'good'}"><div><b>Reconciliation — office and leadership</b>${money0k(o.costFixed)} of salaries sit in fixed costs (you, ops managers, estimators, office) against a forecast fixed cost line of ${money0k(yr.fixed)} — leaving ${money0k(yr.fixed-o.costFixed)} for rent, vehicles, insurance, software and everything else. ${reconFixed>0?'The wage bill alone exceeds the forecast fixed costs. Either the roles are too expensive or the forecast is too thin.':'That headroom looks workable — check it against your actual overheads.'}</div></div>`:'')
   + (reconCos!=null ? `<div class="alert ${reconCos>yr.cos?'bad':'good'}"><div><b>Reconciliation — on tools</b>${money0k(o.costCos)} of on-tools and team-leader wages against forecast cost of sales of ${money0k(yr.cos)}. Cost of sales also carries materials and subcontractors, so labour should be well under it — here it is ${pct(div(o.costCos,yr.cos),0)} of the line.</div></div>`:'')
@@ -2658,12 +2867,12 @@ function renderSettings(){
 
   + sech('The business','')
   + `<div class="fgrid"><div>
-      <div class="f"><div class="flab"><div class="fl">Company</div></div><input type="text" data-path="meta.company" data-kind="str" value="${esc(S.meta.company)}" style="text-align:left"></div>
-      <div class="f"><div class="flab"><div class="fl">Owner</div></div><input type="text" data-path="meta.owner" data-kind="str" value="${esc(S.meta.owner)}" style="text-align:left"></div>
+      <div class="f"><div class="flab"><div class="fl">Company</div></div><input type="text" data-path="meta.company" data-kind="str" value="${esc(S.meta.company)}" style="text-align:left"><span class="pval">${esc(S.meta.company||'—')}</span></div>
+      <div class="f"><div class="flab"><div class="fl">Owner</div></div><input type="text" data-path="meta.owner" data-kind="str" value="${esc(S.meta.owner)}" style="text-align:left"><span class="pval">${esc(S.meta.owner||'—')}</span></div>
       ${selectField('Currency','meta.currency',['NZD','AUD','GBP','USD'])}
     </div><div>
       <div class="f"><div class="flab"><div class="fl">The twelve months start at</div><div class="fh">The column headings on the Scenario Forecaster run from here. You can type over any of them.</div></div>
-        <select data-path="meta.startMonth" data-kind="num">${MONTHS.map((m,i)=>`<option value="${i}"${i===num(S.meta.startMonth)?' selected':''}>${m}</option>`).join('')}</select></div>
+        <select data-path="meta.startMonth" data-kind="num">${MONTHS.map((m,i)=>`<option value="${i}"${i===num(S.meta.startMonth)?' selected':''}>${m}</option>`).join('')}</select><span class="pval">${esc(MONTHS[num(S.meta.startMonth)]||'—')}</span></div>
       ${field('Starting year','meta.startYear',{step:1})}
       <label class="toggle" style="margin-top:16px"><input type="checkbox" id="togDivisions" ${S.divisionsOn?'checked':''}> Run divisions</label>
       <div class="fh" style="margin-top:6px">Off by default — one P&L and one funnel. Turn it on if you run separate divisions. Nothing is lost when you turn it back off.</div>
@@ -2690,7 +2899,7 @@ function renderSettings(){
   + sech('The plan — valuation and macro movement','One plan. These sit underneath every forecast on every tab.')
   + `<div class="fgrid"><div>
       <div class="f"><div class="flab"><div class="fl">EBITDA multiple</div><div class="fh">Sets the business value. Ask your broker or accountant what a business like yours trades on — trades typically 2.5–4×.</div></div>
-        <input type="number" step="0.1" data-path="plan.multiple" value="${num(S.plan.multiple)}" style="width:90px"></div>
+        <input type="number" step="0.1" data-path="plan.multiple" value="${num(S.plan.multiple)}" style="width:90px"><span class="pval">${esc(n1(num(S.plan.multiple)))}×</span></div>
       <div class="fh" style="margin-top:10px">Macro movement applies at the <em>start</em> of each year, before any strategy. It is what happens to the business if you change nothing — market drift, your annual price rise, and overhead creep.</div>
     </div><div>
       <table class="t" style="font-size:13px"><thead><tr><th>Year</th><th>Market %</th><th>Price %</th><th>Overhead %</th></tr></thead><tbody>
@@ -2729,7 +2938,7 @@ function renderSettings(){
 
   + sech('This build','')
   + `<div class="mgrid">
-      ${metric('Version','','n0','Boardroom Growth Plan v2.8 — five spoken prompts into the statement on 01, one Thrive Index score under the radar on 02')}
+      ${metric('Version','','n0','Boardroom Growth Plan v2.9 — the org chart on 10 is drawn by hand, and typed figures now print')}
       ${metric('Self-tests',SELFTEST_COUNT,'n0','Golden cases with hand-calculated answers')}
       ${metric('Tabs',10,'n0','Plus this setup page')}
     </div>`
@@ -3162,6 +3371,8 @@ function findSame(d){
   return null;
 }
 document.addEventListener('change', e=>{
+  const ob=e.target.closest && e.target.closest('[data-obowner]');
+  if(ob){ const i=+ob.dataset.obowner; if(S.org.boxes[i]){ S.org.boxes[i].owner=ob.checked; markDirty(); render(); } return; }
   const el=e.target;
   if(el.dataset.divactive!=null){
     const d=S.divisions.find(x=>x.id===el.dataset.divactive); if(d) d.active=el.checked;
@@ -3195,7 +3406,7 @@ document.addEventListener('change', e=>{
 
 /* ─── clicks ───────────────────────────────────────────────────── */
 document.addEventListener('click', e=>{
-  const t=e.target.closest('[data-tab],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogon],[data-addrock],[data-delrock],[data-clear],[data-role],[data-tscale],[data-divren],[data-divoff],button');
+  const t=e.target.closest('[data-tab],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogon],[data-addrock],[data-delrock],[data-clear],[data-role],[data-tscale],[data-divren],[data-divoff],[data-obox],[data-olink],button');
   if(t && t.disabled) return;
   if(!t) return;
   const d=t.dataset;
@@ -3221,11 +3432,42 @@ document.addEventListener('click', e=>{
   if(d.addrock!=null){ S.oneYear.rocks[+d.addrock].push({text:'',owner:'',done:false}); markDirty(); render(); return; }
   if(d.delrock!=null){ const [q,j]=d.delrock.split('|'); S.oneYear.rocks[+q].splice(+j,1); markDirty(); render(); return; }
 
+  if(ORG_SUPPRESS_CLICK) return;
+  const oline = t.closest && t.closest('[data-olink]');
+  if(oline){ UI.orgSelLink = oline.dataset.olink; UI.orgSel=null; render(); return; }
+  const ocard = t.closest && t.closest('[data-obox]');
+  if(ocard){
+    const id = ocard.dataset.obox;
+    if(UI.orgLinkFrom && UI.orgLinkFrom!=='await' && UI.orgLinkFrom!==id){
+      orgAddLink(UI.orgLinkFrom, id); UI.orgLinkFrom=null; return;
+    }
+    if(UI.orgLinkFrom==='await'){ UI.orgLinkFrom=id; UI.orgSel=id; render(); return; }
+    UI.orgSel = (UI.orgSel===id) ? null : id;
+    UI.orgSelLink = null; render(); return;
+  }
+
   switch(t.id){
     case 'btnAddDept': addDepartment(); break;
     case 'btnAddStrat': addStrategy(); break;
     case 'btnStratLib': openLibrary(); break;
     case 'btnDemo': loadDemo(); break;
+    case 'btnOrgAdd': orgAddBox(); break;
+    case 'btnOrgLink':
+      UI.orgLinkFrom = UI.orgLinkFrom ? null : (UI.orgSel || 'await');
+      UI.orgSelLink = null; render(); break;
+    case 'btnOrgStyle':
+      S.org.lineStyle = S.org.lineStyle==='straight' ? 'angled' : 'straight';
+      markDirty(); render(); break;
+    case 'btnOrgDel':
+      if(UI.orgSel){ orgDeleteBox(S.org, UI.orgSel); UI.orgSel=null; UI.orgLinkFrom=null; markDirty(); render(); }
+      break;
+    case 'btnOrgLinkStyle': {
+      const l=(S.org.links||[]).find(x=>x.id===UI.orgSelLink);
+      if(l){ l.style = orgLinkStyle(l,S.org)==='straight' ? 'angled' : 'straight'; markDirty(); render(); }
+      break; }
+    case 'btnOrgLinkDel':
+      S.org.links = (S.org.links||[]).filter(l=>l.id!==UI.orgSelLink);
+      UI.orgSelLink=null; markDirty(); render(); break;
     case 'btnResetMonths': {
       const d=currentDivision();
       if(confirm(`Clear all twelve months of numbers for ${d.name}? Assumptions and desired numbers are kept.`)){
@@ -3432,6 +3674,85 @@ function seasonalityFromBaseline(quiet){
   markDirty(); render();
   toast('Seasonality taken from your baseline revenue — the shape of your actual year.');
 }
+
+/* ─── org chart editing ────────────────────────────────────────────
+   The only drag interaction in the app. It matters that it does NOT go through
+   render(): the app rebuilds innerHTML wholesale, so re-rendering per pointermove
+   would destroy the node under the cursor sixty times a second. The <g> is moved
+   directly and state is written once, on release. */
+let ORGDRAG = null, ORG_SUPPRESS_CLICK = false;
+
+function orgAddBox(){
+  const boxes = S.org.boxes || (S.org.boxes=[]);
+  const n = boxes.length;
+  const col = n % 4, row = Math.floor(n/4);
+  boxes.push({
+    id: orgNewId('r', boxes),
+    role:'', name:'', cost:null,
+    x: orgSnap(60 + col*(ORG_BOX_W+60)),
+    y: orgSnap(60 + row*(ORG_BOX_H+70)),
+    from:0, handover:0, owner:false
+  });
+  UI.orgSel = boxes[boxes.length-1].id;
+  UI.orgSelLink = null;
+  markDirty(); render();
+  toast('Role added. Fill it in below, or drag it where it belongs.', 3600);
+}
+
+function orgAddLink(a, b){
+  if(!a || !b || a===b) return;
+  const links = S.org.links || (S.org.links=[]);
+  const exists = links.some(l=>(l.a===a&&l.b===b)||(l.a===b&&l.b===a));
+  if(exists){ toast('Those two are already linked.', 3000); render(); return; }
+  links.push({id:orgNewId('l', links), a, b, style:null});
+  markDirty(); render();
+}
+
+/* client px → the canvas's logical units, via the rendered width of the svg */
+function orgScale(svg){
+  const r = svg.getBoundingClientRect();
+  return r.width ? (ORG_W / r.width) : 1;
+}
+
+document.addEventListener('pointerdown', e=>{
+  const card = e.target.closest && e.target.closest('.orgsvg [data-obox]');
+  if(!card) return;
+  const svg = card.closest('.orgsvg');
+  const b = (S.org.boxes||[]).find(x=>x.id===card.dataset.obox);
+  if(!b || !svg) return;
+  ORGDRAG = {id:b.id, node:card, svg, k:orgScale(svg),
+             sx:e.clientX, sy:e.clientY, bx:num(b.x), by:num(b.y), moved:false};
+  card.classList.add('dragging');
+  try{ card.setPointerCapture(e.pointerId); }catch(err){}
+});
+
+document.addEventListener('pointermove', e=>{
+  if(!ORGDRAG) return;
+  const dx=(e.clientX-ORGDRAG.sx)*ORGDRAG.k, dy=(e.clientY-ORGDRAG.sy)*ORGDRAG.k;
+  if(Math.abs(dx)>3 || Math.abs(dy)>3) ORGDRAG.moved = true;
+  const nx = Math.max(0, Math.min(ORG_W-ORG_BOX_W, ORGDRAG.bx+dx));
+  const ny = Math.max(0, ORGDRAG.by+dy);
+  ORGDRAG.node.setAttribute('transform', `translate(${nx},${ny})`);
+  ORGDRAG.nx = nx; ORGDRAG.ny = ny;
+});
+
+document.addEventListener('pointerup', () => {
+  if(!ORGDRAG) return;
+  const d = ORGDRAG; ORGDRAG = null;
+  d.node.classList.remove('dragging');
+  if(!d.moved) return;                       // a click, not a drag
+  const b = (S.org.boxes||[]).find(x=>x.id===d.id);
+  if(b){ b.x = orgSnap(d.nx); b.y = orgSnap(d.ny); markDirty(); }
+  ORG_SUPPRESS_CLICK = true;                 // do not also select on release
+  render();
+  setTimeout(()=>{ ORG_SUPPRESS_CLICK=false; }, 0);
+});
+
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  if(UI.orgLinkFrom){ UI.orgLinkFrom=null; render(); }
+  else if(UI.orgSel || UI.orgSelLink){ UI.orgSel=null; UI.orgSelLink=null; render(); }
+});
 
 /* ─── demo data ────────────────────────────────────────────────── */
 function loadDemo(){
@@ -3972,6 +4293,22 @@ function runSelfTest(){
   // shorten the exercise with no other check noticing.
   T('13 · five Vision prompts, each with a distinct heading',
     new Set(VISION_PROMPTS.map(p2=>p2[0])).size, 5);
+
+  // 14 — the drawn org chart. All pure rules, no DOM.
+  const og = {lineStyle:'angled',
+    boxes:[{id:'r1',x:0,y:0,from:0,cost:120000},{id:'r2',x:200,y:200,from:3,cost:90000}],
+    links:[{id:'l1',a:'r1',b:'r2',style:null}]};
+
+  T('14 · a box tagged year 3 is hidden today', orgBoxVisible(og.boxes[1], 0), false);
+  T('14b · and visible from year 3 on', orgBoxVisible(og.boxes[1], 5), true);
+  // a link must not draw to a box that does not exist yet, or it points at nothing
+  T('14c · a link needs both ends visible', orgLinkVisible(og.links[0], og.boxes, 0), false);
+  T('14d · link style falls back to the chart default', orgLinkStyle({style:null}, og), 'angled');
+  // deleting a box has to take its links or render walks off a missing box
+  const og2 = JSON.parse(JSON.stringify(og));
+  orgDeleteBox(og2, 'r1');
+  T('14e · deleting a box deletes the links touching it',
+    og2.boxes.length + '/' + og2.links.length, '1/0');
 
   // the Setup card publishes SELFTEST_COUNT. If a case is added and that
   // constant is not moved with it, the card would quietly lie — so check it.

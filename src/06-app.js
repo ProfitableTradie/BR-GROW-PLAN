@@ -215,6 +215,8 @@ function findSame(d){
   return null;
 }
 document.addEventListener('change', e=>{
+  const ob=e.target.closest && e.target.closest('[data-obowner]');
+  if(ob){ const i=+ob.dataset.obowner; if(S.org.boxes[i]){ S.org.boxes[i].owner=ob.checked; markDirty(); render(); } return; }
   const el=e.target;
   if(el.dataset.divactive!=null){
     const d=S.divisions.find(x=>x.id===el.dataset.divactive); if(d) d.active=el.checked;
@@ -248,7 +250,7 @@ document.addEventListener('change', e=>{
 
 /* ─── clicks ───────────────────────────────────────────────────── */
 document.addEventListener('click', e=>{
-  const t=e.target.closest('[data-tab],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogon],[data-addrock],[data-delrock],[data-clear],[data-role],[data-tscale],[data-divren],[data-divoff],button');
+  const t=e.target.closest('[data-tab],[data-divsel],[data-orgyear],[data-delstrat],[data-addlever],[data-dellever],[data-stogon],[data-addrock],[data-delrock],[data-clear],[data-role],[data-tscale],[data-divren],[data-divoff],[data-obox],[data-olink],button');
   if(t && t.disabled) return;
   if(!t) return;
   const d=t.dataset;
@@ -274,11 +276,42 @@ document.addEventListener('click', e=>{
   if(d.addrock!=null){ S.oneYear.rocks[+d.addrock].push({text:'',owner:'',done:false}); markDirty(); render(); return; }
   if(d.delrock!=null){ const [q,j]=d.delrock.split('|'); S.oneYear.rocks[+q].splice(+j,1); markDirty(); render(); return; }
 
+  if(ORG_SUPPRESS_CLICK) return;
+  const oline = t.closest && t.closest('[data-olink]');
+  if(oline){ UI.orgSelLink = oline.dataset.olink; UI.orgSel=null; render(); return; }
+  const ocard = t.closest && t.closest('[data-obox]');
+  if(ocard){
+    const id = ocard.dataset.obox;
+    if(UI.orgLinkFrom && UI.orgLinkFrom!=='await' && UI.orgLinkFrom!==id){
+      orgAddLink(UI.orgLinkFrom, id); UI.orgLinkFrom=null; return;
+    }
+    if(UI.orgLinkFrom==='await'){ UI.orgLinkFrom=id; UI.orgSel=id; render(); return; }
+    UI.orgSel = (UI.orgSel===id) ? null : id;
+    UI.orgSelLink = null; render(); return;
+  }
+
   switch(t.id){
     case 'btnAddDept': addDepartment(); break;
     case 'btnAddStrat': addStrategy(); break;
     case 'btnStratLib': openLibrary(); break;
     case 'btnDemo': loadDemo(); break;
+    case 'btnOrgAdd': orgAddBox(); break;
+    case 'btnOrgLink':
+      UI.orgLinkFrom = UI.orgLinkFrom ? null : (UI.orgSel || 'await');
+      UI.orgSelLink = null; render(); break;
+    case 'btnOrgStyle':
+      S.org.lineStyle = S.org.lineStyle==='straight' ? 'angled' : 'straight';
+      markDirty(); render(); break;
+    case 'btnOrgDel':
+      if(UI.orgSel){ orgDeleteBox(S.org, UI.orgSel); UI.orgSel=null; UI.orgLinkFrom=null; markDirty(); render(); }
+      break;
+    case 'btnOrgLinkStyle': {
+      const l=(S.org.links||[]).find(x=>x.id===UI.orgSelLink);
+      if(l){ l.style = orgLinkStyle(l,S.org)==='straight' ? 'angled' : 'straight'; markDirty(); render(); }
+      break; }
+    case 'btnOrgLinkDel':
+      S.org.links = (S.org.links||[]).filter(l=>l.id!==UI.orgSelLink);
+      UI.orgSelLink=null; markDirty(); render(); break;
     case 'btnResetMonths': {
       const d=currentDivision();
       if(confirm(`Clear all twelve months of numbers for ${d.name}? Assumptions and desired numbers are kept.`)){
@@ -485,6 +518,85 @@ function seasonalityFromBaseline(quiet){
   markDirty(); render();
   toast('Seasonality taken from your baseline revenue — the shape of your actual year.');
 }
+
+/* ─── org chart editing ────────────────────────────────────────────
+   The only drag interaction in the app. It matters that it does NOT go through
+   render(): the app rebuilds innerHTML wholesale, so re-rendering per pointermove
+   would destroy the node under the cursor sixty times a second. The <g> is moved
+   directly and state is written once, on release. */
+let ORGDRAG = null, ORG_SUPPRESS_CLICK = false;
+
+function orgAddBox(){
+  const boxes = S.org.boxes || (S.org.boxes=[]);
+  const n = boxes.length;
+  const col = n % 4, row = Math.floor(n/4);
+  boxes.push({
+    id: orgNewId('r', boxes),
+    role:'', name:'', cost:null,
+    x: orgSnap(60 + col*(ORG_BOX_W+60)),
+    y: orgSnap(60 + row*(ORG_BOX_H+70)),
+    from:0, handover:0, owner:false
+  });
+  UI.orgSel = boxes[boxes.length-1].id;
+  UI.orgSelLink = null;
+  markDirty(); render();
+  toast('Role added. Fill it in below, or drag it where it belongs.', 3600);
+}
+
+function orgAddLink(a, b){
+  if(!a || !b || a===b) return;
+  const links = S.org.links || (S.org.links=[]);
+  const exists = links.some(l=>(l.a===a&&l.b===b)||(l.a===b&&l.b===a));
+  if(exists){ toast('Those two are already linked.', 3000); render(); return; }
+  links.push({id:orgNewId('l', links), a, b, style:null});
+  markDirty(); render();
+}
+
+/* client px → the canvas's logical units, via the rendered width of the svg */
+function orgScale(svg){
+  const r = svg.getBoundingClientRect();
+  return r.width ? (ORG_W / r.width) : 1;
+}
+
+document.addEventListener('pointerdown', e=>{
+  const card = e.target.closest && e.target.closest('.orgsvg [data-obox]');
+  if(!card) return;
+  const svg = card.closest('.orgsvg');
+  const b = (S.org.boxes||[]).find(x=>x.id===card.dataset.obox);
+  if(!b || !svg) return;
+  ORGDRAG = {id:b.id, node:card, svg, k:orgScale(svg),
+             sx:e.clientX, sy:e.clientY, bx:num(b.x), by:num(b.y), moved:false};
+  card.classList.add('dragging');
+  try{ card.setPointerCapture(e.pointerId); }catch(err){}
+});
+
+document.addEventListener('pointermove', e=>{
+  if(!ORGDRAG) return;
+  const dx=(e.clientX-ORGDRAG.sx)*ORGDRAG.k, dy=(e.clientY-ORGDRAG.sy)*ORGDRAG.k;
+  if(Math.abs(dx)>3 || Math.abs(dy)>3) ORGDRAG.moved = true;
+  const nx = Math.max(0, Math.min(ORG_W-ORG_BOX_W, ORGDRAG.bx+dx));
+  const ny = Math.max(0, ORGDRAG.by+dy);
+  ORGDRAG.node.setAttribute('transform', `translate(${nx},${ny})`);
+  ORGDRAG.nx = nx; ORGDRAG.ny = ny;
+});
+
+document.addEventListener('pointerup', () => {
+  if(!ORGDRAG) return;
+  const d = ORGDRAG; ORGDRAG = null;
+  d.node.classList.remove('dragging');
+  if(!d.moved) return;                       // a click, not a drag
+  const b = (S.org.boxes||[]).find(x=>x.id===d.id);
+  if(b){ b.x = orgSnap(d.nx); b.y = orgSnap(d.ny); markDirty(); }
+  ORG_SUPPRESS_CLICK = true;                 // do not also select on release
+  render();
+  setTimeout(()=>{ ORG_SUPPRESS_CLICK=false; }, 0);
+});
+
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  if(UI.orgLinkFrom){ UI.orgLinkFrom=null; render(); }
+  else if(UI.orgSel || UI.orgSelLink){ UI.orgSel=null; UI.orgSelLink=null; render(); }
+});
 
 /* ─── demo data ────────────────────────────────────────────────── */
 function loadDemo(){
@@ -1025,6 +1137,22 @@ function runSelfTest(){
   // shorten the exercise with no other check noticing.
   T('13 · five Vision prompts, each with a distinct heading',
     new Set(VISION_PROMPTS.map(p2=>p2[0])).size, 5);
+
+  // 14 — the drawn org chart. All pure rules, no DOM.
+  const og = {lineStyle:'angled',
+    boxes:[{id:'r1',x:0,y:0,from:0,cost:120000},{id:'r2',x:200,y:200,from:3,cost:90000}],
+    links:[{id:'l1',a:'r1',b:'r2',style:null}]};
+
+  T('14 · a box tagged year 3 is hidden today', orgBoxVisible(og.boxes[1], 0), false);
+  T('14b · and visible from year 3 on', orgBoxVisible(og.boxes[1], 5), true);
+  // a link must not draw to a box that does not exist yet, or it points at nothing
+  T('14c · a link needs both ends visible', orgLinkVisible(og.links[0], og.boxes, 0), false);
+  T('14d · link style falls back to the chart default', orgLinkStyle({style:null}, og), 'angled');
+  // deleting a box has to take its links or render walks off a missing box
+  const og2 = JSON.parse(JSON.stringify(og));
+  orgDeleteBox(og2, 'r1');
+  T('14e · deleting a box deletes the links touching it',
+    og2.boxes.length + '/' + og2.links.length, '1/0');
 
   // the Setup card publishes SELFTEST_COUNT. If a case is added and that
   // constant is not moved with it, the card would quietly lie — so check it.

@@ -350,8 +350,8 @@ function field(label, path, opts){
   if(o.money) shown = (UI.editing===path) ? (v==null?'':v) : grouped(v);
   return `<div class="f"><div class="flab"><div class="fl">${esc(label)}</div>${o.help?`<div class="fh">${esc(o.help)}</div>`:''}</div>
     ${o.money
-      ? `<div class="fmoney"><span>${esc(CURSYM)}</span><input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" data-raw="${esc(v==null?'':String(v))}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}"></div>`
-      : `<input type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}">`}
+      ? `<div class="fmoney"><span>${esc(CURSYM)}</span><input class="grp" type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" data-raw="${esc(v==null?'':String(v))}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}"><span class="pval">${esc(shown===''||shown==null?'—':String(shown))}</span></div>`
+      : `<input type="text" inputmode="decimal" autocomplete="off" data-path="${esc(path)}" data-kind="${o.kind||'num'}" value="${shown===''||shown==null?'':shown}" placeholder="${esc(o.ph||'')}" aria-label="${esc(label)}"><span class="pval">${esc(shown===''||shown==null?'—':String(shown))}</span>`}
   </div>`;
 }
 function outrow(label, valueHtml, help, cls){
@@ -361,7 +361,7 @@ function outrow(label, valueHtml, help, cls){
 function selectField(label, path, options, help){
   const v=getPath(path);
   return `<div class="f"><div class="flab"><div class="fl">${esc(label)}</div>${help?`<div class="fh">${esc(help)}</div>`:''}</div>
-    <select data-path="${esc(path)}" data-kind="str" aria-label="${esc(label)}">${options.map(o=>`<option value="${esc(o)}"${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
+    <select data-path="${esc(path)}" data-kind="str" aria-label="${esc(label)}">${options.map(o=>`<option value="${esc(o)}"${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select><span class="pval">${esc(v==null||v===''?'—':String(v))}</span></div>`;
 }
 function getPath(p){ return p.split('.').reduce((o,k)=> o==null?undefined : o[/^\d+$/.test(k)?+k:k], S); }
 function setPath(p,val){
